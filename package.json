@@ -2,10 +2,14 @@
   "name": "razom",
   "version": "0.0.1",
   "description": "Site for intergrting veterans back into society",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "node --trace-deprecation app.js",
     "test": "test"
   },
   "author": "BoarLabs",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "apostrophe": "^4.8.0"
+  }
 }
