@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node --trace-deprecation app.js",
     "test": "echo \"No unit test specified\"",
-    "e2e": "echo \"No e2e test specified\"",
+    "e2e-test": "echo \"No e2e test specified\"",
     "lint": "echo \"No linting specified\""
   },
   "author": "BoarLabs",
