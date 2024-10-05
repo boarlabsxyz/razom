@@ -6,7 +6,7 @@ on:
 
 jobs:
   unit-test:
-    runs-on: node:22
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -15,7 +15,7 @@ jobs:
     - name: Run tests
       run: npm test
   e2e-test:
-    runs-on: node:22
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -24,7 +24,7 @@ jobs:
     - name: Run tests
       run: npm run e2e-test
   lint:
-    runs-on: node:22
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
