@@ -7,6 +7,8 @@ on:
 jobs:
   unit-test:
     runs-on: ubuntu-latest
+    container:
+      image: node:22
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -16,6 +18,8 @@ jobs:
       run: npm test
   e2e-test:
     runs-on: ubuntu-latest
+    container:
+      image: node:22
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -25,6 +29,8 @@ jobs:
       run: npm run e2e-test
   lint:
     runs-on: ubuntu-latest
+    container:
+      image: node:22
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
