@@ -1,0 +1,11 @@
+{
+  "name": "razom",
+  "version": "0.0.1",
+  "description": "Site for intergrting veterans back into society",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "BoarLabs",
+  "license": "MIT"
+}
