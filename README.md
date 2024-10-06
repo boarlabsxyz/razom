@@ -45,4 +45,42 @@ Before you begin, ensure you have met the following requirements:
     docker-compose run app npm test
     ```
 
+## Development porocess
+
+
+### Development Flow
+
+1. **Take an issue from GitHub:**
+    - Browse the [issues](https://github.com/boarlabsxyz/razom/issues) and select one to work on.
+    - Assign the issue to yourself to avoid duplication of work.
+
+2. **Create a new branch:**
+    ```sh
+    git checkout -b feature/issue-<issue-number>-<short-description>
+    ```
+
+3. **Implement the changes:**
+    - Implement issue.
+    - Keep PR as small as possible.
+    - Create several PRs if issue requires significan changes.
+    - Ensure your code adheres to the project's coding standards and guidelines.
+
+4. **Create a Pull Request (PR):**
+    - Push your branch to the remote repository:
+        ```sh
+        git push origin feature/issue-<issue-number>
+        ```
+    - Open a PR against the `main` branch.
+    - Provide a clear and concise description of the changes made.
+
+5. **Pass Continuous Integration (CI):**
+    - Ensure that all CI checks pass successfully.
+    - Fix any issues reported by the CI pipeline.
+
+6. **Get approval and merge the code:**
+    - Request a review from the project maintainers.
+    - Address any feedback or requested changes.
+    - Once approved, merge the PR into the `main` branch.
+
+
 For more detailed instructions, refer to the [documentation](./docs).
