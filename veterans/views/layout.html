@@ -1,0 +1,58 @@
+{# Automatically extends the right outer layout and also handles AJAX siutations #}
+{% extends data.outerLayout %}
+
+{% import 'fragments/topbar.html' as topbar %}
+{% import 'fragments/footer.html' as footer %}
+{% import 'fragments/navigation.html' as navigation %}
+
+{% set title = data.piece.title or data.page.title %}
+{% block title %}
+  {{ title }}
+  {% if not title %}
+    {{ apos.log('Looks like you forgot to override the title block in a template that does not have access to an Apostrophe page or piece.') }}
+  {% endif %}
+{% endblock %}
+
+{% block extraHead %}
+<link rel="icon" sizes="16x16" href="{{ apos.asset.url('/modules/asset/favicon/favicon-16.png')}}">
+<link rel="icon" sizes="32x32" href="{{ apos.asset.url('/modules/asset/favicon/favicon-32.png')}}">
+<link rel="icon" sizes="96x96" href="{{ apos.asset.url('/modules/asset/favicon/favicon-96.png')}}">
+<link rel="icon" sizes="180x180" href="{{ apos.asset.url('/modules/asset/favicon/favicon-180.png')}}">
+<link rel="icon" sizes="512x512" href="{{ apos.asset.url('/modules/asset/favicon/favicon-512.png')}}">
+{% endblock %}
+
+{% block beforeMain %}
+  <header>
+    {% render topbar.mainArea() %}
+    {# {% render navigation.pagetreeNavigation() %} #}
+    {% render navigation.globalNavigation() %}
+  </header>
+  <main class="pr-main">
+{% endblock %}
+
+{% block afterMain %}
+  </main>
+  <footer>
+    {% render footer.mainArea() %}
+  </footer>
+  {# Use module helper to check environment variable #}
+  {% set debugMode = apos.modules['asset'].debugMode() %}
+  {# Breadcrumb trail to the current page or piece. Not on the home page, only in devMode #}
+  {% if data.page and data.page._ancestors.length and debugMode %}
+    <nav class="breadcrumb">
+      {# Loop over the ancestors. #}
+      
+      {% for page in data.page._ancestors %}
+        <a href="{{ page._url }}">{{ page.title }}</a> ➡
+      {% endfor %}
+      {% if data.piece %}
+        {# We're rendering a show page. #}
+        <a href="{{ data.page._url }}">{{ data.page.title }}</a>  ➡
+        <span>{{ data.piece.title }}</span>
+      {% else %}
+        {# We're rendering a normal page. #}
+        <span>{{ data.page.title }}</span>
+      {% endif %}
+    </nav>
+  {% endif %}
+{% endblock %}

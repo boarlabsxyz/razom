@@ -6,18 +6,23 @@ services:
     depends_on:
       - mongodb
     environment:
-      - APOS_MONGODB_URI=mongodb://root:password@mongodb:27017/apostrophe
+      - APOS_MONGODB_URI=mongodb://user:userpasswd@mongodb:27017/apostrophe
+    develop:
+      watch:
+        - action: sync
+          path: ./veterans
+          target: /usr/src/app
 
   mongodb:
-    image: mongo:5.0
+    image: mongo:6
     ports:
       - "27017:27017"
     volumes:
-      - mongo-data:/data/db
+      - ./mongo-data:/data/db
+      - ./mongo-init/:/docker-entrypoint-initdb.d/:ro
     restart: unless-stopped
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=password
+    env_file:
+      - .env
 
 volumes:
   mongo-data:
