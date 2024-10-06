@@ -1,5 +1,5 @@
 # Use the official Node.js 22 image
-FROM node:22
+FROM node:20
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
@@ -11,7 +11,8 @@ COPY package*.json ./
 RUN npm ci --only=production && npm cache clean --force
 
 # Copy the rest of the application code
-COPY . .
+COPY app.js .
+COPY public .
 
 # Expose the port the app runs on (assuming it's 3000, change if different)
 EXPOSE 3000
