@@ -30,10 +30,17 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     container:
-      image: node:22
+      image: node:20
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.OS }}-node-
     - name: Install dependencies
       run: npm install
     - name: Run linter
