@@ -12,6 +12,7 @@
   "author": "BoarLabs",
   "license": "MIT",
   "dependencies": {
+    "@apostrophecms/cli": "^3.4.0",
     "apostrophe": "^4.8.0"
   }
 }
