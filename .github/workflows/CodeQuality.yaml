@@ -12,12 +12,12 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-    - name: Change working directory
-      run: cd ./veterans
     - name: Install dependencies
       run: npm install
+      working-directory: ./veterans
     - name: Run tests
       run: npm test
+      working-directory: ./veterans
   e2e-test:
     runs-on: ubuntu-latest
     container:
@@ -25,12 +25,12 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-    - name: Change working directory
-      run: cd ./veterans
     - name: Install dependencies
       run: npm install
+      working-directory: ./veterans
     - name: Run e2e tests
       run: npm run e2e-test
+      working-directory: ./veterans
   lint:
     runs-on: ubuntu-latest
     container:
@@ -38,14 +38,10 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-    - name: Change working directory
-      run: cd ./veterans
     - name: Install dependencies
-      run: 
-        cd ./veterans
-        npm install
+      run: npm install
+      working-directory: ./veterans
     - name: Run linter
-      run: 
-        cd ./veterans
-        npm run lint
+      run: npm run lint
+      working-directory: ./veterans
 
