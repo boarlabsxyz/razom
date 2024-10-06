@@ -3,6 +3,7 @@ FROM node:20
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
+ENV APOS_MONGODB_URI=mongodb://user:userpasswd@mongodb:27017/apostrophe
 
 COPY ./veterans .
 RUN npm ci && npm cache clean --force

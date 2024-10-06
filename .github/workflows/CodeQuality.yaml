@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+    - name: Change working directory
+      run: cd ./veterans
     - name: Install dependencies
       run: npm install
     - name: Run tests
@@ -23,6 +25,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+    - name: Change working directory
+      run: cd ./veterans
     - name: Install dependencies
       run: npm install
     - name: Run e2e tests
@@ -34,6 +38,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+    - name: Change working directory
+      run: cd ./veterans
     - name: Install dependencies
       run: npm install
     - name: Run linter
