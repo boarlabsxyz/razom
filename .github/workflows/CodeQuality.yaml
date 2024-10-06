@@ -1,0 +1,41 @@
+name: CodeQuality
+
+on:
+  pull_request:
+    types: [synchronize, opened, reopened]
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    container:
+      image: node:20
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Install dependencies
+      run: npm install
+    - name: Run tests
+      run: npm test
+  e2e-test:
+    runs-on: ubuntu-latest
+    container:
+      image: node:20
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Install dependencies
+      run: npm install
+    - name: Run e2e tests
+      run: npm run e2e-test
+  lint:
+    runs-on: ubuntu-latest
+    container:
+      image: node:20
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Install dependencies
+      run: npm install
+    - name: Run linter
+      run: npm run lint
+
