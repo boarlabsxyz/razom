@@ -1,7 +1,8 @@
 // app.js
+
 require('apostrophe')({
-    shortName: 'Veterans', // 
+    shortName: 'veterans',
     modules: {
-    // ...
+   
     }
 });

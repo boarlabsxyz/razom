@@ -1,0 +1,101 @@
+{% fragment mainArea() %}
+  <footer class="bg-info bg-opacity-10 pt-5 text-secondary">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 py-3">
+          <h2 class="fw-bold h5 mb-4 text-primary text-uppercase">Quick Links</h2>
+          <div class="row">
+            <div class="col-sm-6">
+              <ul class="list-unstyled">
+                {% for item in data.global.quickLinks %}
+                  <li class="mb-3">
+                    {% set path = '' %}
+                    {% if item.type === 'page' and item
+                      ._page and item
+                      ._page[0] %}
+                      {% set path = item
+                        ._page[0]
+                        ._url %}
+                    {% elif item.type === 'custom' %}
+                      {% set path = item.customUrl %}
+                    {% endif %}
+                    <a href="{{ path }}" class="text-secondary" {% if item.target[0] === '_blank' %} target="_blank" {% endif %}>{{ item.label }}</a>
+                  </li>
+                {% endfor %}
+                </ul>
+            </div>
+            <div class="col-sm-6">
+              <ul class="list-unstyled">
+                <li class="mb-3">
+                  <a href="#" class="text-secondary">Web Design</a>
+                </li>
+                <li class="mb-3">
+                  <a href="#" class="text-secondary">Web Development</a>
+                </li>
+                <li class="mb-3">
+                  <a href="#" class="text-secondary">WordPress</a>
+                </li>
+                <li class="mb-3">
+                  <a href="#" class="text-secondary">Digital Marketing</a>
+                </li>
+                <li class="mb-3">
+                  <a href="#" class="text-secondary">Content Writing</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 py-3">
+          <h2 class="fw-bold h5 mb-4 text-primary text-uppercase">Latest Review</h2>
+          {% component 'review:latestReview' %}
+          <h2 class="fw-bold h5 mb-4 text-primary text-uppercase">Featured Review</h2>
+          <h3 class="fw-bold h6 mb-3"><a href="{{ data.global._featuredPost[0]._url }}">{{ data.global._featuredPost[0].title }}</a></h3>
+          <p class="mb-3">{{ data.global._featuredPost[0].searchSummary | truncate(100) }}</p>
+        </div>
+        <div class="col-lg-4 py-3">
+          <h2 class="fw-bold h5 mb-4 text-primary text-uppercase">Other</h2>
+          <p class="mb-3">Subscribe to our newsletter and get exclusive updates directly in your inbox.</p>
+          <form class="mb-4">
+            <div class="bg-white border input-group overflow-hidden p-1 rounded-pill">
+              <input
+                type="email"
+                class="border-0 form-control pe-3 ps-3"
+                placeholder="Enter email..."
+                aria-label="Recipient's email"
+                aria-describedby="button-addon2"
+                required>
+                <button class="btn btn-primary pb-2 pe-4 ps-4 pt-2 rounded-pill" type="submit" id="button-addon2" aria-label="submit">
+                  <svg viewBox="0 0 24 24" fill="currentColor" class="d-inline-block" height="16" width="16">
+                    <path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454
+                      19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"></path>
+                  </svg>
+                </button>
+              </div>
+          </form>
+          <h2 class="fw-bold h5 mb-2 text-primary text-uppercase">Get Social</h2>
+          <div class="d-inline-flex flex-wrap">
+              {% for account in data.global.socialLinks %}
+                {% set path = '' %}
+                {% if account.url %}
+                  {% set path = account.url %}
+                {% endif %}
+                <a href="{{ path }}" class="p-1 text-secondary" aria-label="{{ account.label }}" target="_blank"><i class="{{ account.icon }}"></i></a>
+              {% endfor %}
+          </div>
+          <div class="pb-3 pt-3 small">
+            <hr class="mt-0 ">
+            <div class="align-items-center row">
+              <div class="col-md pb-2 pt-2">
+                <p class="mb-0">&copy; 2002 - 2020. All Rights Reserved - Company Name</p>
+              </div>
+              <div class="col-md-auto pb-2 pt-2">
+                <a href="#" class="text-secondary">Privacy Policy</a>
+                |
+                <a href="#" class="text-secondary">Terms of Use</a>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+{% endfragment %}
