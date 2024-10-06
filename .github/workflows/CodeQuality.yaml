@@ -19,10 +19,10 @@ jobs:
   e2e-test:
     runs-on: ubuntu-latest
     container:
-      image: node:22
+      image: node:20
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Install dependencies
       run: npm install
     - name: Run e2e tests
