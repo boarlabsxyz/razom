@@ -45,7 +45,7 @@ Before you begin, ensure you have met the following requirements:
     docker-compose run app npm test
     ```
 
-## Development porocess
+## Development process
 
 
 ### Development Flow
