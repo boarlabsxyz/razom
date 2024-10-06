@@ -6,14 +6,18 @@ services:
     depends_on:
       - mongodb
     environment:
-      - APOS_MONGODB_URI=mongodb://mongodb:27017/apostrophe
+      - APOS_MONGODB_URI=mongodb://root:password@mongodb:27017/apostrophe
 
   mongodb:
-    image: mongo:latest
+    image: mongo:5.0
     ports:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
 
 volumes:
   mongo-data:
