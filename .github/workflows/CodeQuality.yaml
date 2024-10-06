@@ -41,7 +41,11 @@ jobs:
     - name: Change working directory
       run: cd ./veterans
     - name: Install dependencies
-      run: npm install
+      run: 
+        cd ./veterans
+        npm install
     - name: Run linter
-      run: npm run lint
+      run: 
+        cd ./veterans
+        npm run lint
 
