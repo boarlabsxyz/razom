@@ -12,12 +12,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-    - name: Install dependencies
-      run: npm install
-      working-directory: ./veterans
     - name: Run tests
-      run: npm test
-      working-directory: ./veterans
+      run: docker-compose run app npm run test
   e2e-test:
     runs-on: ubuntu-latest
     container:
@@ -25,23 +21,15 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-    - name: Install dependencies
-      run: npm install
-      working-directory: ./veterans
-    - name: Run e2e tests
-      run: npm run e2e-test
-      working-directory: ./veterans
+    - name: Run tests
+      run: docker-compose run app npm run e2e-test
   lint:
     runs-on: ubuntu-latest
     container:
       image: node:20
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-    - name: Install dependencies
-      run: npm install
-      working-directory: ./veterans
-    - name: Run linter
-      run: npm run lint
-      working-directory: ./veterans
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Run tests
+        run: docker-compose run app npm run lint
 

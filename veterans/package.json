@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "keystone dev",
     "start": "keystone start",
-    "build": "keystone build"
+    "build": "keystone build",
+    "test": "echo \"Error: no test specified\"",
+    "lint": "echo \"Error: no lint specified\"",
+    "e2e-test": "echo \"Error: no e2e-test specified\""
   },
   "dependencies": {
     "@keystone-6/auth": "^8.0.0",

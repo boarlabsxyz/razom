@@ -4,11 +4,9 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - mongodb
+      - postgresdb
     env_file:
       - .env
-    environment:
-      - APOS_MONGODB_URI=mongodb://$MONGO_USER:$MONGO_PASSWORD@mongodb:27017/$MONGO_INITDB_DATABASE
     develop:
       watch:
         - action: sync
@@ -24,6 +22,7 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+
 
 volumes:
   mongo-data:
