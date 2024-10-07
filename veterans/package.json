@@ -1,45 +1,16 @@
 {
-  "name": "razom",
-  "version": "0.0.1",
-  "description": "Site for intergrting veterans back into society",
-  "main": "app.js",
+  "name": "keystone-app",
+  "version": "1.0.3",
+  "private": true,
   "scripts": {
-    "dev": "nodemon",
-    "start": "node --trace-deprecation app.js",
-    "test": "echo \"No unit test specified\"",
-    "e2e-test": "echo \"No e2e test specified\"",
-    "lint": "echo \"No linting specified\""
+    "dev": "keystone dev",
+    "start": "keystone start",
+    "build": "keystone build"
   },
-  "nodemonConfig": {
-    "delay": 1000,
-    "verbose": true,
-    "watch": [
-      "./app.js",
-      "./modules/**/*",
-      "./lib/**/*.js",
-      "./views/**/*.html"
-    ],
-    "ignoreRoot": [
-      ".git"
-    ],
-    "ignore": [
-      "**/ui/apos/",
-      "**/ui/src/",
-      "**ui/public/",
-      "locales/*.json",
-      "public/uploads/",
-      "public/apos-frontend/*.js",
-      "data/"
-    ],
-    "ext": "json, js, html, scss, vue"
-  },
-  "author": "BoarLabs",
-  "license": "MIT",
   "dependencies": {
-    "@apostrophecms/cli": "^3.4.0",
-    "apostrophe": "^4.8.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.7"
+    "@keystone-6/auth": "^8.0.0",
+    "@keystone-6/core": "^6.0.0",
+    "@keystone-6/fields-document": "^9.0.0",
+    "typescript": "^5.5.0"
   }
 }

@@ -1,15 +1,15 @@
 # Razom - portal for helping veterans get reintegrated into society
 
 
-## ApostropheCMS
+## KeynoteJS
 
-This project uses [ApostropheCMS](https://apostrophecms.com/), a full-featured, open-source CMS built with Node.js.
+This project uses [KeynoteJS](https://keynotejs.com/), a powerful, open-source presentation framework built with JavaScript.
 
 For more information and useful resources, refer to the following links:
 
-- [ApostropheCMS Documentation](https://docs.apostrophecms.org/)
-- [ApostropheCMS GitHub Repository](https://github.com/apostrophecms/apostrophe)
-- [ApostropheCMS Tutorials](https://apostrophecms.com/docs/tutorials/getting-started/)
+- [KeynoteJS Documentation](https://docs.keynotejs.com/)
+- [KeynoteJS GitHub Repository](https://github.com/keynotejs/keynote)
+- [KeynoteJS Tutorials](https://keynotejs.com/docs/tutorials/getting-started/)
 
 ## Get started
 

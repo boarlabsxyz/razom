@@ -15,13 +15,12 @@ services:
           path: ./veterans
           target: /usr/src/app
 
-  mongodb:
-    image: mongo:6
+  postgresdb:
+    image: postgres:latest
     ports:
-      - "27017:27017"
+      - "5432:5432"
     volumes:
-      - ./mongo-data:/data/db
-      - ./mongo-init/:/docker-entrypoint-initdb.d/:ro
+      - ./postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
     env_file:
       - .env
