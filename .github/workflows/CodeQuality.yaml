@@ -7,29 +7,29 @@ on:
 jobs:
   unit-test:
     runs-on: ubuntu-latest
-    container:
-      image: node:20
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+    - name: Build app image
+      run: docker compose build
     - name: Run tests
       run: docker compose run app npm run test
   e2e-test:
     runs-on: ubuntu-latest
-    container:
-      image: node:20
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+    - name: Build app image
+      run: docker compose build
     - name: Run tests
       run: docker compose run app npm run e2e-test
   lint:
     runs-on: ubuntu-latest
-    container:
-      image: node:20
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      - name: Build app image
+        run: docker compose build
       - name: Run tests
         run: docker compose run app npm run lint
 
