@@ -13,7 +13,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
     - name: Run tests
-      run: docker-compose run app npm run test
+      run: docker compose run app npm run test
   e2e-test:
     runs-on: ubuntu-latest
     container:
@@ -22,7 +22,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
     - name: Run tests
-      run: docker-compose run app npm run e2e-test
+      run: docker compose run app npm run e2e-test
   lint:
     runs-on: ubuntu-latest
     container:
@@ -31,5 +31,5 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Run tests
-        run: docker-compose run app npm run lint
+        run: docker compose run app npm run lint
 
