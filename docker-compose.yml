@@ -4,31 +4,22 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - mongodb
+      - postgresdb
     env_file:
       - .env
-    environment:
-      - APOS_MONGODB_URI=mongodb://$MONGO_USER:$MONGO_PASSWORD@mongodb:27017/$MONGO_INITDB_DATABASE
     develop:
       watch:
         - action: sync
           path: ./veterans
           target: /usr/src/app
 
-  mongodb:
-    image: mongo:6
+  postgresdb:
+    image: postgres:17
     ports:
-      - "27017:27017"
+      - "5432:5432"
     volumes:
-      - ./mongo-data:/data/db
-      - ./mongo-init/:/docker-entrypoint-initdb.d/:ro
+      - ./postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
     env_file:
       - .env
-
-volumes:
-  mongo-data:
-
-
-
   
