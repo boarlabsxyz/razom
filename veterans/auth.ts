@@ -15,11 +15,11 @@
 // If you want to learn more about how our out-of-the-box authentication works, please
 // read https://keystonejs.com/docs/apis/auth#authentication-api
 
-import { randomBytes } from 'node:crypto'
-import { createAuth } from '@keystone-6/auth'
+import { randomBytes } from 'node:crypto';
+import { createAuth } from '@keystone-6/auth';
 
 // see https://keystonejs.com/docs/apis/session for the session docs
-import { statelessSessions } from '@keystone-6/core/session'
+import { statelessSessions } from '@keystone-6/core/session';
 
 // withAuth is a function we can use to wrap our base configuration
 const { withAuth } = createAuth({
@@ -45,17 +45,17 @@ const { withAuth } = createAuth({
     // it uses context.sudo() to do this, which bypasses any access control you might have
     //   you shouldn't use this in production
   },
-})
+});
 
 // statelessSessions uses cookies for session tracking
 //   these cookies have an expiry, in seconds
 //   we use an expiry of 30 days for this starter
-const sessionMaxAge = 60 * 60 * 24 * 30
+const sessionMaxAge = 60 * 60 * 24 * 30;
 
 // you can find out more at https://keystonejs.com/docs/apis/session#session-api
 const session = statelessSessions({
   maxAge: sessionMaxAge,
   secret: process.env.SESSION_SECRET,
-})
+});
 
-export { withAuth, session }
+export { withAuth, session };

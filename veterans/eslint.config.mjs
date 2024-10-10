@@ -1,0 +1,46 @@
+import globals from 'globals';
+import pluginJs from '@eslint/js';
+import tseslint from 'typescript-eslint';
+
+export default [
+  { files: ['**/*.{js,mjs,cjs,ts}'] },
+  { languageOptions: { globals: globals.browser } },
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
+  {
+    rules: {
+      'no-console': 'error',
+      'no-debugger': 'error',
+      'eqeqeq': ['error', 'always'],
+      'curly': 'error',
+      'no-unused-vars': ['error', { 'args': 'none', 'ignoreRestSiblings': true }],
+      'strict': ['error', 'global'],
+      'no-var': 'error',
+      'prefer-const': 'error',
+      'no-multi-spaces': 'error',
+      'comma-dangle': ['error', 'always-multiline'],
+      'quotes': ['error', 'single', { 'avoidEscape': true }],
+      'semi': ['error', 'always'],
+      'indent': ['error', 2],
+      'space-before-function-paren': ['error', 'never'],
+      'keyword-spacing': ['error', { 'before': true, 'after': true }],
+      'space-infix-ops': 'error',
+      'eol-last': ['error', 'always'],
+      'no-trailing-spaces': 'error',
+      'object-curly-spacing': ['error', 'always'],
+      'array-bracket-spacing': ['error', 'never'],
+      'block-spacing': 'error',
+      'brace-style': ['error', '1tbs', { 'allowSingleLine': true }],
+      'camelcase': ['error', { 'properties': 'never' }],
+      'comma-spacing': ['error', { 'before': false, 'after': true }],
+      'func-call-spacing': ['error', 'never'],
+      'key-spacing': ['error', { 'beforeColon': false, 'afterColon': true }],
+      'no-multiple-empty-lines': ['error', { 'max': 1, 'maxEOF': 1 }],
+      'no-whitespace-before-property': 'error',
+      'padded-blocks': ['error', 'never'],
+      'space-before-blocks': ['error', 'always'],
+      'space-in-parens': ['error', 'never'],
+      'spaced-comment': ['error', 'always', { 'exceptions': ['-'] }],
+    },
+  },
+];
