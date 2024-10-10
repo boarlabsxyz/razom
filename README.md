@@ -74,8 +74,14 @@ Before you begin, ensure you have met the following requirements:
     - Provide a clear and concise description of the changes made.
 
 5. **Pass Continuous Integration (CI):**
-    - Ensure that all CI checks pass successfully.
-    - Fix any issues reported by the CI pipeline.
+    5. **Pass Continuous Integration (CI):**
+        - Ensure that all CI checks pass successfully.
+        - Fix any issues reported by the CI pipeline.
+        ```sh
+        docker compose run app npm run lint
+        ```
+        - Fix any linting issues reported.
+
 
 6. **Get approval and merge the code:**
     - Request a review from the project maintainers.

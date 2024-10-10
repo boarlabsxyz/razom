@@ -5,6 +5,14 @@ on:
     types: [synchronize, opened, reopened]
 
 jobs:
+  docker-lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Run hadolint
+      run: docker run --rm -i hadolint/hadolint < Dockerfile
+
   unit-test:
     runs-on: ubuntu-latest
     steps:
