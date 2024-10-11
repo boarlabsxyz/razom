@@ -24,6 +24,8 @@ jobs:
       run: docker compose build
     - name: Run tests
       run: docker compose run --rm app npm run test
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
   e2e-test:
     runs-on: ubuntu-latest
     steps:
