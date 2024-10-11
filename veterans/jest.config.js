@@ -6,6 +6,7 @@ module.exports = {
     '^.+.tsx?$': ['ts-jest', {}],
   },
   collectCoverage: true,
+  collectCoverageFrom: ['**/*.ts', '!node_modules/**', '!.keystone/**'],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov'],
 };
