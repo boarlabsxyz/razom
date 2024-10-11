@@ -3,6 +3,7 @@ import pluginJs from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import prettierPlugin from 'eslint-plugin-prettier';
 import prettierConfig from 'eslint-config-prettier';
+import jestPlugin from 'eslint-plugin-jest';
 
 export default [
   { files: ['**/*.{js,mjs,cjs,ts}'] },
@@ -14,6 +15,7 @@ export default [
   {
     plugins: {
       prettier: prettierPlugin,
+      jest: jestPlugin,
     },
     rules: {
       'no-console': 'error',
