@@ -12,6 +12,8 @@ services:
         - action: sync
           path: ./veterans
           target: /usr/src/app
+    volumes:
+     - ./veterans/coverage:/usr/src/app/coverage
 
   postgresdb:
     image: postgres:17

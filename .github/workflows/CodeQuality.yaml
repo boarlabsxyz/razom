@@ -23,7 +23,14 @@ jobs:
     - name: Build app image
       run: docker compose build
     - name: Run tests
-      run: docker compose run app npm run test
+      run: docker compose run --rm app npm run test
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      with:
+        args: > 
+          -Dproject.settings=./sonar-project.properties
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   e2e-test:
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +41,7 @@ jobs:
     - name: Build app image
       run: docker compose build
     - name: Run e2e tests
-      run: docker compose run app npm run e2e-test
+      run: docker compose run --rm app npm run e2e-test
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -45,5 +52,5 @@ jobs:
       - name: Build app image
         run: docker compose build
       - name: Run linters
-        run: docker compose run app npm run lint
+        run: docker compose run --rm app npm run lint
 
