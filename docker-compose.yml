@@ -13,7 +13,7 @@ services:
           path: ./veterans
           target: /usr/src/app
     volumes:
-      - ./veterans:/usr/src/app
+     - ./coverage:/usr/src/app/coverage
 
   postgresdb:
     image: postgres:17

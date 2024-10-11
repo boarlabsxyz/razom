@@ -5,7 +5,7 @@ FROM node:20
 WORKDIR /usr/src/app
 
 COPY ./veterans .
-RUN npm ci && npm cache clean --force
+RUN npm install
 
 # Copy the rest of the application code
 
