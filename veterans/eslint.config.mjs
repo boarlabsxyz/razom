@@ -27,7 +27,6 @@ export default [
       'no-var': 'error',
       'prefer-const': 'error',
       'no-multi-spaces': 'error',
-      'space-before-function-paren': ['error', 'never'],
       'keyword-spacing': ['error', { before: true, after: true }],
       'space-infix-ops': 'error',
       'eol-last': ['error', 'always'],
