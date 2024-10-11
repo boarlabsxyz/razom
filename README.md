@@ -34,7 +34,7 @@ Before you begin, ensure you have met the following requirements:
 
 3. **Build and start the containers:**
     ```sh
-    docker-compose up --build --watch
+    docker compose up --build --watch
     ```
 
 4. **Open the project in your browser:**
@@ -42,7 +42,7 @@ Before you begin, ensure you have met the following requirements:
 
 5. **Run tests:**
     ```sh
-    docker-compose run app npm test
+    docker compose run app npm test
     ```
 
 ## Development process
