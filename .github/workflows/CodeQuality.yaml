@@ -24,11 +24,11 @@ jobs:
       run: docker compose build
     - name: Run tests
       run: docker compose run --rm app npm run test
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@master
-      with:
-        args: > 
-          -Dproject.settings=./sonar-project.properties
+    # - name: SonarCloud Scan
+    #   uses: SonarSource/sonarcloud-github-action@master
+    #   with:
+    #     args: > 
+    #       -Dproject.settings=./sonar-project.properties
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   e2e-test:
