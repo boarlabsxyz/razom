@@ -9,12 +9,9 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Install Vercel CLI
-      run: npm install -g vercel
+      uses: actions/checkout@v4
 
     - name: Deploy to Vercel
       env:
         VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      run: vercel --prod
+      run: echo "deploying to Vercel will be implemented here"
