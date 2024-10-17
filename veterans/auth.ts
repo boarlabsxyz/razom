@@ -39,7 +39,6 @@ const { withAuth } = createAuth({
     //   you are asking the Keystone AdminUI to create a new user
     //   providing inputs for these fields
     fields: ['name', 'email', 'password'],
-    itemData: { isAdmin: true },
     skipKeystoneWelcome: false,
 
     // it uses context.sudo() to do this, which bypasses any access control you might have
