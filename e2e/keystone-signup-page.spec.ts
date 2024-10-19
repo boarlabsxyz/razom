@@ -4,8 +4,8 @@ test.describe("Keystone Signup page", () => {
   test("should navigate to the signup page and see signup form", async ({
     page,
   }) => {
-    await page.goto("http://localhost:3000");
-    await expect(page).toHaveURL("http://localhost:3000/init");
+    await page.goto("/");
+    await expect(page).toHaveURL("/init");
     await expect(
       page.getByRole("heading", { name: "Welcome to KeystoneJS" })
     ).toBeVisible();
@@ -24,7 +24,7 @@ test.describe("Keystone Signup page", () => {
   });
 
   test("should have validation on signup form", async ({ page }) => {
-    await page.goto("http://localhost:3000");
+    await page.goto("/");
     await page.getByRole("button", { name: "Get started" }).click();
     await expect(page.locator("form")).toContainText("Name must not be empty");
     await expect(page.locator("form")).toContainText("Email must not be empty");
