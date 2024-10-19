@@ -16,19 +16,10 @@ jobs:
           node-version: lts/*
       - name: Install Dependencies
         run: npm ci
-
-      # Set up Docker (Docker already pre-installed in most GitHub CI environments)
-      # - name: Set up Docker
-      # run: sudo apt-get update && sudo apt-get install -y docker-compose
-
-      # Build Docker image for Playwright tests
-      # - name: Build Docker image
-      # run: docker build -t test:e2e .
-
-      # Run Playwright tests inside Docker container
-      - name: Run Playwright tests
-        run: docker run test:e2e
-
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run e2e tests
+        run: npm run test:e2e
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

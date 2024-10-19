@@ -7,12 +7,6 @@ WORKDIR /usr/src/app
 COPY ./veterans .
 RUN npm ci && npm cache clean --force
 
-# Copy the rest of the application code
-COPY . .
-
-# Install Playwright browsers
-RUN npx playwright install --with-deps
-
 # Expose the port the app runs on (assuming it's 3000, change if different)
 EXPOSE 3000
 
