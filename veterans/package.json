@@ -4,10 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "keystone dev",
-    "start": "keystone start",
-    "build": "keystone build",
-    "next-build": "next build",
-    "next-start": "next start --port 8000",
+    "start": "next start --port 8000",
+    "build": "keystone build && next build",
     "test": "jest",
     "lint": "eslint .",
     "e2e-test": "echo \"Error: no e2e-test specified\""
