@@ -6,6 +6,8 @@
     "dev": "keystone dev",
     "start": "keystone start",
     "build": "keystone build",
+    "next-build": "next build",
+    "next-start": "next start --port 8000",
     "test": "jest",
     "lint": "eslint .",
     "e2e-test": "echo \"Error: no e2e-test specified\""
@@ -14,6 +16,7 @@
     "@keystone-6/auth": "^8.0.0",
     "@keystone-6/core": "^6.0.0",
     "@keystone-6/fields-document": "^9.0.0",
+    "next": "^14.2.15",
     "typescript": "^5.5.0"
   },
   "devDependencies": {
