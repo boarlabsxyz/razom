@@ -11,7 +11,7 @@ COPY package*.json ./
 RUN npm ci && npm cache clean --force
 
 # Copy everything from the root directory, excluding what is in .dockerignore
-COPY . .
+COPY ./veterans .
 
 # Expose the port the app runs on (assuming it's 3000, change if different)
 EXPOSE 3000
