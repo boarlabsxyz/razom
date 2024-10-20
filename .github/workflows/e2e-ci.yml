@@ -1,25 +1,40 @@
 name: "Tests: E2E"
+
 on:
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+
 jobs:
   tests_e2e:
     timeout-minutes: 60
     name: Run end-to-end tests
     runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:27.2.0
+        options: --privileged
+        ports:
+          - 3000:3000
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock # to manage Docker containers
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
+      - name: Start services using Docker Compose
+        run: docker-compose up -d
       - name: Install Dependencies
         run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-      - name: Run e2e tests
-        run: npm run test:e2e
+      - name: Run Playwright tests
+        run: |
+          docker-compose exec app npx playwright test
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
