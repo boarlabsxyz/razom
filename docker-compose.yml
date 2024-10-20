@@ -3,6 +3,10 @@ services:
     build: .
     ports:
       - "3000:3000"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     depends_on:
       - postgresdb
     env_file:
@@ -13,7 +17,7 @@ services:
           path: ./veterans
           target: /usr/src/app
     volumes:
-     - ./veterans/coverage:/usr/src/app/coverage
+      - ./veterans/coverage:/usr/src/app/coverage
 
   postgresdb:
     image: postgres:17
@@ -24,4 +28,3 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-  
