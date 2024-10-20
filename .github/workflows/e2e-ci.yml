@@ -55,7 +55,7 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-          docker compose exec app npm run test:e2e
+          docker compose exec app npx playwright test
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
