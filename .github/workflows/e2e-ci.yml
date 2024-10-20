@@ -36,6 +36,10 @@ jobs:
           sudo apt-get install docker-compose-plugin
           docker compose version
 
+      - name: Adding credentials to .env file
+        run: |
+          cp .env.example .env
+
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
