@@ -44,11 +44,8 @@ jobs:
         with:
           node-version: lts/*
 
-      - name: Build Docker image
-        run: docker compose build
-
       - name: Start services using Docker Compose
-        run: docker compose up -d
+        run: docker compose up -d --build
 
       - name: Install Dependencies
         run: docker compose exec app npm install

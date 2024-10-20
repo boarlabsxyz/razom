@@ -4,7 +4,7 @@ FROM node:20
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
-COPY ./veterans .
+COPY . .
 RUN npm ci && npm cache clean --force
 
 # Expose the port the app runs on (assuming it's 3000, change if different)
