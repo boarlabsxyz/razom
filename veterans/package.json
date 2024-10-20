@@ -8,7 +8,7 @@
     "build": "keystone build",
     "test": "jest",
     "lint": "eslint .",
-    "test:e2e": "playwright test"
+    "e2e-test": "echo \"Error: no e2e-test specified\""
   },
   "dependencies": {
     "@keystone-6/auth": "^8.0.0",
