@@ -48,7 +48,7 @@ jobs:
         run: docker compose up -d --build
 
       - name: Install Dependencies
-        run: docker compose exec app npm ci
+        run: npm ci
 
       - name: Install Playwright Browsers
         run: docker compose exec app npx playwright install --with-deps
