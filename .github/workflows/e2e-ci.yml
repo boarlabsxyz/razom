@@ -53,6 +53,9 @@ jobs:
       - name: Install Playwright Browsers
         run: docker compose exec app npx playwright install --with-deps
 
+      - name: Check what commands Docker sees
+        run: docker compose exec app npm run
+
       - name: Run Playwright tests
         run: |
           docker compose exec app npm run test:e2e
