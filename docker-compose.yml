@@ -14,6 +14,7 @@ services:
           target: /usr/src/app
     volumes:
       - ./veterans/coverage:/usr/src/app/coverage
+      - ./veterans/test-results:/usr/src/app/playwright-report
 
   postgresdb:
     image: postgres:17
