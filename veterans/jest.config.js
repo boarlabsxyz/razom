@@ -14,4 +14,5 @@ module.exports = {
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov'],
+  testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
 };

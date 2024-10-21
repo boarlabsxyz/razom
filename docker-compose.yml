@@ -13,7 +13,8 @@ services:
           path: ./veterans
           target: /usr/src/app
     volumes:
-     - ./veterans/coverage:/usr/src/app/coverage
+      - ./veterans/coverage:/usr/src/app/coverage
+      - ./veterans/playwright-report:/usr/src/app/playwright-report
 
   postgresdb:
     image: postgres:17
@@ -24,4 +25,3 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-  
