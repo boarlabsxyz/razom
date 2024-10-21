@@ -6,9 +6,6 @@ WORKDIR /usr/src/app
 
 COPY ./veterans .
 
-# Copy root-level package.json and package-lock.json (if present)
-COPY ./package*.json ./
-
 # Install dependencies
 RUN npm ci && npm cache clean --force
 
