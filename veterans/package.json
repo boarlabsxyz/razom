@@ -8,7 +8,8 @@
     "build": "keystone build",
     "test": "jest",
     "lint": "eslint .",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@keystone-6/auth": "^8.0.0",
