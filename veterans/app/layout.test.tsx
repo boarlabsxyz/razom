@@ -14,7 +14,7 @@ describe('RootLayout', () => {
     render(
       <RootLayout>
         <div>Hello, Veterans!</div>
-      </RootLayout>
+      </RootLayout>,
     );
 
     expect(screen.getByText('Hello, Veterans!')).toBeInTheDocument();
