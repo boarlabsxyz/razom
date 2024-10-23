@@ -1,16 +1,11 @@
+import st from './page.module.css';
+
 export default function HomePage() {
   return (
-    <main
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: '200px',
-      }}
-    >
+    <main className={st.container}>
       <div>
         <h1>Coming soon...</h1>
-        <h2>The site is under construction</h2>
+        <p>The site is under construction</p>
       </div>
     </main>
   );
