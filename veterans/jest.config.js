@@ -1,9 +1,15 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
 // eslint-disable-next-line no-undef
 module.exports = {
-  testEnvironment: 'node',
+  preset: 'ts-jest',
+  testEnvironment: 'jest-environment-jsdom',
   transform: {
-    '^.+.tsx?$': ['ts-jest', {}],
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.jest.json',
+      },
+    ],
   },
   collectCoverage: true,
   collectCoverageFrom: [
@@ -14,4 +20,8 @@ module.exports = {
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov'],
+  moduleNameMapper: {
+    '\\.css$': 'jest-transform-stub',
+    '\\.module\\.css$': 'jest-transform-stub',
+  },
 };
