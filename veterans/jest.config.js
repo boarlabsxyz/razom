@@ -24,4 +24,5 @@ module.exports = {
     '\\.css$': 'jest-transform-stub',
     '\\.module\\.css$': 'jest-transform-stub',
   },
+  testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
 };
