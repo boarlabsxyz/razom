@@ -65,5 +65,12 @@ jobs:
         run: cp .env.example .env
       - name: Build app image
         run: docker compose build
+
+      - name: Check ESLint version
+        run: docker compose run --rm app npx eslint -v
+
+      - name: Check Prettier version
+        run: docker compose run --rm app npx prettier -v
+
       - name: Run linters
         run: docker compose run --rm app npm run lint
