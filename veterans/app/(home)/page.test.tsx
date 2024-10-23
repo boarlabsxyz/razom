@@ -1,13 +1,16 @@
-import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
+
 import HomePage from './page';
 
-describe('HomePage', () => {
-  it('renders the "Coming soon..." message', () => {
-    const { getByText } = render(<HomePage />);
+describe('HomePage component', () => {
+  it('renders the main content', () => {
+    render(<HomePage />);
 
-    expect(getByText('Coming soon...')).toBeInTheDocument();
+    const heading = screen.getByRole('heading', { level: 1 });
+    expect(heading).toHaveTextContent('Coming soon...');
 
-    expect(getByText('The site is under construction')).toBeInTheDocument();
+    const paragraph = screen.getByText('The site is under construction');
+    expect(paragraph).toBeInTheDocument();
   });
 });
