@@ -3,6 +3,12 @@ mongo-data
 .env
 postgres-data
 coverage
+.prettierignore
+.prettierrc.json
+.next
+next-env.d.ts
+schema.graphql
+schema.prisma
 /test-results/
 /playwright-report/
 /blob-report/

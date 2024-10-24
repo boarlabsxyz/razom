@@ -6,3 +6,14 @@ keystone.db
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+mongo-data
+.env
+postgres-data
+coverage
+.prettierignore
+.prettierrc.json
+.next
+next-env.d.ts
+schema.graphql
+schema.prisma
