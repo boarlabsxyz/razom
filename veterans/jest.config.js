@@ -26,6 +26,7 @@ module.exports = {
     '!jest.config.js',
     '!playwright.config.ts',
     '!next-env.d.ts',
+    '!global.d.ts',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov'],
