@@ -8,39 +8,49 @@ jobs:
     name: Deploy Preview
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./veterans
+
     steps:
       - name: Check out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "18.18.2"
+          cache: "npm"
+          cache-dependency-path: "./veterans/package-lock.json"
 
       - name: Install dependencies
-        working-directory: ./veterans # Specify the working directory here
-        run: npm install
+        run: npm ci
 
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
       - name: Pull Vercel Environment
-        working-directory: ./veterans
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
 
       - name: Build project
-        working-directory: ./veterans
         run: vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
+        timeout-minutes: 10
 
       - name: Deploy to Vercel
         id: deploy
-        working-directory: ./veterans
         run: |
-          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_CLI_TOKEN }})
-          echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_ENV
+          # DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_CLI_TOKEN }})
+          # echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_ENV
+
+          if ! DEPLOYMENT_URL="$(vercel deploy --prebuilt --token="${{ secrets.VERCEL_CLI_TOKEN }}")"; then
+            echo "::error::Deployment failed"
+            exit 1
+          fi
+          echo "deployment_url=${DEPLOYMENT_URL}" >> $GITHUB_ENV
+        timeout-minutes: 10
 
       - name: Upload Deployment Environment
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: preview-deployment
           path: preview-deployment.env
