@@ -16,6 +16,13 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      # Step to output environment variables
+      - name: Output environment variables
+        run: |
+          echo "CI_COMMIT_REF_SLUG: ${{ env.CI_COMMIT_REF_SLUG }}"
+          echo "CI_PROJECT_NAMESPACE: ${{ env.CI_PROJECT_NAMESPACE }}"
+          echo "CI_PIPELINE_SOURCE: ${{ env.CI_PIPELINE_SOURCE }}"
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
