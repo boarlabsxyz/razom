@@ -26,11 +26,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
-
       - name: Pull Vercel Environment
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
+        run: npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
 
       - name: Build project
         run: vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
@@ -39,15 +36,34 @@ jobs:
       - name: Deploy to Vercel
         id: deploy
         run: |
-          # DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_CLI_TOKEN }})
-          # echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_ENV
-
-          if ! DEPLOYMENT_URL="$(vercel deploy --prebuilt --token="${{ secrets.VERCEL_CLI_TOKEN }}")"; then
+          if ! DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="${{ secrets.VERCEL_CLI_TOKEN }}"); then
             echo "::error::Deployment failed"
             exit 1
           fi
-          echo "deployment_url=${DEPLOYMENT_URL}" >> $GITHUB_ENV
+          echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> $GITHUB_ENV
         timeout-minutes: 10
+
+      - name: Check if DEPLOYMENT_URL is set
+        run: |
+          if [ -z "${{ env.DEPLOYMENT_URL }}" ]; then
+            echo "::error::DEPLOYMENT_URL is not set"
+            exit 1
+          else
+            echo "DEPLOYMENT_URL is set to: ${{ env.DEPLOYMENT_URL }}"
+          fi
+
+      - name: Create deployment environment file
+        run: echo "PREVIEW_URL=${{ env.DEPLOYMENT_URL }}" > preview-deployment.env
+
+      - name: Verify deployment environment file creation
+        run: |
+          if [ -f "preview-deployment.env" ]; then
+            echo "preview-deployment.env file created successfully."
+            cat preview-deployment.env
+          else
+            echo "::error::preview-deployment.env file not found"
+            exit 1
+          fi
 
       - name: Upload Deployment Environment
         uses: actions/upload-artifact@v4
