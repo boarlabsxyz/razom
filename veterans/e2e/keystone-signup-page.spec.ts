@@ -7,7 +7,7 @@ test.describe('Keystone Signup page', () => {
     await page.goto('/');
     await expect(page).toHaveURL('/init');
     await expect(
-      page.getByRole('heading', { name: 'Welcome to KeystoneJS' })
+      page.getByRole('heading', { name: 'Welcome to KeystoneJS' }),
     ).toBeVisible();
     await expect(page.getByText('Create your first user to get')).toBeVisible();
     await expect(page.locator('form')).toContainText('Name');
@@ -16,10 +16,10 @@ test.describe('Keystone Signup page', () => {
     await expect(page.getByLabel('Email')).toBeVisible();
     await expect(page.locator('form')).toContainText('Password');
     await expect(
-      page.getByRole('button', { name: 'Set Password' })
+      page.getByRole('button', { name: 'Set Password' }),
     ).toBeVisible();
     await expect(
-      page.getByRole('button', { name: 'Get started' })
+      page.getByRole('button', { name: 'Get started' }),
     ).toBeVisible();
   });
 
