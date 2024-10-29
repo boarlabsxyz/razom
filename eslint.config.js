@@ -9,7 +9,7 @@ export default [
       'eslint:recommended',
       'plugin:prettier/recommended',
       'plugin:@typescript-eslint/recommended',
-      'plugin:@eslint-plugin-playwright'
+      'plugin:@eslint-plugin-playwright/recommended',
     ],
     plugins: ['prettier'],
     rules: {
@@ -22,10 +22,10 @@ export default [
           objects: 'always-multiline',
           imports: 'always-multiline',
           exports: 'always-multiline',
-          functions: 'never'
-        }
-      ]
+          functions: 'never',
+        },
+      ],
     },
-    eslintConfigPrettier
-  }
+    eslintConfigPrettier,
+  },
 ];
