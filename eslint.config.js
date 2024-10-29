@@ -4,7 +4,7 @@ import eslintConfigPrettier from 'eslint-config-prettier';
 export default [
   {
     ...playwright.configs['flat/recommended'],
-    files: ['e2e/**'],
+    files: ['veterans/e2e/**/*.ts'],
     extends: [
       'eslint:recommended',
       'plugin:prettier/recommended',
