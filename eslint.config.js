@@ -7,9 +7,9 @@ export default [
     files: ['veterans/e2e/**/*.ts'],
     extends: [
       'eslint:recommended',
-      'plugin:prettier/recommended',
       'plugin:@typescript-eslint/recommended',
       'plugin:@eslint-plugin-playwright/recommended',
+      'plugin:prettier/recommended',
     ],
     plugins: ['prettier'],
     rules: {
