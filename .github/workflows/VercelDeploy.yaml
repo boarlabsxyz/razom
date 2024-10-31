@@ -1,4 +1,8 @@
-name: Deploy to Vercel
+name: Vercel Preview Deployment
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 on:
   workflow_dispatch:
@@ -26,11 +30,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Parse VERCEL_ENV_FILE and write to .vercel/projects.json
-        run: |
-          mkdir -p .vercel
-          echo '${{ secrets.VERCEL_ENV_FILE }}' > .vercel/project.json
-        shell: bash
+      # - name: Parse VERCEL_ENV_FILE and write to .vercel/projects.json
+      #   run: |
+      #     mkdir -p .vercel
+      #     echo '${{ secrets.VERCEL_ENV_FILE }}' > .vercel/project.json
+      #   shell: bash
 
       - name: Pull Vercel Environment
         run: |
