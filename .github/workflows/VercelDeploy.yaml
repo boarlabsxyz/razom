@@ -41,13 +41,10 @@ jobs:
       #     echo "orgId=$ORG_ID" >> $GITHUB_ENV
       #   shell: bash
 
-      - name: Parse VERCEL_ENV_FILE and write to veterans/.vercel/projects.json
+      - name: Parse VERCEL_ENV_FILE and write to .vercel/projects.json
         run: |
-          echo '${{ secrets.VERCEL_ENV_FILE }}' > vercel_env.json
-          PROJECT_ID=$(jq -r '.projectId' vercel_env.json)
-          ORG_ID=$(jq -r '.orgId' vercel_env.json)
-          mkdir -p .veterans/.vercel
-          echo "{ \"projectId\": \"$PROJECT_ID\", \"orgId\": \"$ORG_ID\" }" > veretans/.vercel/projects.json
+          mkdir -p .vercel
+          echo '${{ secrets.VERCEL_ENV_FILE }}' > .vercel/project.json
         shell: bash
 
       # - name: Echo variables from $GITHUB_ENV
