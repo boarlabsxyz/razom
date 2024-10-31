@@ -20,6 +20,13 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Validate required secrets
+        run: |
+          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "::error::Required secrets VERCEL_ORG_ID and VERCEL_PROJECT_ID must be set"
+            exit 1
+          fi
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
