@@ -24,19 +24,7 @@ jobs:
           cache-dependency-path: './veterans/package-lock.json'
 
       - name: Install dependencies
-        run: | 
-          pwd
-          ls -la
-          npm ci
-
-      # - name: Parse VERCEL_ENV_FILE and export variables
-      #   run: |
-      #     echo '${{ secrets.VERCEL_ENV_FILE }}' > vercel_env.json
-      #     export PROJECT_ID=$(jq -r '.projectId' vercel_env.json)
-      #     export ORG_ID=$(jq -r '.orgId' vercel_env.json)
-      #     echo "projectId=$PROJECT_ID" >> $GITHUB_ENV
-      #     echo "orgId=$ORG_ID" >> $GITHUB_ENV
-      #   shell: bash
+        run: npm ci
 
       - name: Parse VERCEL_ENV_FILE and write to .vercel/projects.json
         run: |
@@ -49,12 +37,6 @@ jobs:
           npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
           echo "Vercel Environment pulled successfully."
           cat .vercel/project.json
-
-
-      # - name: Echo variables from $GITHUB_ENV
-      #   run: |
-      #     echo "projectId=${projectId}"
-      #     echo "orgId=${orgId}"
 
       - name: Build project
         run: vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
@@ -91,14 +73,3 @@ jobs:
             echo "::error::preview-deployment.env file not found"
             exit 1
           fi
-
-      - name: Upload Deployment Environment
-        uses: actions/upload-artifact@v4
-        with:
-          name: preview-deployment
-          path: preview-deployment.env
-
-    env:
-      CI_COMMIT_REF_SLUG: ${{ github.head_ref || github.ref_name }}
-      CI_PROJECT_NAMESPACE: ${{ github.repository_owner }}
-      CI_PIPELINE_SOURCE: workflow_dispatch
