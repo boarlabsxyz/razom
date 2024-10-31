@@ -32,6 +32,10 @@ jobs:
       - name: Pull Vercel Environment
         run: npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
 
+      - name: Export env variables
+        run: |
+          export $(cat .env | xargs)
+
       - name: Build project
         run: vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
         timeout-minutes: 10
