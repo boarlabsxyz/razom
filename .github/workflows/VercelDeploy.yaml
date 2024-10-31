@@ -68,16 +68,3 @@ jobs:
           else
             echo "DEPLOYMENT_URL is set to: ${{ env.DEPLOYMENT_URL }}"
           fi
-
-      - name: Create deployment environment file
-        run: echo "PREVIEW_URL=${{ env.DEPLOYMENT_URL }}" > preview-deployment.env
-
-      - name: Verify deployment environment file creation
-        run: |
-          if [ -f "preview-deployment.env" ]; then
-            echo "preview-deployment.env file created successfully."
-            cat preview-deployment.env
-          else
-            echo "::error::preview-deployment.env file not found"
-            exit 1
-          fi
