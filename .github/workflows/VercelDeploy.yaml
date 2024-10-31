@@ -43,6 +43,7 @@ jobs:
           echo '${{ secrets.VERCEL_ENV_FILE }}' > vercel_env.json
           PROJECT_ID=$(jq -r '.projectId' vercel_env.json)
           ORG_ID=$(jq -r '.orgId' vercel_env.json)
+          # mkdir -p .veterans
           echo "{ \"projectId\": \"$PROJECT_ID\", \"orgId\": \"$ORG_ID\" }" > .veterans/projects.json
         shell: bash
 
