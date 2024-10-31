@@ -22,8 +22,8 @@ jobs:
 
       - name: Validate required secrets
         run: |
-          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
-            echo "::error::Required secrets VERCEL_ORG_ID and VERCEL_PROJECT_ID must be set"
+          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "${{ secrets.VERCEL_CLI_TOKEN }}" ]; then
+            echo "::error::Required secrets VERCEL_ORG_ID, VERCEL_PROJECT_ID, and VERCEL_CLI_TOKEN must be set"
             exit 1
           fi
 
