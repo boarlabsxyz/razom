@@ -26,13 +26,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Load environment variables
-        run: echo "${{ secrets.VERCEL_ENV_FILE }}" > .env
-
       - name: Pull Vercel Environment
         run: npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
 
-      - name: VERCEL_ENV_FILE and export variables
+      - name: Parse VERCEL_ENV_FILE and export variables
         run: |
           echo '${{ secrets.VERCEL_ENV_FILE }}' > vercel_env.json
           export PROJECT_ID=$(jq -r '.projectId' vercel_env.json)
@@ -40,6 +37,11 @@ jobs:
           echo "PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
           echo "ORG_ID=$ORG_ID" >> $GITHUB_ENV
         shell: bash
+
+      - name: Echo variables from $GITHUB_ENV
+        run: |
+          echo "PROJECT_ID=${PROJECT_ID}"
+          echo "ORG_ID=${ORG_ID}"
 
       - name: Build project
         run: vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
