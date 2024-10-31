@@ -32,9 +32,14 @@ jobs:
       - name: Pull Vercel Environment
         run: npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
 
-      - name: Export env variables
+      - name: VERCEL_ENV_FILE and export variables
         run: |
-          export $(cat .env | xargs)
+          echo '${{ secrets.VERCEL_ENV_FILE }}' > vercel_env.json
+          export PROJECT_ID=$(jq -r '.projectId' vercel_env.json)
+          export ORG_ID=$(jq -r '.orgId' vercel_env.json)
+          echo "PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+          echo "ORG_ID=$ORG_ID" >> $GITHUB_ENV
+        shell: bash
 
       - name: Build project
         run: vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
