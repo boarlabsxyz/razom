@@ -34,14 +34,14 @@ jobs:
           echo '${{ secrets.VERCEL_ENV_FILE }}' > vercel_env.json
           export PROJECT_ID=$(jq -r '.projectId' vercel_env.json)
           export ORG_ID=$(jq -r '.orgId' vercel_env.json)
-          echo "PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
-          echo "ORG_ID=$ORG_ID" >> $GITHUB_ENV
+          echo "projectId=$PROJECT_ID" >> $GITHUB_ENV
+          echo "orgId=$ORG_ID" >> $GITHUB_ENV
         shell: bash
 
       - name: Echo variables from $GITHUB_ENV
         run: |
-          echo "PROJECT_ID=${PROJECT_ID}"
-          echo "ORG_ID=${ORG_ID}"
+          echo "projectId=${projectId}"
+          echo "orgId=${orgId}"
 
       - name: Build project
         run: vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
