@@ -41,7 +41,6 @@ jobs:
         run: |
           npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
           echo "Vercel Environment pulled successfully."
-          cat .vercel/project.json
 
       - name: Build project
         run: vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
