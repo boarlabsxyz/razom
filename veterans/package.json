@@ -5,7 +5,7 @@
   "scripts": {
     "keystone:dev": "keystone dev",
     "keystone:build": "keystone build",
-    "start": "next start",
+    "start": "next start --port 8000",
     "next:dev": "next dev --port 8000",
     "next:build": "next build",
     "build": "keystone build --no-ui && next build",
