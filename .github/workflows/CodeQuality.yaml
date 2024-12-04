@@ -46,11 +46,11 @@ jobs:
         run: docker compose up -d --build
 
       - name: Install Playwright Browsers
-        run: docker compose exec app-nextjs npx playwright install --with-deps
+        run: docker compose exec app-keystone npx playwright install --with-deps
 
       - name: Run Playwright tests
         run: |
-          docker compose exec app-nextjs npm run test:e2e
+          docker compose exec app-keystone npm run test:e2e
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
