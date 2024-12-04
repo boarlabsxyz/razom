@@ -43,17 +43,10 @@ Before you begin, ensure you have met the following requirements:
 4. **Open the project CMS in your browser:**
    Navigate to `http://localhost:3000` to see the project in action.
 
-5. **Start the Next.js development server:**
-
-   ```sh
-   cd veterans
-   npm run next:dev
-   ```
-
-6. **Open the project page in your browser:**
+5. **Open the project page in your browser:**
    Navigate to `http://localhost:8000` to see the project in action.
 
-7. **Run tests:**
+6. **Run tests:**
    ```sh
    docker compose run app npm test
    ```
