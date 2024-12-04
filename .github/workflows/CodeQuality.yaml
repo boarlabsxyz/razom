@@ -25,7 +25,7 @@ jobs:
       - name: Build app image
         run: docker compose build
       - name: Run tests
-        run: docker compose run --rm app npm run test
+        run: docker compose run --rm app-nextjs npm run test
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         with:
@@ -46,11 +46,11 @@ jobs:
         run: docker compose up -d --build
 
       - name: Install Playwright Browsers
-        run: docker compose exec app npx playwright install --with-deps
+        run: docker compose exec app-nextjs npx playwright install --with-deps
 
       - name: Run Playwright tests
         run: |
-          docker compose exec app npm run test:e2e
+          docker compose exec app-nextjs npm run test:e2e
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
@@ -68,4 +68,4 @@ jobs:
       - name: Build app image
         run: docker compose build
       - name: Run linters
-        run: docker compose run --rm app npm run lint
+        run: docker compose run --rm app-nextjs npm run lint

@@ -9,7 +9,7 @@ services:
     env_file:
       - .env
 
-  keystone:
+  app-keystone:
     build:
       context: .
       dockerfile: Dockerfile.keystone
@@ -28,7 +28,7 @@ services:
       - ./veterans/coverage:/usr/src/app/coverage
       - ./veterans/playwright-report:/usr/src/app/playwright-report
 
-  nextjs:
+  app-nextjs:
     build:
       context: .
       dockerfile: Dockerfile.nextjs
