@@ -82,10 +82,7 @@ Before you begin, ensure you have met the following requirements:
    - Open a PR against the `main` branch.
    - Provide a clear and concise description of the changes made.
 
-5. **Pass Continuous Integration (CI):** 5. **Pass Continuous Integration (CI):** - Ensure that all CI checks pass successfully. - Fix any issues reported by the CI pipeline.
-   `sh
-docker compose run app npm run lint
-` - Fix any linting issues reported.
+5. **Pass Continuous Integration (CI):** - Ensure that all CI checks pass successfully. - Fix any issues reported by the CI pipeline.
 
 6. **Get approval and merge the code:**
    - Request a review from the project maintainers.
