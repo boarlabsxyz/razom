@@ -10,8 +10,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Run hadolint
-        run: docker run --rm -i hadolint/hadolint < Dockerfile
+      - name: Lint Dockerfile.keystone
+        run: docker run --rm -i hadolint/hadolint < Dockerfile.keystone
+      - name: Lint Dockerfile.nextjs
+        run: docker run --rm -i hadolint/hadolint < Dockerfile.nextjs
 
   unit-test:
     runs-on: ubuntu-latest
