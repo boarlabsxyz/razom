@@ -1,8 +1,25 @@
 services:
-  app:
-    build: .
+  postgresdb:
+    image: postgres:17
     ports:
-      - "3000:3000"
+      - '5432:5432'
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    env_file:
+      - .env
+
+  app-keystone:
+    build:
+      context: .
+      dockerfile: Dockerfile.keystone
+    ports:
+      - '3000:3000'
     depends_on:
       - postgresdb
     env_file:
@@ -16,12 +33,21 @@ services:
       - ./veterans/coverage:/usr/src/app/coverage
       - ./veterans/playwright-report:/usr/src/app/playwright-report
 
-  postgresdb:
-    image: postgres:17
+  app-nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile.nextjs
     ports:
-      - "5432:5432"
-    volumes:
-      - ./postgres-data:/var/lib/postgresql/data
-    restart: unless-stopped
+      - '8000:8000'
+    depends_on:
+      - postgresdb
     env_file:
       - .env
+    develop:
+      watch:
+        - action: sync
+          path: ./veterans
+          target: /usr/src/app
+    volumes:
+      - ./veterans/coverage:/usr/src/app/coverage
+      - ./veterans/playwright-report:/usr/src/app/playwright-report
