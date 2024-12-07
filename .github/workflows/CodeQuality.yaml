@@ -24,8 +24,8 @@ jobs:
         run: docker compose build
       - name: Run tests
         run: docker compose run --rm app npm run test
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+      - name: SonarQube Scan
+        uses: sonarsource/sonarcloud-github-action@<action version>
         with:
           args: >
             -Dproject.settings=./sonar-project.properties
