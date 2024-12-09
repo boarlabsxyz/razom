@@ -24,13 +24,6 @@ jobs:
         run: docker compose build
       - name: Run tests
         run: docker compose run --rm app npm run test
-      - name: Run SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v4.1.0
-        with:
-          projectBaseDir: .
-          scannerVersion: 6.2.1.4610
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   e2e-test:
     runs-on: ubuntu-latest
