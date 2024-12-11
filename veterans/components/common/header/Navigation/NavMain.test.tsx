@@ -1,5 +1,6 @@
 import React from 'react';
 import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 import { usePathname } from 'next/navigation';
 import NavMain from './NavMain';
@@ -62,6 +63,24 @@ describe('NavMain Component', () => {
       const element = document.querySelector(`[data-cy="${key}-header-link"]`);
       expect(element).toBeInTheDocument();
       expect(element).toHaveAttribute('data-cy', `${key}-header-link`);
+    });
+  });
+  it('supports keyboard navigation', async () => {
+    const user = userEvent.setup();
+    render(<NavMain />);
+
+    const firstLink = screen.getByRole('link', { name: 'Мета' });
+    await user.tab();
+    expect(firstLink).toHaveFocus();
+  });
+
+  it('handles invalid paths gracefully', () => {
+    (usePathname as jest.Mock).mockReturnValue('/invalid-path');
+    render(<NavMain />);
+
+    const links = screen.getAllByRole('link');
+    links.forEach((link) => {
+      expect(link).not.toHaveClass('active');
     });
   });
 });

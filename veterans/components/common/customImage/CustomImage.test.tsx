@@ -48,7 +48,8 @@ describe('CustomImage Component', () => {
 
   it('calls getImageQuality with the correct src', () => {
     const mockSrc = '/another-image.jpg';
-    (getImageQuality as jest.Mock).mockReturnValue(50);
+    const mockQuality = 50;
+    (getImageQuality as jest.Mock).mockReturnValue(mockQuality);
 
     render(
       <CustomImage
@@ -60,5 +61,32 @@ describe('CustomImage Component', () => {
     );
 
     expect(getImageQuality).toHaveBeenCalledWith(mockSrc);
+    const image = screen.getByAltText('Another Test Image') as HTMLImageElement;
+    expect(image.src).toContain(`q=${mockQuality}`);
+  });
+
+  it('handles getImageQuality errors gracefully', () => {
+    const mockSrc = '/error-image.jpg';
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+
+    (getImageQuality as jest.Mock).mockImplementation(() => {
+      throw new Error('Quality calculation failed');
+    });
+
+    render(
+      <CustomImage
+        src={mockSrc}
+        alt="Error Test Image"
+        width={300}
+        height={200}
+      />,
+    );
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'Failed to calculate image quality:',
+      expect.any(Error),
+    );
+
+    consoleSpy.mockRestore();
   });
 });

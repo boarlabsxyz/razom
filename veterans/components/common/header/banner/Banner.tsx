@@ -11,12 +11,14 @@ type RazomProps = {
 type BannerProps = RazomProps;
 
 function Banner({ name, height }: BannerProps) {
+  const shouldPrefetch = false;
+
   return (
     <div className={st.bannerContainer}>
       <Link
         href="/"
         className={st.bannerLink}
-        {...(false ? { prefetch: false } : {})}
+        {...(shouldPrefetch ? { prefetch: false } : {})}
       >
         <CustomImage
           src={`/img/logo/${name}.svg`}

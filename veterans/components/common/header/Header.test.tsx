@@ -9,6 +9,18 @@ jest.mock('../container', () => ({
   ),
 }));
 
+beforeAll(() => {
+  window.scrollTo = jest.fn();
+});
+
+beforeEach(() => {
+  jest.useFakeTimers();
+});
+
+afterEach(() => {
+  jest.useRealTimers();
+});
+
 describe('Header component', () => {
   it('renders the children correctly', () => {
     render(
@@ -36,12 +48,20 @@ describe('Header component', () => {
       window.dispatchEvent(new Event('scroll'));
     });
 
+    act(() => {
+      jest.advanceTimersByTime(100);
+    });
+
     expect(headerElement.classList.contains('bottomBorder')).toBe(true);
 
     act(() => {
       document.body.scrollTop = 0;
       document.documentElement.scrollTop = 0;
       window.dispatchEvent(new Event('scroll'));
+    });
+
+    act(() => {
+      jest.advanceTimersByTime(100);
     });
 
     expect(headerElement.classList.contains('bottomBorder')).toBe(false);

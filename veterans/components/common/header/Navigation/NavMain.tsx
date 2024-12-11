@@ -16,7 +16,7 @@ function NavMain() {
   const pathname = usePathname();
 
   return (
-    <nav className={st.navContainer}>
+    <nav className={st.navContainer} aria-label="Main navigation">
       <ul className={st.navList}>
         {Object.entries(pages).map(([key, value]) => {
           const isActive = pathname === `/${key}`;
@@ -26,6 +26,7 @@ function NavMain() {
                 href={`/${key}`}
                 prefetch={false}
                 className={`${st.link} ${isActive ? st.active : ''}`}
+                aria-current={isActive ? 'page' : undefined}
               >
                 {value}
               </Link>

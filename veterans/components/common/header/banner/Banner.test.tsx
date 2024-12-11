@@ -2,17 +2,22 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import Banner from './Banner';
 import CustomImage from '../../customImage';
+import { LinkProps } from 'next/link';
+import React from 'react';
 
 jest.mock('../../customImage', () =>
   jest.fn(() => <div data-testid="custom-image" />),
 );
 
 jest.mock('next/link', () => {
-  return ({ children, ...props }: any) => (
-    <a {...props} data-testid="next-link">
-      {children}
-    </a>
-  );
+  return ({ children, href, ...props }: React.PropsWithChildren<LinkProps>) => {
+    const hrefString = typeof href === 'string' ? href : href.toString();
+    return (
+      <a href={hrefString} {...props} data-testid="next-link">
+        {children}
+      </a>
+    );
+  };
 });
 
 jest.mock('../Header.module.css', () => ({

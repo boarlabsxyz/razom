@@ -1,6 +1,7 @@
 'use client';
 
-import { FC, useEffect, useRef, ElementRef } from 'react';
+import { FC, useEffect, useRef } from 'react';
+import { throttle } from '../../../helpers/throttle';
 
 import st from './Header.module.css';
 import Container from '../container';
@@ -13,7 +14,7 @@ const Header: FC<Props> = ({ children }) => {
   const headerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const onScroll = () => {
+    const onScroll = throttle(() => {
       const scrollThreshold = 2;
       const bodyScrollTop = document.body.scrollTop;
       const htmlScrollTop = document.documentElement.scrollTop;
@@ -21,7 +22,8 @@ const Header: FC<Props> = ({ children }) => {
         bodyScrollTop > scrollThreshold || htmlScrollTop > scrollThreshold;
 
       headerRef.current?.classList.toggle(st.bottomBorder, force);
-    };
+    }, 100);
+
     window.addEventListener('scroll', onScroll);
 
     return () => {

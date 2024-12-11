@@ -2,7 +2,7 @@ import st from './Header.module.css';
 import NavMain from './Navigation/NavMain';
 
 type HeaderContentProps = {
-  children: React.ReactElement;
+  children: React.ReactNode;
 };
 
 function HeaderContent({ children }: HeaderContentProps) {
