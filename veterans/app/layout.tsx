@@ -1,5 +1,9 @@
 import React from 'react';
 
+import Header from '../components/common/header/Header';
+import Banner from '../components/common/header/banner';
+import HeaderContent from '../components/common/header/HeaderContent/HeaderContent';
+
 export const metadata = {
   title: 'Razom for veterans',
   description:
@@ -13,7 +17,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body style={{ margin: 0 }}>
+        <Header>
+          <HeaderContent>
+            <Banner name="logotype" height={34} />
+          </HeaderContent>
+        </Header>
+        <main>{children}</main>
+      </body>
     </html>
   );
 }
