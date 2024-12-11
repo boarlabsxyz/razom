@@ -2,7 +2,7 @@ import React from 'react';
 
 import Header from '../components/common/header/Header';
 import Banner from '../components/common/header/banner';
-import HeaderContent from '../components/common/header/HeaderContent';
+import HeaderContent from '../components/common/header/HeaderContent/HeaderContent';
 
 export const metadata = {
   title: 'Razom for veterans',

@@ -1,5 +1,5 @@
-import st from './Header.module.css';
-import NavMain from './Navigation/NavMain';
+import st from '../Header.module.css';
+import NavMain from '../Navigation/NavMain';
 
 type HeaderContentProps = {
   children: React.ReactNode;

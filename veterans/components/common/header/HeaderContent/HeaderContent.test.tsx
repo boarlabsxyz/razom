@@ -2,7 +2,9 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import HeaderContent from './HeaderContent';
 
-jest.mock('./Navigation/NavMain', () => () => <div data-testid="nav-main" />);
+jest.mock('../Navigation/NavMain.tsx', () => () => (
+  <div data-testid="nav-main" />
+));
 
 describe('HeaderContent', () => {
   it('renders children correctly', () => {

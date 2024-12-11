@@ -15,8 +15,7 @@ const CustomImage = (props: CustomImageProps): JSX.Element => {
   let quality: number;
   try {
     quality = getImageQuality(src);
-  } catch (error) {
-    console.error('Failed to calculate image quality:', error);
+  } catch {
     quality = 75;
   }
 

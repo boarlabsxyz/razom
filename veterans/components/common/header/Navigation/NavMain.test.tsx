@@ -83,4 +83,21 @@ describe('NavMain Component', () => {
       expect(link).not.toHaveClass('active');
     });
   });
+
+  it('meets accessibility requirements', () => {
+    const activePage = '/news';
+    (usePathname as jest.Mock).mockReturnValue(activePage);
+
+    render(<NavMain />);
+
+    const links = screen.getAllByRole('link');
+    links.forEach((link) => {
+      const isActive = link.getAttribute('href') === activePage;
+      if (isActive) {
+        expect(link).toHaveAttribute('aria-current', 'page');
+      } else {
+        expect(link).not.toHaveAttribute('aria-current');
+      }
+    });
+  });
 });
