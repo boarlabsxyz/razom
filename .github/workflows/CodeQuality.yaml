@@ -26,6 +26,10 @@ jobs:
         run: docker compose build
       - name: Run tests
         run: docker compose run --rm app-nextjs npm run test
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v4.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   e2e-test:
     runs-on: ubuntu-latest
@@ -64,13 +68,13 @@ jobs:
       - name: Run linters
         run: docker compose run --rm app-nextjs npm run lint
 
-  sonarqube:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v4.1.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  # sonarqube:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - name: SonarQube Scan
+  #       uses: sonarsource/sonarqube-scan-action@v4.1.0
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
