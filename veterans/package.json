@@ -3,9 +3,12 @@
   "version": "1.0.3",
   "private": true,
   "scripts": {
-    "dev": "keystone dev",
+    "keystone:dev": "keystone dev",
+    "keystone:build": "keystone build",
     "start": "next start --port 8000",
-    "build": "keystone build && next build",
+    "next:dev": "next dev --port 8000",
+    "next:build": "next build",
+    "build": "keystone build --no-ui && next build",
     "test": "jest",
     "lint": "eslint .",
     "test:e2e": "playwright test",
@@ -17,7 +20,7 @@
     "@keystone-6/auth": "^8.0.0",
     "@keystone-6/core": "^6.0.0",
     "@keystone-6/fields-document": "^9.0.0",
-    "next": "^14.0.4"
+    "next": "^15.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",
