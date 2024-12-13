@@ -1,7 +1,7 @@
 export function throttle<T extends (...args: unknown[]) => void>(
   func: T,
   limit: number,
-): (...args: Parameters<T>) => void {
+): ((...args: Parameters<T>) => void) & { cancel: () => void } {
   if (limit <= 0) {
     throw new Error('Throttle limit must be positive');
   }
@@ -24,6 +24,7 @@ export function throttle<T extends (...args: unknown[]) => void>(
       }, limit);
     }
   };
+
   throttled.cancel = () => {
     if (timeoutId) {
       clearTimeout(timeoutId);
@@ -32,5 +33,7 @@ export function throttle<T extends (...args: unknown[]) => void>(
     inThrottle = false;
   };
 
-  return throttled;
+  return throttled as ((...args: Parameters<T>) => void) & {
+    cancel: () => void;
+  };
 }

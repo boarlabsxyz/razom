@@ -45,7 +45,7 @@ describe('throttle', () => {
 
   it('should cancel the throttling when cancel is called', () => {
     const func = jest.fn();
-    const throttledFunc = throttle(func, 1000) as any;
+    const throttledFunc = throttle(func, 1000);
 
     throttledFunc();
     throttledFunc.cancel();
