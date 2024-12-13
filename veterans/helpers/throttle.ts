@@ -2,10 +2,14 @@ export function throttle<T extends (...args: unknown[]) => void>(
   func: T,
   limit: number,
 ): (...args: Parameters<T>) => void {
+  if (limit <= 0) {
+    throw new Error('Throttle limit must be positive');
+  }
+
   let inThrottle = false;
   let timeoutId: NodeJS.Timeout | null = null;
 
-  return function (this: unknown, ...args: Parameters<T>) {
+  const throttled = function (this: unknown, ...args: Parameters<T>) {
     if (!inThrottle) {
       func.apply(this, args);
       inThrottle = true;
@@ -20,4 +24,13 @@ export function throttle<T extends (...args: unknown[]) => void>(
       }, limit);
     }
   };
+  throttled.cancel = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+    inThrottle = false;
+  };
+
+  return throttled;
 }
