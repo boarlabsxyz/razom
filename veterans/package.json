@@ -20,6 +20,9 @@
     "@keystone-6/auth": "^8.0.0",
     "@keystone-6/core": "^6.0.0",
     "@keystone-6/fields-document": "^9.0.0",
+    "@preconstruct/next": "^4.0.0",
+    "graphql": "^16.9.0",
+    "graphql-yoga": "^5.10.5",
     "next": "^15.0.3"
   },
   "devDependencies": {
