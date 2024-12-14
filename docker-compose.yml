@@ -12,7 +12,7 @@ services:
       timeout: 5s
       retries: 5
     env_file:
-      - .env
+      - ./veterans/.env
 
   app-keystone:
     build:
@@ -23,7 +23,7 @@ services:
     depends_on:
       - postgresdb
     env_file:
-      - .env
+      - ./veterans/.env
     develop:
       watch:
         - action: sync
@@ -42,7 +42,7 @@ services:
     depends_on:
       - postgresdb
     env_file:
-      - .env
+      - ./veterans/.env
     develop:
       watch:
         - action: sync
