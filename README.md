@@ -32,7 +32,7 @@ Before you begin, ensure you have met the following requirements:
    ```
 
 2. **Set up environment variables:**
-   Create a `.env` file in the root directory and add the necessary environment variables. Refer to `.env.example` for the required variables.
+   Create a `.env` file in the veterans directory and add the necessary environment variables. Refer to `.env.example` for the required variables.
 
 3. **Build and start the containers:**
 
@@ -82,7 +82,10 @@ Before you begin, ensure you have met the following requirements:
    - Open a PR against the `main` branch.
    - Provide a clear and concise description of the changes made.
 
-5. **Pass Continuous Integration (CI):** - Ensure that all CI checks pass successfully. - Fix any issues reported by the CI pipeline.
+5. **Pass Continuous Integration (CI):**
+
+   - Ensure that all CI checks pass successfully.
+   - Fix any issues reported by the CI pipeline.
 
 6. **Get approval and merge the code:**
    - Request a review from the project maintainers.
