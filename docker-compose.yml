@@ -29,10 +29,6 @@ services:
         - action: sync
           path: ./veterans
           target: /usr/src/app
-    # volumes:
-    #   - ./veterans/.keystone:/usr/src/app/.keystone
-    # - ./veterans/coverage:/usr/src/app/coverage
-    # - ./veterans/playwright-report:/usr/src/app/playwright-report
 
   app-nextjs:
     build:
@@ -49,6 +45,3 @@ services:
         - action: sync
           path: ./veterans
           target: /usr/src/app
-    volumes:
-      - ./veterans/coverage:/usr/src/app/coverage
-      - ./veterans/playwright-report:/usr/src/app/playwright-report

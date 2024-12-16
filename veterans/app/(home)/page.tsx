@@ -33,14 +33,23 @@ export default async function HomePage() {
     }),
   ) as Post[];
 
-  const processedPosts: ProcessedPost[] = posts.map((post) => ({
-    ...post,
-    content: post.content.document
-      .map((paragraph) =>
-        paragraph.children.map((child) => child.text).join(' '),
-      )
-      .join('\n'),
-  }));
+  const processedPosts: ProcessedPost[] = posts.map((post) => {
+    try {
+      return {
+        ...post,
+        content:
+          post.content?.document
+            .map((paragraph) =>
+              paragraph.children.map((child) => child.text).join(' '),
+            )
+            .join('\n') ?? null,
+      };
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(`Error processing post ${post.id}:`, error);
+      return { ...post, content: null };
+    }
+  });
 
   return (
     <main className={st.container}>
