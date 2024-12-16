@@ -22,12 +22,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Add .env file
-        run: echo "${{ secrets.ENV_FILE }}" > veterans/.env
+      # - name: Add .env file
+      #   run: echo "${{ secrets.ENV_FILE }}" > veterans/.env
       - name: Build app image
         run: docker compose build
-      - name: Run tests
-        run: docker compose run --rm app-nextjs npm run test -- --coverage
+      - name: Run tests with environment
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+        run: |
+          echo "$ENV_FILE" > veterans/.env
+          docker compose run --rm app-nextjs npm run test -- --coverage
+          rm veterans/.env
       - name: Save coverage report
         uses: actions/upload-artifact@v4
         with:
@@ -39,15 +44,19 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Add .env file
-        run: echo "${{ secrets.ENV_FILE }}" > veterans/.env
+      # - name: Add .env file
+      #   run: echo "${{ secrets.ENV_FILE }}" > veterans/.env
       - name: Docker starts services
         run: docker compose up -d --build
       - name: Install Playwright Browsers
         run: docker compose exec app-keystone npx playwright install --with-deps
-      - name: Run Playwright tests
+      - name: Run Playwright tests with environment
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
         run: |
+          echo "$ENV_FILE" > veterans/.env
           docker compose exec app-keystone npm run test:e2e
+          rm veterans/.env
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
@@ -60,8 +69,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Add .env file
-        run: echo "${{ secrets.ENV_FILE }}" > veterans/.env
+      # - name: Add .env file
+      #   run: echo "${{ secrets.ENV_FILE }}" > veterans/.env
       - name: Build app image
         run: docker compose build
       - name: Run linters
@@ -75,8 +84,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Add .env file
-        run: echo "${{ secrets.ENV_FILE }}" > veterans/.env
+      # - name: Add .env file
+      #   run: echo "${{ secrets.ENV_FILE }}" > veterans/.env
       - name: Download coverage report
         uses: actions/download-artifact@v4
         with:
