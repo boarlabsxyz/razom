@@ -26,7 +26,7 @@ describe('keystoneContext', () => {
 
   afterEach(() => {
     (globalThis as any).keystoneContext = originalKeystoneContext;
-
+    delete (globalThis as any).keystoneContext;
     jest.clearAllMocks();
   });
 
