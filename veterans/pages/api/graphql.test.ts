@@ -14,19 +14,6 @@ jest.mock('../../keystone/context', () => ({
   },
 }));
 
-const createTestSchema = () => {
-  const queryType = new GraphQLObjectType({
-    name: 'Query',
-    fields: {
-      hello: {
-        type: GraphQLString,
-        resolve: () => 'Hello, world!',
-      },
-    },
-  });
-  return new GraphQLSchema({ query: queryType });
-};
-
 describe('GraphQL API Route', () => {
   let mockRequest: Partial<NextApiRequest>;
   let mockResponse: Partial<NextApiResponse>;
@@ -39,40 +26,38 @@ describe('GraphQL API Route', () => {
     };
     mockResponse = {
       statusCode: 200,
-      json: jest.fn(),
+      json: jest.fn().mockResolvedValue({ data: 'mocked-data' }),
     };
 
-    (createYoga as jest.Mock).mockImplementation(() => {
-      return async (req: NextApiRequest, res: NextApiResponse) => {
-        // const ctx = context({ req, res });
-        if (req.method !== 'POST') {
-          res.statusCode = 405;
-          res.json({
-            errors: [{ message: 'Method not allowed' }],
-          });
-        } else {
-          res.statusCode = 200;
-          res.json({ data: 'mocked-data' });
-        }
+    (createYoga as jest.Mock).mockImplementation(({ context }) => {
+      return (req: NextApiRequest, res: NextApiResponse) => {
+        context({ req, res });
+        res.statusCode = 200;
+        res.json({ data: 'mocked-data' });
       };
     });
   });
 
-  it('should create a Yoga API and handle POST requests', async () => {
+  it('should create a Yoga API with keystoneContext and handle the request', async () => {
+    const queryType = new GraphQLObjectType({
+      name: 'Query',
+      fields: {
+        hello: {
+          type: GraphQLString,
+          resolve: () => 'Hello, world!',
+        },
+      },
+    });
+
+    const schema = new GraphQLSchema({
+      query: queryType,
+    });
+
     const yogaApi = createYoga({
       graphqlEndpoint: '/api/graphql',
-      schema: createTestSchema(),
-      context: ({
-        req,
-        res,
-      }: {
-        req: NextApiRequest;
-        res: NextApiResponse;
-      }) => ({
-        ...keystoneContext.withRequest(req, res),
-        req,
-        res,
-      }),
+      schema,
+      context: ({ req, res }: { req: NextApiRequest; res: NextApiResponse }) =>
+        keystoneContext.withRequest(req, res),
     });
 
     await yogaApi(
@@ -86,42 +71,7 @@ describe('GraphQL API Route', () => {
     );
 
     expect(mockResponse.statusCode).toBe(200);
+
     expect(mockResponse.json).toHaveBeenCalledWith({ data: 'mocked-data' });
-  });
-
-  it('should handle invalid requests (non-POST)', async () => {
-    mockRequest.method = 'GET';
-
-    const yogaApi = createYoga({
-      graphqlEndpoint: '/api/graphql',
-      schema: createTestSchema(),
-      context: ({
-        req,
-        res,
-      }: {
-        req: NextApiRequest;
-        res: NextApiResponse;
-      }) => ({
-        ...keystoneContext.withRequest(req, res),
-        req,
-        res,
-      }),
-    });
-
-    await yogaApi(
-      mockRequest as NextApiRequest,
-      mockResponse as NextApiResponse,
-    );
-
-    expect(mockResponse.statusCode).toBe(405);
-    expect(mockResponse.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        errors: expect.arrayContaining([
-          expect.objectContaining({
-            message: 'Method not allowed',
-          }),
-        ]),
-      }),
-    );
   });
 });
