@@ -24,6 +24,15 @@ services:
       - postgresdb
     env_file:
       - ./veterans/.env
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'curl --silent --fail http://localhost:3000/health || exit 1',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     develop:
       watch:
         - action: sync
@@ -37,7 +46,10 @@ services:
     ports:
       - '8000:8000'
     depends_on:
-      - postgresdb
+      postgresdb:
+        condition: service_healthy
+      app-keystone:
+        condition: service_healthy
     env_file:
       - ./veterans/.env
     develop:
