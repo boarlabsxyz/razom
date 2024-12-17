@@ -44,8 +44,6 @@ services:
     ports:
       - '8000:8000'
     depends_on:
-      postgresdb:
-        condition: service_healthy
       app-keystone:
         condition: service_healthy
     volumes:
