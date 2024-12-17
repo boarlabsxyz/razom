@@ -6,6 +6,15 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
+    environment:
+      POSTGRES_LOGGING_COLLECTOR: 'on' # Увімкнути збір логів
+      POSTGRES_LOG_DESTINATION: 'stderr' # Записувати в стандартний потік
+      POSTGRES_LOG_MIN_MESSAGES: 'debug1' # Логувати максимальну кількість інформації
+      POSTGRES_LOG_CONNECTIONS: 'on' # Логувати підключення
+      POSTGRES_LOG_DISCONNECTIONS: 'on' # Логувати відключення
+      POSTGRES_LOG_STATEMENT: 'all' # Логувати всі SQL-запити
+      POSTGRES_LOG_DURATION: 'on' # Логувати час виконання запитів
+
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
