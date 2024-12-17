@@ -57,38 +57,37 @@ services:
       - shared-volume:/usr/src/app/shared
     env_file:
       - ./veterans/.env
-    healthcheck:
-      test: ['CMD', 'test', '-f', '/usr/src/app/shared/schema.prisma']
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    # healthcheck:
+    #   test: ['CMD', 'test', '-f', '/usr/src/app/shared/schema.prisma']
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
     command: >
       sh -c "
         wait-for-it postgresdb:5432 -- &&
-        npx prisma generate &&
         echo 'Contents of current directory before copying schema.prisma:' &&
         ls -la &&
         cp ./schema.prisma /usr/src/app/shared/schema.prisma &&
         npm run keystone:dev"
 
-  app-nextjs:
-    build:
-      context: .
-      dockerfile: Dockerfile.nextjs
-    ports:
-      - '8000:8000'
-    depends_on:
-      app-keystone:
-        condition: service_healthy
-    volumes:
-      - shared-volume:/usr/src/app/shared
-    env_file:
-      - ./veterans/.env
-    develop:
-      watch:
-        - action: sync
-          path: ./veterans
-          target: /usr/src/app
+  # app-nextjs:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.nextjs
+  #   ports:
+  #     - '8000:8000'
+  #   depends_on:
+  #     app-keystone:
+  #       condition: service_healthy
+  #   volumes:
+  #     - shared-volume:/usr/src/app/shared
+  #   env_file:
+  #     - ./veterans/.env
+  #   develop:
+  #     watch:
+  #       - action: sync
+  #         path: ./veterans
+  #         target: /usr/src/app
 
 volumes:
   shared-volume:
