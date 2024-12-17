@@ -6,14 +6,14 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
-    environment:
-      POSTGRES_LOGGING_COLLECTOR: 'on' # Увімкнути збір логів
-      POSTGRES_LOG_DESTINATION: 'stderr' # Записувати в стандартний потік
-      POSTGRES_LOG_MIN_MESSAGES: 'debug1' # Логувати максимальну кількість інформації
-      POSTGRES_LOG_CONNECTIONS: 'on' # Логувати підключення
-      POSTGRES_LOG_DISCONNECTIONS: 'on' # Логувати відключення
-      POSTGRES_LOG_STATEMENT: 'all' # Логувати всі SQL-запити
-      POSTGRES_LOG_DURATION: 'on' # Логувати час виконання запитів
+    # environment:
+    #   POSTGRES_LOGGING_COLLECTOR: 'on' # Увімкнути збір логів
+    #   POSTGRES_LOG_DESTINATION: 'stderr' # Записувати в стандартний потік
+    #   POSTGRES_LOG_MIN_MESSAGES: 'debug1' # Логувати максимальну кількість інформації
+    #   POSTGRES_LOG_CONNECTIONS: 'on' # Логувати підключення
+    #   POSTGRES_LOG_DISCONNECTIONS: 'on' # Логувати відключення
+    #   POSTGRES_LOG_STATEMENT: 'all' # Логувати всі SQL-запити
+    #   POSTGRES_LOG_DURATION: 'on' # Логувати час виконання запитів
 
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres']
@@ -22,6 +22,27 @@ services:
       retries: 5
     env_file:
       - ./veterans/.env
+
+  # app-keystone:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.keystone
+  #   ports:
+  #     - '3000:3000'
+  #   depends_on:
+  #     postgresdb:
+  #       condition: service_healthy
+  #   volumes:
+  #     - shared-volume:/usr/src/app/shared
+  #   env_file:
+  #     - ./veterans/.env
+  #   healthcheck:
+  #     test: ['CMD', 'test', '-f', '/usr/src/app/shared/schema.prisma']
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   command: >
+  #     sh -c "wait-for-it postgresdb:5432 -- npx prisma generate && npm run keystone:dev"
 
   app-keystone:
     build:
@@ -42,7 +63,11 @@ services:
       timeout: 5s
       retries: 5
     command: >
-      sh -c "wait-for-it postgresdb:5432 -- npx prisma generate && npm run keystone:dev"
+      sh -c "
+        wait-for-it postgresdb:5432 -- &&
+        npx prisma generate &&
+        cp ./schema.prisma /usr/src/app/shared/schema.prisma &&
+        npm run keystone:dev"
 
   app-nextjs:
     build:

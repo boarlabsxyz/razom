@@ -1,3 +1,22 @@
+# FROM node:22.11.0
+
+# WORKDIR /usr/src/app
+
+# COPY ./veterans/package.json ./veterans/package-lock.json ./
+
+# RUN npm ci && npm cache clean --force
+
+# COPY ./veterans .
+
+# EXPOSE 3000
+
+# RUN curl -sS https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -o /usr/local/bin/wait-for-it && \
+#     chmod +x /usr/local/bin/wait-for-it
+
+# CMD ["sh", "-c", "wait-for-it postgresdb:5432 -- npm run keystone:dev & while [ ! -f /usr/src/app/shared/schema.prisma ]; do sleep 1; done; cp /usr/src/app/shared/schema.prisma /usr/src/app/shared/schema.prisma; wait"]
+
+# CMD ["sh", "-c", "npm run keystone:dev & while [ ! -f schema.prisma ]; do sleep 1; done; cp schema.prisma /usr/src/app/shared/schema.prisma; wait"]
+
 FROM node:22.11.0
 
 WORKDIR /usr/src/app
@@ -13,6 +32,4 @@ EXPOSE 3000
 RUN curl -sS https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -o /usr/local/bin/wait-for-it && \
     chmod +x /usr/local/bin/wait-for-it
 
-CMD ["sh", "-c", "wait-for-it postgresdb:5432 -- npm run keystone:dev & while [ ! -f /usr/src/app/shared/schema.prisma ]; do sleep 1; done; cp /usr/src/app/shared/schema.prisma /usr/src/app/shared/schema.prisma; wait"]
-
-# CMD ["sh", "-c", "npm run keystone:dev & while [ ! -f schema.prisma ]; do sleep 1; done; cp schema.prisma /usr/src/app/shared/schema.prisma; wait"]
+CMD ["sh", "-c", "npm run keystone:dev"]
