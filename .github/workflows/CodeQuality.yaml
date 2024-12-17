@@ -23,7 +23,10 @@ jobs:
       - name: Add .env file
         run: echo "${{ secrets.ENV_FILE }}" > veterans/.env
       - name: Build app image
-        run: docker compose build  --no-cache
+        run: |
+          docker compose build -d
+          sleep 10
+          docker logs razom-app-keystone-1
       - name: Run tests
         run: docker compose run --rm app-nextjs npm run test -- --coverage
       - name: Save coverage report
