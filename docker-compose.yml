@@ -21,21 +21,19 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      - postgresdb
+      postgresdb:
+        condition: service_healthy
     volumes:
       - shared-volume:/usr/src/app/shared
     env_file:
       - ./veterans/.env
     healthcheck:
-      test: ['CMD', 'cat', '/usr/src/app/shared/schema.prisma']
+      test: ['CMD', 'test', '-f', '/usr/src/app/shared/schema.prisma']
       interval: 10s
       timeout: 5s
       retries: 5
-    develop:
-      watch:
-        - action: sync
-          path: ./veterans
-          target: /usr/src/app
+    command: >
+      sh -c "wait-for-it postgresdb:5432 -- npx prisma generate && npm run keystone:dev"
 
   app-nextjs:
     build:
