@@ -27,12 +27,13 @@ module.exports = {
     '!playwright.config.ts',
     '!next-env.d.ts',
     '!global.d.ts',
+    '!**/index.ts',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov'],
   moduleNameMapper: {
-    '\\.css$': 'jest-transform-stub',
-    '\\.module\\.css$': 'jest-transform-stub',
+    '\\.css$': 'identity-obj-proxy',
+    '\\.module\\.css$': 'identity-obj-proxy',
   },
   testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
 };
