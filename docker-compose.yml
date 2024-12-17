@@ -74,9 +74,9 @@ services:
       dockerfile: Dockerfile.nextjs
     ports:
       - '8000:8000'
-    # depends_on:
-    #   app-keystone:
-    #     condition: service_healthy
+    depends_on:
+      app-keystone:
+        condition: service_healthy
     volumes:
       - shared-volume:/usr/src/app/shared
     env_file:
