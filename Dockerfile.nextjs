@@ -10,6 +10,4 @@ COPY ./veterans .
 
 EXPOSE 3000
 
-# CMD ["sh", "-c", "npx prisma generate --schema=/usr/src/app/shared/schema.prisma && npm run next:dev"]
-
-CMD ["npm", "run", "next:dev"]
+CMD ["sh", "-c", "npx prisma generate --schema=/usr/src/app/shared/schema.prisma && npm run next:dev"]
