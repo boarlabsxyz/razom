@@ -66,6 +66,8 @@ services:
       sh -c "
         wait-for-it postgresdb:5432 -- &&
         npx prisma generate &&
+        echo 'Contents of current directory before copying schema.prisma:' &&
+        ls -la &&
         cp ./schema.prisma /usr/src/app/shared/schema.prisma &&
         npm run keystone:dev"
 
