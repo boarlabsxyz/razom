@@ -50,9 +50,9 @@ services:
       dockerfile: Dockerfile.keystone
     ports:
       - '3000:3000'
-    depends_on:
-      postgresdb:
-        condition: service_healthy
+    # depends_on:
+    #   postgresdb:
+    #     condition: service_healthy
     volumes:
       - shared-volume:/usr/src/app/shared
     env_file:
