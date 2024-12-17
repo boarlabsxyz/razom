@@ -64,10 +64,8 @@ services:
     #   retries: 5
     command: >
       sh -c "
-        wait-for-it postgresdb:5432 -- &&
         echo 'Contents of current directory before copying schema.prisma:' &&
         ls -la &&
-        cp ./schema.prisma /usr/src/app/shared/schema.prisma &&
         npm run keystone:dev"
 
   app-nextjs:
