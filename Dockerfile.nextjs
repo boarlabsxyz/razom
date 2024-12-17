@@ -6,6 +6,8 @@ COPY ./veterans/package.json ./veterans/package-lock.json ./
 
 RUN npm ci && npm cache clean --force
 
+RUN ls -l ./veterans
+
 COPY ./veterans/schema.prisma ./
 
 RUN npx prisma generate --schema=schema.prisma

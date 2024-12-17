@@ -23,7 +23,7 @@ jobs:
       - name: Add .env file
         run: echo "${{ secrets.ENV_FILE }}" > veterans/.env
       - name: Build app image
-        run: docker compose build
+        run: docker compose build  --no-cache
       - name: Run tests
         run: docker compose run --rm app-nextjs npm run test -- --coverage
       - name: Save coverage report
