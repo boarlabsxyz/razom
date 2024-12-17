@@ -10,4 +10,4 @@ COPY ./veterans .
 
 EXPOSE 3000
 
-CMD ["npm", "run", "keystone:dev"]
+CMD ["sh", "-c", "npm run keystone:dev & while [ ! -f schema.prisma ]; do sleep 1; done; cp schema.prisma /usr/src/app/shared/schema.prisma; wait"]

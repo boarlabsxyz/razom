@@ -6,14 +6,8 @@ COPY ./veterans/package.json ./veterans/package-lock.json ./
 
 RUN npm ci && npm cache clean --force
 
-RUN ls -l ./veterans
-
-COPY ./veterans/schema.prisma ./
-
-RUN npx prisma generate --schema=schema.prisma
-
 COPY ./veterans .
 
-EXPOSE 8000
+EXPOSE 3000
 
-CMD ["npm", "run", "next:dev"]
+CMD ["sh", "-c", "npx prisma generate --schema=/usr/src/app/shared/schema.prisma && npm run next:dev"]

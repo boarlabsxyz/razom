@@ -22,14 +22,12 @@ services:
       - '3000:3000'
     depends_on:
       - postgresdb
+    volumes:
+      - shared-volume:/usr/src/app/shared
     env_file:
       - ./veterans/.env
     healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          'curl --silent --fail http://localhost:3000/health || exit 1',
-        ]
+      test: ['CMD', 'cat', '/usr/src/app/shared/schema.prisma']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -50,6 +48,8 @@ services:
         condition: service_healthy
       app-keystone:
         condition: service_healthy
+    volumes:
+      - shared-volume:/usr/src/app/shared
     env_file:
       - ./veterans/.env
     develop:
@@ -57,3 +57,6 @@ services:
         - action: sync
           path: ./veterans
           target: /usr/src/app
+
+volumes:
+  shared-volume:
