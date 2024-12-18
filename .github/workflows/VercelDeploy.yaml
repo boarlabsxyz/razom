@@ -12,44 +12,29 @@ jobs:
     name: Deploy Preview
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./veterans
-
     steps:
-      - name: Check out repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Validate required secrets
+      - name: Add .env file
+        run: echo "${{ secrets.ENV_FILE }}" > veterans/.env
+
+      - name: Docker starts services
+        run: docker compose up -d --build
+
+      - name: Vercel Environment
         run: |
-          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "${{ secrets.VERCEL_CLI_TOKEN }}" ]; then
-            echo "::error::Required secrets VERCEL_ORG_ID, VERCEL_PROJECT_ID, and VERCEL_CLI_TOKEN must be set"
-            exit 1
-          fi
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18.18.2'
-          cache: 'npm'
-          cache-dependency-path: './veterans/package-lock.json'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Pull Vercel Environment
-        run: |
-          npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
+          docker compose run --rm app-nextjs npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
           echo "Vercel Environment pulled successfully."
 
       - name: Build project
-        run: vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
+        run: docker compose run --rm app-nextjs npx vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
         timeout-minutes: 10
 
       - name: Deploy to Vercel
         id: deploy
         run: |
-          if ! DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="${{ secrets.VERCEL_CLI_TOKEN }}"); then
+          if ! DEPLOYMENT_URL=$(docker compose run --rm app-nextjs npx vercel deploy --prebuilt --token="${{ secrets.VERCEL_CLI_TOKEN }}"); then
             echo "::error::Deployment failed"
             exit 1
           fi
