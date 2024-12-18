@@ -28,10 +28,9 @@ jobs:
           docker compose run --rm app-nextjs npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
           echo "Vercel Environment pulled successfully."
 
-      - name: Check .vercel configuration
+      - name: Check veterans folder
         run: |
-          ls -al veterans/.vercel
-          cat veterans/.vercel/project.json || echo "project.json not found!"
+          ls -al veterans
 
       - name: Build project
         working-directory: veterans
