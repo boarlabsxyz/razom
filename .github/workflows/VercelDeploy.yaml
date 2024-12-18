@@ -22,10 +22,15 @@ jobs:
       - name: Docker starts services
         run: docker compose up -d --build
 
-      - name: Vercel Environment
+      - name: Pull Vercel Environment
         run: |
           docker compose run --rm app-nextjs npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
           echo "Vercel Environment pulled successfully."
+
+      - name: Check .vercel configuration
+        run: |
+          ls -al veterans/.vercel
+          cat veterans/.vercel/project.json || echo "project.json not found!"
 
       - name: Build project
         run: docker compose run --rm app-nextjs npx vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
