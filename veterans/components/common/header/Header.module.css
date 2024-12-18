@@ -1,0 +1,27 @@
+.wrapper {
+  position: sticky;
+  top: 0;
+  left: 0;
+  background-color: #f8fafb;
+  z-index: 4;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 92px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bannerContainer {
+  width: 146px;
+  height: 34px;
+}
+
+.bannerLink {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
