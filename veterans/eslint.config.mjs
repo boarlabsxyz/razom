@@ -34,7 +34,7 @@ export default [
       'array-bracket-spacing': ['error', 'never'],
       'block-spacing': 'error',
       'brace-style': ['error', '1tbs', { allowSingleLine: true }],
-      camelcase: ['error', { properties: 'never' }],
+      camelcase: ['error', { properties: 'never', allow: ['Golos_Text'] }],
       'func-call-spacing': ['error', 'never'],
       'key-spacing': ['error', { beforeColon: false, afterColon: true }],
       'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 1 }],
