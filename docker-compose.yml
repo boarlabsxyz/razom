@@ -25,6 +25,7 @@ services:
         condition: service_healthy
     volumes:
       - shared-volume:/usr/src/app/shared
+      - ./veterans/playwright-report:/usr/src/app/playwright-report
     env_file:
       - ./veterans/.env
 
@@ -36,6 +37,8 @@ services:
       - '8000:8000'
     volumes:
       - shared-volume:/usr/src/app/shared
+      - ./veterans/coverage:/usr/src/app/coverage
+      - ./veterans/playwright-report:/usr/src/app/playwright-report
     env_file:
       - ./veterans/.env
     develop:
