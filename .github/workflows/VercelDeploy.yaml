@@ -23,6 +23,7 @@ jobs:
         run: docker compose up -d --build
 
       - name: Pull Vercel Environment
+        working-directory: veterans
         run: |
           docker compose run --rm app-nextjs npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
           echo "Vercel Environment pulled successfully."
@@ -33,10 +34,12 @@ jobs:
           cat veterans/.vercel/project.json || echo "project.json not found!"
 
       - name: Build project
+        working-directory: veterans
         run: docker compose run --rm app-nextjs npx vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
         timeout-minutes: 10
 
       - name: Deploy to Vercel
+        working-directory: veterans
         id: deploy
         run: |
           if ! DEPLOYMENT_URL=$(docker compose run --rm app-nextjs npx vercel deploy --prebuilt --token="${{ secrets.VERCEL_CLI_TOKEN }}"); then
