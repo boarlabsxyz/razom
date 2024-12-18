@@ -16,7 +16,7 @@ const lato = Lato({
 const golosText = Golos_Text({
   weight: ['400', '500', '600'],
   variable: '--font-golos-text',
-  subsets: ['latin'],
+  subsets: ['latin', 'cyrillic'],
   display: 'swap',
 });
 
