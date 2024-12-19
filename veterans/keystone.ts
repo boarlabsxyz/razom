@@ -1,4 +1,5 @@
 import { config } from '@keystone-6/core';
+import 'dotenv/config';
 
 import { lists } from './schema';
 
