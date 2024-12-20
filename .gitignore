@@ -1,6 +1,7 @@
 node_modules
 mongo-data
 .env
+veterans/.env
 postgres-data
 coverage
 .prettierignore
