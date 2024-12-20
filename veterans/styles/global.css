@@ -1,0 +1,198 @@
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+}
+
+/* ===== Colors ===== */
+:root {
+  /* Neutral */
+  --haiti: #252138;
+  --raven: #6c757d;
+  --heather: #b3bec7;
+  --solitude: #e9ecee;
+  --alice-blue: #f8f9fa;
+
+  /* Primary */
+  --fiji-green: #596b21;
+  --finch: #7d8c53;
+  --pale-leaf: #c6ceac;
+  --rice-flower: #eae8d8;
+
+  /* Actions */
+  --warning: #c5a206;
+  --success: #2a7f3e;
+  --danger: #922f34;
+}
+
+/* ===== Typography ===== */
+html {
+  font-size: 100%;
+}
+
+body {
+  font-family: var(--font-lato);
+  color: var(--haiti);
+  background-color: var(--alice-blue);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headlines */
+h1,
+h2,
+h3,
+h4 {
+  font-family:
+    var(--font-golos-text),
+    system-ui,
+    -apple-system,
+    sans-serif;
+  margin: 0;
+}
+
+h1 {
+  font-weight: 600;
+  font-size: 6.875rem; /* 110px */
+  line-height: 6.375rem; /* 102px */
+}
+
+h2 {
+  font-weight: 600;
+  font-size: 2.5rem; /* 40px */
+  line-height: 2.75rem; /* 44px */
+}
+
+h3 {
+  font-weight: 500;
+  font-size: 2rem; /* 32px */
+  line-height: 2.375rem; /* 38px */
+}
+
+h4 {
+  font-weight: 500;
+  font-size: 1.375rem; /* 22px */
+  line-height: 1.625rem; /* 26px */
+}
+
+/* Body text */
+body,
+p {
+  font-family: var(--font-lato);
+  font-weight: 400;
+  font-size: 1rem; /* 16px */
+  line-height: 1.5rem; /* 24px */
+  margin: 0;
+}
+
+.small-text {
+  font-family: var(--font-lato);
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.125rem; /* 18px */
+  margin: 0;
+}
+
+.title-text {
+  font-family: var(--font-lato);
+  font-weight: 600;
+  font-size: 1.375rem; /* 22px */
+  line-height: 1.625rem; /* 26px */
+}
+
+/* ===== Utility classes ===== */
+.text-warning {
+  color: var(--warning);
+}
+
+.text-success {
+  color: var(--success);
+}
+
+.text-danger {
+  color: var(--danger);
+}
+
+.bg-primary {
+  background-color: var(--fiji-green);
+}
+
+.bg-neutral {
+  background-color: var(--raven);
+}
+
+/* ===== Global Button Styles ===== */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-lato);
+  font-weight: 400;
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.5rem; /* 24px */
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* ===== Primary Buttons ===== */
+.button--primary {
+  background-color: var(--fiji-green);
+  color: var(--alice-blue);
+}
+
+.button--primary:hover {
+  background-color: var(--finch);
+}
+
+.button--primary:focus {
+  outline: 1px solid var(--haiti);
+}
+
+.button--primary:active {
+  background-color: var(--fiji-green);
+  transform: scale(0.98);
+}
+
+.button--primary[disabled] {
+  background-color: var(--pale-leaf);
+  color: var(--finch);
+  cursor: not-allowed;
+}
+
+/* Loading state */
+.button--primary.loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.button--primary.loading::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  width: 16px;
+  height: 16px;
+  border: 2px dashed var(--alice-blue);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem; /* 40px */
+    line-height: 2.75rem; /* 44px */
+  }
+}
