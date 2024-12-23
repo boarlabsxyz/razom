@@ -12,7 +12,7 @@ services:
       timeout: 5s
       retries: 5
     env_file:
-      - .env
+      - ./veterans/.env
 
   app-keystone:
     build:
@@ -21,17 +21,13 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      - postgresdb
-    env_file:
-      - .env
-    develop:
-      watch:
-        - action: sync
-          path: ./veterans
-          target: /usr/src/app
+      postgresdb:
+        condition: service_healthy
     volumes:
-      - ./veterans/coverage:/usr/src/app/coverage
+      - shared-volume:/usr/src/app/shared
       - ./veterans/playwright-report:/usr/src/app/playwright-report
+    env_file:
+      - ./veterans/.env
 
   app-nextjs:
     build:
@@ -39,15 +35,17 @@ services:
       dockerfile: Dockerfile.nextjs
     ports:
       - '8000:8000'
-    depends_on:
-      - postgresdb
+    volumes:
+      - shared-volume:/usr/src/app/shared
+      - ./veterans/coverage:/usr/src/app/coverage
+      - ./veterans/playwright-report:/usr/src/app/playwright-report
     env_file:
-      - .env
+      - ./veterans/.env
     develop:
       watch:
         - action: sync
           path: ./veterans
           target: /usr/src/app
-    volumes:
-      - ./veterans/coverage:/usr/src/app/coverage
-      - ./veterans/playwright-report:/usr/src/app/playwright-report
+
+volumes:
+  shared-volume:
