@@ -37,6 +37,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run keystone buildß
+        run: npm run keystone:build
+
       - name: Check content of folder
         run: ls -al
 
