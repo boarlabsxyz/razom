@@ -37,34 +37,37 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Pull Vercel Environment
-        run: |
-          npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
-          echo "Vercel Environment pulled successfully."
+      - name: Check content of folder
+        run: ls -al
 
-      - name: Build project
-        run: vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
-        timeout-minutes: 10
+      # - name: Pull Vercel Environment
+      #   run: |
+      #     npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
+      #     echo "Vercel Environment pulled successfully."
 
-      - name: Deploy to Vercel
-        id: deploy
-        run: |
-          if ! DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="${{ secrets.VERCEL_CLI_TOKEN }}"); then
-            echo "::error::Deployment failed"
-            exit 1
-          fi
-          echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
-        timeout-minutes: 10
+      # - name: Build project
+      #   run: vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
+      #   timeout-minutes: 10
 
-      - name: Check if DEPLOYMENT_URL is set
-        run: |
-          if [ -z "${{ env.DEPLOYMENT_URL }}" ]; then
-            echo "::error::DEPLOYMENT_URL is not set. This might be due to:"
-            echo "1. Failed Vercel deployment"
-            echo "2. Missing or invalid VERCEL_CLI_TOKEN"
-            echo "3. Network connectivity issues"
-            echo "Please check the deployment logs above for more details."
-            exit 1
-          else
-            echo "DEPLOYMENT_URL is set to: ${{ env.DEPLOYMENT_URL }}"
-          fi
+      # - name: Deploy to Vercel
+      #   id: deploy
+      #   run: |
+      #     if ! DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="${{ secrets.VERCEL_CLI_TOKEN }}"); then
+      #       echo "::error::Deployment failed"
+      #       exit 1
+      #     fi
+      #     echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
+      #   timeout-minutes: 10
+
+      # - name: Check if DEPLOYMENT_URL is set
+      #   run: |
+      #     if [ -z "${{ env.DEPLOYMENT_URL }}" ]; then
+      #       echo "::error::DEPLOYMENT_URL is not set. This might be due to:"
+      #       echo "1. Failed Vercel deployment"
+      #       echo "2. Missing or invalid VERCEL_CLI_TOKEN"
+      #       echo "3. Network connectivity issues"
+      #       echo "Please check the deployment logs above for more details."
+      #       exit 1
+      #     else
+      #       echo "DEPLOYMENT_URL is set to: ${{ env.DEPLOYMENT_URL }}"
+      #     fi
