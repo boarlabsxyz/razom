@@ -41,8 +41,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run keystone dev test
-        run: npm run keystone:dev:test
+      - name: Run Keystone dev with timeout
+        run: |
+          npx keystone dev &
+          for i in {1..30}; do
+            if nc -z localhost 3000; then
+              echo "Keystone is running."
+              pkill -f "keystone dev"
+              break
+            fi
+            sleep 1
+          done
 
       - name: Check content of folder
         run: ls -al

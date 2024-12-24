@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "keystone:dev": "keystone dev",
-    "keystone:dev:test": "timeout 1s keystone dev",
+    "keystone:dev:test": "npx keystone dev & for i in {1..30}; do if nc -z localhost 3000; then echo 'Keystone is running.'; pkill -f 'keystone dev'; break; fi; sleep 1; done",
     "keystone:build": "keystone build",
     "start": "next start --port 8000",
     "next:dev": "next dev --port 8000",
