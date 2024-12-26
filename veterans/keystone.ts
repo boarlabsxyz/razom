@@ -10,10 +10,10 @@ export default withAuth(
     db: {
       provider: 'postgresql',
       url: (() => {
-        if (!process.env.DATABASE_URL) {
+        if (!process.env.VERCEL_DATABASE_URL) {
           throw new Error('DATABASE_URL environment variable is not set');
         }
-        return process.env.DATABASE_URL;
+        return process.env.VERCEL_DATABASE_URL;
       })(),
     },
     lists,
