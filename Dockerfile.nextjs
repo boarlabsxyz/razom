@@ -8,6 +8,4 @@ RUN npm ci && npm cache clean --force
 
 COPY ./veterans .
 
-EXPOSE 3000
-
-CMD ["sh", "-c", "npx prisma generate --schema=/usr/src/app/shared/schema.prisma && npm run next:dev"]
+CMD ["sh", "-c", "while [ ! -f schema.prisma ]; do echo 'Waiting for schema.prisma...'; sleep 1; done && npx prisma generate --schema=schema.prisma && npm run next:dev"]
