@@ -12,4 +12,6 @@ COPY ./veterans/wait-for-schema.sh /usr/src/app/wait-for-schema.sh
 
 RUN chmod +x /usr/src/app/wait-for-schema.sh
 
+EXPOSE 3000
+
 CMD ["sh", "-c", "npm run keystone:dev & /usr/src/app/wait-for-schema.sh && cp schema.prisma /usr/src/app/schema.prisma && tail -f /dev/null"]
