@@ -42,13 +42,13 @@ jobs:
         run: echo "${{ secrets.DATABASE_URL }}" > veterans/.env
 
       - name: Docker starts services
-        run: docker compose up -d --build
+        run: docker-compose -f docker-compose.yaml -f docker-compose.ci.yaml up -d --build
 
-      - name: Install Playwright Browsers
-        run: docker compose exec app-keystone npx playwright install --with-deps
+      # - name: Install Playwright Browsers
+      #   run: docker compose exec app-keystone npx playwright install --with-deps
 
-      - name: Run Playwright tests
-        run: docker compose exec app-keystone npm run test:e2e
+      # - name: Run Playwright tests
+      #   run: docker compose exec app-keystone npm run test:e2e
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

@@ -18,7 +18,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.keystone
-    mem_limit: 4G
     ports:
       - '3000:3000'
     # depends_on:
