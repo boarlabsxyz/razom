@@ -38,6 +38,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Check resource limits
+        run: |
+          echo "CPU Info:"
+          lscpu
+          echo "Memory Info:"
+          free -h
+          echo "Disk Info:"
+          df -h
+
       - name: Add .env file
         run: echo "${{ secrets.DATABASE_URL }}" > veterans/.env
 
