@@ -49,6 +49,9 @@ jobs:
           docker compose up -d --build
           docker compose ps
 
+      - name: Show Keystone logs
+        run: docker compose logs app-keystone
+
       - name: Wait for Keystone service to be ready
         run: |
           for i in {1..20}; do
