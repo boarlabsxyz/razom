@@ -51,14 +51,16 @@ jobs:
 
       - name: Wait for Keystone service to be ready
         run: |
-          for i in {1..10}; do
-            if docker compose exec app-keystone curl -s http://localhost:3000 | grep -q "Welcome to KeystoneJS"; then
+          for i in {1..20}; do
+            if docker compose exec app-keystone curl -s http://localhost:3000/init | grep -q "Welcome to KeystoneJS"; then
               echo "Keystone is ready!";
-              break;
+              exit 0;
             fi;
             echo "Waiting for Keystone service...";
             sleep 5;
           done
+          echo "Keystone service did not start in time";
+          exit 1
 
       - name: Install Playwright Browsers
         run: docker compose exec app-keystone npx playwright install --with-deps
