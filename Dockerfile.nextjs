@@ -8,6 +8,12 @@ RUN npm ci && npm cache clean --force
 
 COPY ./veterans .
 
+COPY ./scripts/wait-schema-for-nextjs.sh /usr/src/app/wait-schema-for-nextjs.sh
+
+RUN chmod +x /usr/src/app/wait-schema-for-nextjs.sh
+
 EXPOSE 8000
 
-CMD ["sh", "-c", "while [ ! -f schema.prisma ]; do echo 'Waiting for schema.prisma...'; sleep 1; done && npx prisma generate --schema=schema.prisma && npm run next:dev"]
+CMD ["sh", "-c", "/usr/src/app/wait-schema-for-nextjs.sh && \
+                  npx prisma generate --schema=/usr/src/app/shared/schema.prisma &&\
+                  npm run next:dev"]
