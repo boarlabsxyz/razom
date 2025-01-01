@@ -55,6 +55,9 @@ jobs:
       - name: Check current working directory
         run: docker compose exec app-keystone pwd
 
+      - name: Check current working directory content
+        run: docker compose exec app-keystone ls
+
       - name: Wait for Keystone service to be ready
         run: |
           for i in {1..20}; do
