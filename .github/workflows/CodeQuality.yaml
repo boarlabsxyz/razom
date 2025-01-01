@@ -61,8 +61,8 @@ jobs:
       - name: Check current working directory content
         run: docker compose exec app-keystone ls
 
-      - name: Display .env variable names
-        run: sed 's/=.*//' veterans/.env
+      - name: Show .env variable names
+        run: cut -d '=' -f 1 veterans/.env
 
       - name: Display NODE_ENV inside Docker container
         run: docker compose exec app-keystone node -e "console.log('NODE_ENV:', process.env.NODE_ENV || 'not defined')"
