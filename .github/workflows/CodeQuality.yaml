@@ -58,6 +58,14 @@ jobs:
       - name: Check current working directory content
         run: docker compose exec app-keystone ls
 
+      - name: Display sanitized .env file content
+        run: |
+          sed 's/SECRET_KEY=.*/SECRET_KEY=***HIDDEN***/' veterans/.env
+          cat veterans/.env
+
+      - name: Display NODE_ENV inside Docker container
+        run: docker compose exec app-keystone node -e "console.log('NODE_ENV:', process.env.NODE_ENV || 'not defined')"
+
       - name: Wait for Keystone service to be ready
         run: |
           for i in {1..20}; do
