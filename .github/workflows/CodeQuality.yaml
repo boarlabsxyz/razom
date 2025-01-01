@@ -44,6 +44,9 @@ jobs:
       - name: Add .env file
         run: echo "${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
 
+      # - name: Set NODE_ENV
+      #   run: echo "NODE_ENV=development" >> veterans/.env
+
       - name: Docker starts services
         run: |
           docker compose up -d --build
@@ -58,10 +61,8 @@ jobs:
       - name: Check current working directory content
         run: docker compose exec app-keystone ls
 
-      - name: Display sanitized .env file content
-        run: |
-          sed 's/SECRET_KEY=.*/SECRET_KEY=***HIDDEN***/' veterans/.env
-          cat veterans/.env
+      - name: Display .env variable names
+        run: sed 's/=.*//' veterans/.env
 
       - name: Display NODE_ENV inside Docker container
         run: docker compose exec app-keystone node -e "console.log('NODE_ENV:', process.env.NODE_ENV || 'not defined')"
