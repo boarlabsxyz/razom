@@ -55,11 +55,12 @@ jobs:
       - name: Show Keystone logs
         run: docker compose logs app-keystone
 
-      - name: Check permissions
-        run: ls -ld /usr/src/app
+      # - name: Check permissions
+      #   run: ls -ld /usr/src/app
+      #     /usr/src/app
 
-      - name: Test write permissions
-        run: echo "test" > /usr/src/app/testfile && cat /usr/src/app/testfile
+      # - name: Test write permissions
+      #   run: echo "test" > /usr/src/app/testfile && cat /usr/src/app/testfile
 
       - name: Check current working directory
         run: docker compose exec app-keystone pwd
@@ -67,11 +68,12 @@ jobs:
       - name: Check current working directory content
         run: docker compose exec app-keystone ls
 
-      - name: Show .env variable names
-        run: cut -d '=' -f 1 veterans/.env
+      - name: Check permissions
+        run: ls -ld /usr/src/app
+          /usr/src/app
 
-      - name: Display NODE_ENV inside Docker container
-        run: docker compose exec app-keystone node -e "console.log('NODE_ENV:', process.env.NODE_ENV || 'not defined')"
+      - name: Test write permissions
+        run: echo "test" > /usr/src/app/testfile && cat /usr/src/app/testfile
 
       - name: Wait for Keystone service to be ready
         run: |
