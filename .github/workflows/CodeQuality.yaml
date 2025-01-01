@@ -69,10 +69,10 @@ jobs:
         run: docker compose exec app-keystone ls
 
       - name: Check permissions
-        run: ls -ld /usr/src/app
+        run: ls -ld .
 
       - name: Test write permissions
-        run: echo "test" > /usr/src/app/testfile && cat /usr/src/app/testfile
+        run: echo "test" > ./testfile && cat ./testfile
 
       - name: Wait for Keystone service to be ready
         run: |
