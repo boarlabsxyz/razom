@@ -70,7 +70,6 @@ jobs:
 
       - name: Check permissions
         run: ls -ld /usr/src/app
-          /usr/src/app
 
       - name: Test write permissions
         run: echo "test" > /usr/src/app/testfile && cat /usr/src/app/testfile
