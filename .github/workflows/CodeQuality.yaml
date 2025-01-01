@@ -75,7 +75,7 @@ jobs:
         run: echo "test" > ./testfile && cat ./testfile
 
       - name: Check current working directory content
-        run: docker compose exec app-keystone ls
+        run: docker compose exec app-keystone ls -a
 
       - name: Wait for Keystone service to be ready
         run: |
