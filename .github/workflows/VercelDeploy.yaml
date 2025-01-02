@@ -3,6 +3,7 @@ name: Vercel Preview Deployment
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VERCEL_CLI_TOKEN: { { secrets.VERCEL_CLI_TOKEN } }
   PRODUCTION_DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
 
 on:
@@ -23,8 +24,8 @@ jobs:
 
       - name: Validate required secrets
         run: |
-          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "${{ secrets.VERCEL_CLI_TOKEN }}" ]; then
-            echo "::error::Required secrets VERCEL_ORG_ID, VERCEL_PROJECT_ID, and VERCEL_CLI_TOKEN must be set"
+          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "$VERCEL_CLI_TOKEN" ] || [ -z "$PRODUCTION_DATABASE_URL" ]; then
+            echo "::error::Required secrets VERCEL_ORG_ID, VERCEL_PROJECT_ID, VERCEL_CLI_TOKEN and PRODUCTION_DATABASE_URL must be set"
             exit 1
           fi
 
