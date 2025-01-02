@@ -51,22 +51,19 @@ jobs:
             sleep 1
           done
 
-      - name: Check content of folder
-        run: ls -al
-
       - name: Pull Vercel Environment
         run: |
-          npx vercel pull --yes --environment=preview --token=$VERCEL_CLI_TOKEN
+          npx vercel pull --yes --environment=preview --token="$VERCEL_CLI_TOKEN"
           echo "Vercel Environment pulled successfully."
 
       - name: Build project
-        run: vercel build --yes --token=$VERCEL_CLI_TOKEN
+        run: vercel build --yes --token="$VERCEL_CLI_TOKEN"
         timeout-minutes: 10
 
       - name: Deploy to Vercel
         id: deploy
         run: |
-          if ! DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=$VERCEL_CLI_TOKEN); then
+          if ! DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN"); then
             echo "::error::Deployment failed"
             exit 1
           fi
