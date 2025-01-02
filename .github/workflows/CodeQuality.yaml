@@ -15,22 +15,22 @@ jobs:
       - name: Lint Dockerfile.nextjs
         run: docker run --rm -i hadolint/hadolint < Dockerfile.nextjs
 
-  # unit-test:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
-  #     - name: Add .env file
-  #       run: echo "${{ secrets.DATABASE_URL }}" > veterans/.env
-  #     - name: Build app image
-  #       run: docker compose build
-  #     - name: Run tests
-  #       run: docker compose run --rm app-nextjs npm run test -- --coverage
-  #     - name: Save coverage report
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: coverage-report
-  #         path: veterans/coverage/lcov.info
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Add .env file
+        run: echo "${{ secrets.DATABASE_URL }}" > veterans/.env
+      - name: Build app image
+        run: docker compose build
+      - name: Run tests
+        run: docker compose run --rm app-nextjs npm run test -- --coverage
+      - name: Save coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: veterans/coverage/lcov.info
 
   e2e-test:
     runs-on: ubuntu-latest
@@ -42,49 +42,49 @@ jobs:
         run: echo "${{ secrets.DATABASE_URL }}" > veterans/.env
 
       - name: Docker starts services
-        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d --build
+        run: docker compose up -d --build
 
       - name: Check current working directory content
         run: docker compose exec app-keystone ls -a
 
-      # - name: Install Playwright Browsers
-      #   run: docker compose exec app-keystone npx playwright install --with-deps
+      - name: Install Playwright Browsers
+        run: docker compose exec app-keystone npx playwright install --with-deps
 
-      # - name: Run Playwright tests
-      #   run: docker compose exec app-keystone npm run test:e2e
+      - name: Run Playwright tests
+        run: docker compose exec app-keystone npm run test:e2e
 
-      # - uses: actions/upload-artifact@v4
-      #   if: ${{ !cancelled() }}
-      #   with:
-      #     name: playwright-report
-      #     path: veterans/playwright-report/
-      #     retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: veterans/playwright-report/
+          retention-days: 30
 
-  # lint:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v3
-  #     - name: Add .env file
-  #       run: echo "${{ secrets.DATABASE_URL }}" > veterans/.env
-  #     - name: Build app image
-  #       run: docker compose build
-  #     - name: Run linters
-  #       run: docker compose run --rm app-nextjs npm run lint
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Add .env file
+        run: echo "${{ secrets.DATABASE_URL }}" > veterans/.env
+      - name: Build app image
+        run: docker compose build
+      - name: Run linters
+        run: docker compose run --rm app-nextjs npm run lint
 
-  # sonarqube:
-  #   runs-on: ubuntu-latest
-  #   needs: unit-test
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
-  #     - name: Download coverage report
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: coverage-report
-  #     - name: SonarQube Scan
-  #       uses: sonarsource/sonarqube-scan-action@v4.1.0
-  #       env:
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  sonarqube:
+    runs-on: ubuntu-latest
+    needs: unit-test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download coverage report
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v4.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
