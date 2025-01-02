@@ -39,7 +39,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Add .env file
-        run: echo "${{ secrets.DATABASE_URL }}" > veterans/.env
+        run: echo "${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
 
       - name: Docker starts services
         run: docker compose up --build
@@ -66,7 +66,7 @@ jobs:
   #     - name: Checkout repository
   #       uses: actions/checkout@v3
   #     - name: Add .env file
-  #       run: echo "${{ secrets.DATABASE_URL }}" > veterans/.env
+  #       run: echo "${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
   #     - name: Build app image
   #       run: docker compose build
   #     - name: Run linters
