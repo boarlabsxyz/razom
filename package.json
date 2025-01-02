@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "@next/font": "^14.2.15",
-    "dotenv": "^16.4.7"
+    "@next/font": "^14.2.15"
   }
 }
