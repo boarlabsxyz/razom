@@ -8,6 +8,13 @@ RUN npm ci && npm cache clean --force
 
 COPY ./veterans .
 
+COPY ./scripts/wait-schema-for-keystone.sh /usr/src/app/wait-schema-for-keystone.sh
+
+RUN chmod +x /usr/src/app/wait-schema-for-keystone.sh
+
 EXPOSE 3000
 
-CMD ["npm", "run", "keystone:dev"]
+CMD ["sh", "-c", "npm run keystone:dev & \
+                  /usr/src/app/wait-schema-for-keystone.sh && \
+                  cp schema.prisma /usr/src/app/shared/schema.prisma &&\
+                  tail -f /dev/null"]
