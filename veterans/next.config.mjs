@@ -6,6 +6,7 @@ export default withPreconstruct({
     config.externals = {
       ...config.externals,
       'styled-jsx': 'styled-jsx',
+      // eslint-disable-next-line prettier/prettier
       next: 'next',
       '@swc/helpers': '@swc/helpers',
     };
