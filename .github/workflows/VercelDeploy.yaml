@@ -41,15 +41,18 @@ jobs:
 
       - name: Run Keystone dev with timeout
         run: |
-          npx keystone dev &
-          for i in {1..30}; do
-            if nc -z localhost 3000; then
-              echo "Keystone is running."
-              pkill -f "keystone dev"
-              break
-            fi
-            sleep 1
-          done
+          timeout 30s sh -c '
+            npx keystone dev & PID=$!
+            while ! nc -z localhost 3000; do
+              if ! kill -0 $PID 2>/dev/null; then
+                echo "Keystone process died"
+                exit 1
+              fi
+              sleep 1
+            done
+            echo "Keystone is running."
+            kill $PID
+          ' || (echo "Keystone failed to start"; exit 1)
 
       - name: Pull Vercel Environment
         run: |
