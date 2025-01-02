@@ -1,5 +1,8 @@
 name: CodeQuality
 
+env:
+  DEVELOPMENT_DATABASE_URL: ${{ secrets.DEVELOPMENT_DATABASE_URL }}
+
 on:
   pull_request:
     types: [synchronize, opened, reopened]
@@ -38,8 +41,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Add .env file
-        run: echo "${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
+      - name: Validate required secrets
+        run: |
+          if [ -z "$DEVELOPMENT_DATABASE_URL" ]; then
+            echo "::error::Required secrets DEVELOPMENT_DATABASE_URL must be set"
+            exit 1
+          fi
 
       - name: Docker starts services
         run: docker compose up --build
