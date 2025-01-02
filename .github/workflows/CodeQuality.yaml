@@ -43,7 +43,7 @@ jobs:
           echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
 
       - name: Docker starts services
-        run: docker compose up --build
+        run: docker compose up -d --build
 
       - name: Check current working directory content
         run: docker compose exec app-keystone ls -a
