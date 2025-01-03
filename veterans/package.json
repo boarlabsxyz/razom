@@ -10,6 +10,7 @@
     "start": "next start --port 8000",
     "next:dev": "next dev --port 8000",
     "next:build": "next build",
+    "next:prod:build": "NODE_ENV=production next build",
     "build": "keystone build --no-ui && next build",
     "test": "jest",
     "lint": "eslint .",
