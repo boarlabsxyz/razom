@@ -53,6 +53,9 @@ jobs:
           ' || (echo "Keystone failed to start"; exit 1)
         working-directory: ./veterans
 
+      - name: List current directory contents
+        run: ls -la
+
       - name: Add binaryTargets to schema.prisma
         run: node scripts/add-binary-targets.js
 
