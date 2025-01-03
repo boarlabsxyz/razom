@@ -69,6 +69,7 @@ jobs:
       - name: Build project
         run: vercel build --yes --token="$VERCEL_CLI_TOKEN"
         timeout-minutes: 10
+        working-directory: ./veterans
 
       - name: Deploy to Vercel
         id: deploy
@@ -79,6 +80,7 @@ jobs:
           fi
           echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
         timeout-minutes: 10
+        working-directory: ./veterans
 
       - name: Check if DEPLOYMENT_URL is set
         run: |
