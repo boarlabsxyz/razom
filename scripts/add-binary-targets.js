@@ -1,12 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const schemaPath = path.join(process.cwd(), 'schema.prisma');
-
-if (!fs.existsSync(schemaPath)) {
-  console.error('Файл schema.prisma не знайдено в поточному каталозі!');
-  process.exit(1);
-}
+const schemaPath = path.join(process.cwd(), 'veterans/schema.prisma');
 
 if (fs.existsSync(schemaPath)) {
   let schema = fs.readFileSync(schemaPath, 'utf8');

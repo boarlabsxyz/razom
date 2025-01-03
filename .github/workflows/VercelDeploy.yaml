@@ -54,7 +54,9 @@ jobs:
         working-directory: ./veterans
 
       - name: List current directory contents
-        run: ls -la
+        run: |
+          cd veterans
+          ls -la
 
       - name: Add binaryTargets to schema.prisma
         run: node scripts/add-binary-targets.js
