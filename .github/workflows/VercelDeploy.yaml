@@ -38,22 +38,6 @@ jobs:
         run: npm ci
         working-directory: ./veterans
 
-      # - name: Run Keystone dev with timeout
-      #   run: |
-      #     timeout 30s sh -c '
-      #       npx keystone dev & PID=$!
-      #       while ! nc -z localhost 3000; do
-      #         if ! kill -0 $PID 2>/dev/null; then
-      #           echo "Keystone process died"
-      #           exit 1
-      #         fi
-      #         sleep 1
-      #       done
-      #       echo "Keystone is running."
-      #       kill $PID
-      #     ' || (echo "Keystone failed to start"; exit 1)
-      #   working-directory: ./veterans
-
       - name: Run Keystone build
         run: npm run keystone:prod:build
         working-directory: ./veterans
@@ -73,17 +57,8 @@ jobs:
         run: cat ./veterans/schema.prisma
 
       - name: Generate Prisma Client
-        run: |
-          if [ ! -d "node_modules/.prisma/client" ]; then
-            npx prisma generate
-          else
-            echo "Prisma Client already generated"
-          fi
+        run: npx prisma generate --binaryTargets rhel-openssl-3.0.x
         working-directory: ./veterans
-
-      # - name: Apply Prisma Migrations
-      #   run: npx prisma migrate deploy
-      #   working-directory: ./veterans
 
       - name: Pull Vercel Environment
         run: |
