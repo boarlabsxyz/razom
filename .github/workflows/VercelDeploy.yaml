@@ -69,12 +69,17 @@ jobs:
         run: cat ./veterans/schema.prisma
 
       - name: Generate Prisma Client
-        run: npx prisma generate
+        run: |
+          if [ ! -d "node_modules/.prisma/client" ]; then
+            npx prisma generate
+          else
+            echo "Prisma Client already generated"
+          fi
         working-directory: ./veterans
 
-      - name: Apply Prisma Migrations
-        run: npx prisma migrate deploy
-        working-directory: ./veterans
+      # - name: Apply Prisma Migrations
+      #   run: npx prisma migrate deploy
+      #   working-directory: ./veterans
 
       - name: Pull Vercel Environment
         run: |
