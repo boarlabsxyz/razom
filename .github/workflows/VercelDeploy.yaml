@@ -78,7 +78,7 @@ jobs:
       - name: Deploy to Vercel
         id: deploy
         run: |
-          if ! DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN"); then
+          if ! DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN"); then
             echo "::error::Deployment failed"
             exit 1
           fi
