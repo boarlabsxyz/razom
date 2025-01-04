@@ -59,14 +59,14 @@ jobs:
           cd veterans
           ls -la
 
+      - name: Clean node_modules/.prisma
+        run: rm -rf node_modules/.prisma
+
       - name: Add binaryTargets to schema.prisma
         run: node scripts/add-binary-targets.js
 
       - name: Show schema.prisma content
         run: cat ./veterans/schema.prisma
-
-      - name: Clean node_modules/.prisma
-        run: rm -rf node_modules/.prisma
 
       - name: Generate Prisma Client
         run: npx prisma generate
