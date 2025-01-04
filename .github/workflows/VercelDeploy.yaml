@@ -38,20 +38,24 @@ jobs:
         run: npm ci
         working-directory: ./veterans
 
-      - name: Run Keystone dev with timeout
-        run: |
-          timeout 30s sh -c '
-            npx keystone dev & PID=$!
-            while ! nc -z localhost 3000; do
-              if ! kill -0 $PID 2>/dev/null; then
-                echo "Keystone process died"
-                exit 1
-              fi
-              sleep 1
-            done
-            echo "Keystone is running."
-            kill $PID
-          ' || (echo "Keystone failed to start"; exit 1)
+      # - name: Run Keystone dev with timeout
+      #   run: |
+      #     timeout 30s sh -c '
+      #       npx keystone dev & PID=$!
+      #       while ! nc -z localhost 3000; do
+      #         if ! kill -0 $PID 2>/dev/null; then
+      #           echo "Keystone process died"
+      #           exit 1
+      #         fi
+      #         sleep 1
+      #       done
+      #       echo "Keystone is running."
+      #       kill $PID
+      #     ' || (echo "Keystone failed to start"; exit 1)
+      #   working-directory: ./veterans
+
+      - name: Run Keystone build
+        run: npm run keystone:prod:build
         working-directory: ./veterans
 
       - name: List current directory contents
