@@ -61,6 +61,10 @@ jobs:
       - name: Add binaryTargets to schema.prisma
         run: node scripts/add-binary-targets.js
 
+      - name: Generate Prisma Client
+        run: npx prisma generate
+        working-directory: ./veterans
+
       - name: Pull Vercel Environment
         run: |
           npx vercel pull --yes --environment=preview --token="$VERCEL_CLI_TOKEN"
