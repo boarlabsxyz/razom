@@ -9,7 +9,7 @@ if (fs.existsSync(schemaPath)) {
     schema = schema.replace(
       /generator client {/,
       `generator client {
-  binaryTargets = ["native", "debian-openssl-1.1.x", "rhel-openssl-3.0.x"]`,
+  binaryTargets = ["rhel-openssl-3.0.x"]`,
     );
     fs.writeFileSync(schemaPath, schema);
     console.log('binaryTargets додано до schema.prisma');
