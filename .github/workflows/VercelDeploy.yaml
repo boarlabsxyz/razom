@@ -71,7 +71,7 @@ jobs:
           echo "Vercel Environment pulled successfully."
 
       - name: Build project
-        run: vercel build --yes --token="$VERCEL_CLI_TOKEN"
+        run: npx vercel build --yes --token="$VERCEL_CLI_TOKEN"
         timeout-minutes: 10
         # working-directory: ./veterans
 
