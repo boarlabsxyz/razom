@@ -4,6 +4,7 @@ env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
   PRODUCTION_DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
   NODE_ENV: 'production'
 
