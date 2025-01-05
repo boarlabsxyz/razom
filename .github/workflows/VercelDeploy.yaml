@@ -65,7 +65,7 @@ jobs:
         working-directory: ./veterans
 
       - name: Show schema.prisma content in node modules
-      run: cat ./veterans/node_modules/.prisma/client/schema.prisma
+        run: cat ./veterans/node_modules/.prisma/client/schema.prisma
 
       # - name: Pull Vercel Environment
       #   run: |
