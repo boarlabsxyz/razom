@@ -87,8 +87,14 @@ jobs:
           done
         working-directory: ./veterans
 
-      - name: Check .vercel/output/functions/api/post.func/node_modules/.prisma/client/
-        run: ls -la .vercel/output/functions/api/post.func/node_modules/.prisma/client/
+      - name: Copy Prisma binaries to Vercel deployment output
+        run: |
+          mkdir -p .vercel/output/functions/api/posts.func/node_modules/.prisma/client/
+          cp -r node_modules/.prisma/client/* .vercel/output/functions/api/posts.func/node_modules/.prisma/client/
+        working-directory: ./veterans
+
+      - name: Check .vercel/output/functions/api/posts.func/node_modules/.prisma/client/
+        run: ls -la .vercel/output/functions/api/posts.func/node_modules/.prisma/client/
         working-directory: ./veterans
 
       - name: Deploy to Vercel
