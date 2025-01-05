@@ -53,7 +53,7 @@ jobs:
       - name: Add binaryTargets to schema.prisma
         run: node scripts/add-binary-targets.js
 
-      - name: Show schema.prisma content
+      - name: Show schema.prisma content in veterans
         run: cat ./veterans/schema.prisma
 
       - name: Generate Prisma Client
@@ -63,6 +63,9 @@ jobs:
       - name: Check node_modules/.prisma/client
         run: ls -la node_modules/.prisma/client
         working-directory: ./veterans
+
+       - name: Show schema.prisma content in node modules
+        run: cat ./veterans/node_modules/.prisma/client/schema.prisma
 
       # - name: Pull Vercel Environment
       #   run: |
