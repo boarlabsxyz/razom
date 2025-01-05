@@ -1,9 +1,5 @@
 name: CodeQuality
 
-# on:
-#   pull_request:
-#     types: [synchronize, opened, reopened]
-
 on:
   workflow_dispatch:
 
