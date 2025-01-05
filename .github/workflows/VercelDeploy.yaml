@@ -77,6 +77,12 @@ jobs:
         timeout-minutes: 10
         working-directory: ./veterans
 
+      - name: Copy Prisma binaries for deployment
+        run: |
+          mkdir -p .output/node_modules/.prisma/client
+          cp -r node_modules/.prisma/client/* .output/node_modules/.prisma/client/
+        working-directory: ./veterans
+
       - name: Deploy to Vercel
         id: deploy
         run: |
