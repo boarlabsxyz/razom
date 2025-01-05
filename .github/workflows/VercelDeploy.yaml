@@ -62,6 +62,7 @@ jobs:
 
       - name: Check node_modules/.prisma/client
         run: ls -la node_modules/.prisma/client
+        working-directory: ./veterans
 
       # - name: Pull Vercel Environment
       #   run: |
