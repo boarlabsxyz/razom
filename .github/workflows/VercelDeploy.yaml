@@ -42,10 +42,10 @@ jobs:
         run: npm run keystone:prod:build
         working-directory: ./veterans
 
-      - name: List current directory contents
-        run: |
-          cd veterans
-          ls -la
+      # - name: List current directory contents
+      #   run: |
+      #     cd veterans
+      #     ls -la
 
       - name: Clean node_modules/.prisma
         run: rm -rf node_modules/.prisma
@@ -53,19 +53,19 @@ jobs:
       - name: Add binaryTargets to schema.prisma
         run: node scripts/add-binary-targets.js
 
-      - name: Show schema.prisma content in veterans
-        run: cat ./veterans/schema.prisma
+      # - name: Show schema.prisma content in veterans
+      #   run: cat ./veterans/schema.prisma
 
       - name: Generate Prisma Client
         run: npx prisma generate
         working-directory: ./veterans
 
-      - name: Check node_modules/.prisma/client
-        run: ls -la node_modules/.prisma/client
-        working-directory: ./veterans
+      # - name: Check node_modules/.prisma/client
+      #   run: ls -la node_modules/.prisma/client
+      #   working-directory: ./veterans
 
-      - name: Show schema.prisma content in node modules
-        run: cat ./veterans/node_modules/.prisma/client/schema.prisma
+      # - name: Show schema.prisma content in node modules
+      #   run: cat ./veterans/node_modules/.prisma/client/schema.prisma
 
       - name: Pull Vercel Environment
         run: |
@@ -77,15 +77,15 @@ jobs:
         timeout-minutes: 10
         working-directory: ./veterans
 
-      - name: Copy Prisma binaries to Vercel deployment output
-        run: |
-          for dir in .veterans/.vercel/output/functions/*; do
-            if [ -f "$dir/.vc-config.json" ]; then
-              mkdir -p "$dir/node_modules/.prisma/client"
-              cp -r node_modules/.prisma/client/* "$dir/node_modules/.prisma/client/"
-            fi
-          done
-        working-directory: ./veterans
+      # - name: Copy Prisma binaries to Vercel deployment output
+      #   run: |
+      #     for dir in .veterans/.vercel/output/functions/*; do
+      #       if [ -f "$dir/.vc-config.json" ]; then
+      #         mkdir -p "$dir/node_modules/.prisma/client"
+      #         cp -r node_modules/.prisma/client/* "$dir/node_modules/.prisma/client/"
+      #       fi
+      #     done
+      #   working-directory: ./veterans
 
       - name: Copy Prisma binaries to Vercel deployment output
         run: |
@@ -93,9 +93,9 @@ jobs:
           cp -r node_modules/.prisma/client/* .vercel/output/functions/api/posts.func/node_modules/.prisma/client/
         working-directory: ./veterans
 
-      - name: Check .vercel/output/functions/api/posts.func/node_modules/.prisma/client/
-        run: ls -la .vercel/output/functions/api/posts.func/node_modules/.prisma/client/
-        working-directory: ./veterans
+      # - name: Check .vercel/output/functions/api/posts.func/node_modules/.prisma/client/
+      #   run: ls -la .vercel/output/functions/api/posts.func/node_modules/.prisma/client/
+      #   working-directory: ./veterans
 
       - name: Deploy to Vercel
         id: deploy
