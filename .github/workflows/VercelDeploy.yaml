@@ -3,6 +3,9 @@ name: Vercel Preview Deployment
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
+  PRODUCTION_DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+  NODE_ENV: 'production'
 
 on:
   workflow_dispatch:
@@ -22,8 +25,8 @@ jobs:
 
       - name: Validate required secrets
         run: |
-          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "${{ secrets.VERCEL_CLI_TOKEN }}" ]; then
-            echo "::error::Required secrets VERCEL_ORG_ID, VERCEL_PROJECT_ID, and VERCEL_CLI_TOKEN must be set"
+          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "$VERCEL_CLI_TOKEN" ] || [ -z "$PRODUCTION_DATABASE_URL" ]; then
+            echo "::error::Required secrets VERCEL_ORG_ID, VERCEL_PROJECT_ID, VERCEL_CLI_TOKEN and PRODUCTION_DATABASE_URL must be set"
             exit 1
           fi
 
@@ -37,19 +40,34 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run Keystone dev with timeout
+        run: |
+          timeout 30s sh -c '
+            npx keystone dev & PID=$!
+            while ! nc -z localhost 3000; do
+              if ! kill -0 $PID 2>/dev/null; then
+                echo "Keystone process died"
+                exit 1
+              fi
+              sleep 1
+            done
+            echo "Keystone is running."
+            kill $PID
+          ' || (echo "Keystone failed to start"; exit 1)
+
       - name: Pull Vercel Environment
         run: |
-          npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_CLI_TOKEN }}
+          npx vercel pull --yes --environment=preview --token="$VERCEL_CLI_TOKEN"
           echo "Vercel Environment pulled successfully."
 
       - name: Build project
-        run: vercel build --yes --token=${{ secrets.VERCEL_CLI_TOKEN }}
+        run: vercel build --yes --token="$VERCEL_CLI_TOKEN"
         timeout-minutes: 10
 
       - name: Deploy to Vercel
         id: deploy
         run: |
-          if ! DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="${{ secrets.VERCEL_CLI_TOKEN }}"); then
+          if ! DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN"); then
             echo "::error::Deployment failed"
             exit 1
           fi
