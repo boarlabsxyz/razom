@@ -44,6 +44,7 @@ jobs:
 
       - name: Clean node_modules/.prisma
         run: rm -rf node_modules/.prisma
+        working-directory: ./veterans
 
       - name: Add binaryTargets to schema.prisma
         run: node scripts/add-binary-targets.js
