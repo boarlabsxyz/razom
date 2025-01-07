@@ -119,7 +119,7 @@ jobs:
       - lint
       - unit-tests
       - e2e-tests
-      - onarqube
+      - sonarqube
     defaults:
       run:
         working-directory: ./veterans
