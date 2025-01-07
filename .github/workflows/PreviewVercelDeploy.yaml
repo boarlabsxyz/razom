@@ -109,7 +109,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-   preview-deployment:
+  preview-deployment:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
