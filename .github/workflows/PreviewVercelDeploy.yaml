@@ -1,0 +1,193 @@
+name: Vercel Preview Deployment
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
+  TEST_DATABASE_URL: ${{ secrets.DEPLOYMENT_DATABASE_URL }}
+  NODE_ENV: 'test'
+
+jobs:
+  docker-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Lint Dockerfile.keystone
+        run: docker run --rm -i hadolint/hadolint < Dockerfile.keystone
+
+      - name: Lint Dockerfile.nextjs
+        run: docker run --rm -i hadolint/hadolint < Dockerfile.nextjs
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
+
+      - name: Build app image
+        run: docker compose build
+
+      - name: Run tests
+        run: docker compose run --rm app-nextjs npm run test -- --coverage
+
+      - name: Save coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: veterans/coverage/lcov.info
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: |
+          echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> veterans/.env
+
+      - name: Docker starts services
+        run: docker compose up -d --build
+
+      - name: Install Playwright Browsers
+        run: docker compose exec app-keystone npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: docker compose exec app-keystone npm run test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: veterans/playwright-report/
+          retention-days: 30
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Create .env file
+        run: echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
+
+      - name: Build app image
+        run: docker compose build
+
+      - name: Run linters
+        run: docker compose run --rm app-nextjs npm run lint
+
+  sonarqube:
+    runs-on: ubuntu-latest
+    needs: unit-test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download coverage report
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v4.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+   preview-deployment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: preview
+      url: ${{ steps.deploy.outputs.url }}
+    needs:
+      - lint
+      - unit-tests
+      - e2e-tests
+      - onarqube
+    defaults:
+      run:
+        working-directory: ./veterans
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        run: |
+          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "$VERCEL_CLI_TOKEN" ] || [ -z "$PRODUCTION_DATABASE_URL" ]; then
+            echo "::error::Required secrets VERCEL_ORG_ID, VERCEL_PROJECT_ID, VERCEL_CLI_TOKEN and PRODUCTION_DATABASE_URL must be set"
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.18.2'
+          cache: 'npm'
+          cache-dependency-path: './veterans/package-lock.json'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Keystone dev with timeout
+        run: |
+          timeout 30s sh -c '
+            npx keystone dev & PID=$!
+            while ! nc -z localhost 3000; do
+              if ! kill -0 $PID 2>/dev/null; then
+                echo "Keystone process died"
+                exit 1
+              fi
+              sleep 1
+            done
+            echo "Keystone is running."
+            kill $PID
+          ' || (echo "Keystone failed to start"; exit 1)
+
+      - name: Pull Vercel Environment
+        run: |
+          npx vercel pull --yes --environment=preview --token="$VERCEL_CLI_TOKEN"
+          echo "Vercel Environment pulled successfully."
+
+      - name: Build project
+        run: vercel build --yes --token="$VERCEL_CLI_TOKEN"
+        timeout-minutes: 10
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          if ! DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN"); then
+            echo "::error::Deployment failed"
+            exit 1
+          fi
+          echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
+        timeout-minutes: 10
+
+      - name: Check if DEPLOYMENT_URL is set
+        run: |
+          if [ -z "${{ env.DEPLOYMENT_URL }}" ]; then
+            echo "::error::DEPLOYMENT_URL is not set. This might be due to:"
+            echo "1. Failed Vercel deployment"
+            echo "2. Missing or invalid VERCEL_CLI_TOKEN"
+            echo "3. Network connectivity issues"
+            echo "Please check the deployment logs above for more details."
+            exit 1
+          else
+            echo "DEPLOYMENT_URL is set to: ${{ env.DEPLOYMENT_URL }}"
+          fi

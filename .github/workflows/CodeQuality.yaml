@@ -1,8 +1,11 @@
 name: CodeQuality
 
+# on:
+#   pull_request:
+#     types: [synchronize, opened, reopened]
+
 on:
-  pull_request:
-    types: [synchronize, opened, reopened]
+  workflow_dispatch:
 
 jobs:
   docker-lint:
