@@ -148,8 +148,8 @@ jobs:
         run: npm ci
         working-directory: ./veterans
 
-      - name: Run Keystone build
-        run: npm run keystone:prod:build
+      - name: Run Keystone test build
+        run: npm run keystone:test:build
         working-directory: ./veterans
 
       - name: Clean node_modules/.prisma
