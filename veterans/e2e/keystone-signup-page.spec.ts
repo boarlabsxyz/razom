@@ -60,8 +60,6 @@ test.describe('Keystone Signup page', () => {
       await expect(page.getByRole('group')).toContainText(
         'Password is required',
       );
-    } else {
-      console.log('User is authorized; skipping signup validation test.');
     }
   });
 });
