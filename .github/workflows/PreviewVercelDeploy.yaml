@@ -114,9 +114,9 @@ jobs:
   preview-deployment:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    environment:
-      name: preview
-      url: ${{ steps.deploy.outputs.url }}
+    # environment:
+    #   name: preview
+    #   url: ${{ steps.deploy.outputs.url }}
 
     needs:
       - lint
@@ -185,8 +185,13 @@ jobs:
             exit 1
           fi
           echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
-        timeout-minutes: 10
+          echo "url=${DEPLOYMENT_URL}" >> $GITHUB_OUTPUT
         working-directory: ./veterans
+
+      - name: Set preview environment
+        environment:
+          name: preview
+          url: ${{ steps.deploy.outputs.url }}
 
       - name: Check if DEPLOYMENT_URL is set
         run: |
