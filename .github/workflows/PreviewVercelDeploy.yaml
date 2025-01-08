@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Lint Dockerfile.keystone
         run: docker run --rm -i hadolint/hadolint < Dockerfile.keystone
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create .env file
         run: echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
@@ -184,25 +184,6 @@ jobs:
             echo "::error::Deployment failed"
             exit 1
           fi
-          echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
-          echo "Preview URL: $DEPLOY_URL"
+          echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
+          echo "Preview URL: $DEPLOYMENT_URL"
         working-directory: ./veterans
-
-      # - name: Set preview environment
-      #   environment:
-      #     name: preview
-      #     url: ${{ steps.deploy.outputs.url }}
-
-      # - name: Check if DEPLOYMENT_URL is set
-      #   run: |
-      #     if [ -z "${{ env.DEPLOYMENT_URL }}" ]; then
-      #       echo "::error::DEPLOYMENT_URL is not set. This might be due to:"
-      #       echo "1. Failed Vercel deployment"
-      #       echo "2. Missing or invalid VERCEL_CLI_TOKEN"
-      #       echo "3. Network connectivity issues"
-      #       echo "Please check the deployment logs above for more details."
-      #       exit 1
-      #     else
-      #       echo "url=${{ env.DEPLOYMENT_URL }}" >> $GITHUB_OUTPUT
-      #       echo "DEPLOYMENT_URL is set to: ${{ env.DEPLOYMENT_URL }}"
-      #     fi
