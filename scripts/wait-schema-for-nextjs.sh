@@ -5,4 +5,3 @@ while [ ! -f /usr/src/app/shared/schema.prisma ]; do
     sleep 5
 done
 echo "schema.prisma found!"
-

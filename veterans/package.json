@@ -9,8 +9,9 @@
     "keystone:prod:start": "NODE_ENV=production keystone start",
     "start": "next start --port 8000",
     "next:dev": "next dev --port 8000",
-    "next:build": "next build",
-    "build": "keystone build --no-ui && next build",
+    "build": "next build",
+    "next:prod:build": "NODE_ENV=production next build",
+    "next:prod:start": "NODE_ENV=production next start",
     "test": "jest",
     "lint": "eslint .",
     "test:e2e": "playwright test",
@@ -26,7 +27,7 @@
     "dotenv": "^16.4.7",
     "graphql": "^16.9.0",
     "graphql-yoga": "^5.10.5",
-    "next": "^15.0.3"
+    "next": "^14.2.18"
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",
@@ -48,6 +49,8 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "jest-fetch-mock": "^3.0.3",
+    "node-mocks-http": "^1.16.2",
     "prettier": "^3.3.3",
     "ts-jest": "^29.2.5",
     "typescript": "^5.6.3",
