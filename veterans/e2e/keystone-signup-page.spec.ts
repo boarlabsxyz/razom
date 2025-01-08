@@ -14,7 +14,6 @@ test.describe('Keystone Signup page', () => {
     const authorized = await isUserAuthorized(page);
 
     if (!authorized) {
-      // Test for unauthenticated users
       await expect(page).toHaveURL('/init');
       await expect(
         page.getByRole('heading', { name: 'Welcome to KeystoneJS' }),
