@@ -117,6 +117,7 @@ jobs:
     environment:
       name: preview
       url: ${{ steps.deploy.outputs.url }}
+
     needs:
       - lint
       - unit-tests
@@ -197,5 +198,6 @@ jobs:
             echo "Please check the deployment logs above for more details."
             exit 1
           else
+            echo "url=${{ env.DEPLOYMENT_URL }}" >> $GITHUB_OUTPUT
             echo "DEPLOYMENT_URL is set to: ${{ env.DEPLOYMENT_URL }}"
           fi
