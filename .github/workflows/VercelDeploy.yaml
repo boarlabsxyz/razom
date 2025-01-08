@@ -15,10 +15,6 @@ jobs:
     name: Deploy Preview
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./veterans
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -39,21 +35,22 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: ./veterans
 
-      - name: Run Keystone dev with timeout
-        run: |
-          timeout 30s sh -c '
-            npx keystone dev & PID=$!
-            while ! nc -z localhost 3000; do
-              if ! kill -0 $PID 2>/dev/null; then
-                echo "Keystone process died"
-                exit 1
-              fi
-              sleep 1
-            done
-            echo "Keystone is running."
-            kill $PID
-          ' || (echo "Keystone failed to start"; exit 1)
+      - name: Run Keystone build
+        run: npm run keystone:prod:build
+        working-directory: ./veterans
+
+      - name: Clean node_modules/.prisma
+        run: rm -rf node_modules/.prisma
+        working-directory: ./veterans
+
+      - name: Add binaryTargets to schema.prisma
+        run: node scripts/add-binary-targets.js
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+        working-directory: ./veterans
 
       - name: Pull Vercel Environment
         run: |
@@ -61,18 +58,26 @@ jobs:
           echo "Vercel Environment pulled successfully."
 
       - name: Build project
-        run: vercel build --yes --token="$VERCEL_CLI_TOKEN"
+        run: npx vercel build --yes --token="$VERCEL_CLI_TOKEN"
         timeout-minutes: 10
+        working-directory: ./veterans
+
+      - name: Copy Prisma binaries to Vercel deployment output
+        run: |
+          mkdir -p .vercel/output/functions/api/posts.func/node_modules/.prisma/client/
+          cp -r node_modules/.prisma/client/* .vercel/output/functions/api/posts.func/node_modules/.prisma/client/
+        working-directory: ./veterans
 
       - name: Deploy to Vercel
         id: deploy
         run: |
-          if ! DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN"); then
+          if ! DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN"); then
             echo "::error::Deployment failed"
             exit 1
           fi
           echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
         timeout-minutes: 10
+        working-directory: ./veterans
 
       - name: Check if DEPLOYMENT_URL is set
         run: |
