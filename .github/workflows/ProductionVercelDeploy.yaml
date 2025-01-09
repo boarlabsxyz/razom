@@ -199,4 +199,19 @@ jobs:
             echo "::error::Deployment failed"
             exit 1
           fi
+          echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
+        timeout-minutes: 10
         working-directory: ./veterans
+
+      - name: Check if DEPLOYMENT_URL is set
+        run: |
+          if [ -z "${{ env.DEPLOYMENT_URL }}" ]; then
+            echo "::error::DEPLOYMENT_URL is not set. This might be due to:"
+            echo "1. Failed Vercel deployment"
+            echo "2. Missing or invalid VERCEL_CLI_TOKEN"
+            echo "3. Network connectivity issues"
+            echo "Please check the deployment logs above for more details."
+            exit 1
+          else
+            echo "DEPLOYMENT_URL is set to: ${{ env.DEPLOYMENT_URL }}"
+          fi
