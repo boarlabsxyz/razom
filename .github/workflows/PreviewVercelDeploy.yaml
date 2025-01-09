@@ -151,14 +151,26 @@ jobs:
         working-directory: ./veterans
 
       - name: Clean node_modules/.prisma
-        run: rm -rf node_modules/.prisma
+        run: |
+          if [ -d "node_modules/.prisma" ]; then
+            rm -rf node_modules/.prisma
+            echo "Cleaned .prisma directory"
+          fi
         working-directory: ./veterans
 
       - name: Add binaryTargets to schema.prisma
-        run: node scripts/add-binary-targets.js
+        run: |
+          if ! node scripts/add-binary-targets.js; then
+            echo "::error::Failed to add binary targets to schema.prisma"
+            exit 1
+          fi
 
       - name: Generate Prisma Client
-        run: npx prisma generate
+        run: |
+          if ! npx prisma generate; then
+            echo "::error::Failed to generate Prisma Client"
+            exit 1
+          fi
         working-directory: ./veterans
 
       - name: Pull Vercel Environment
@@ -173,8 +185,17 @@ jobs:
 
       - name: Copy Prisma binaries to Vercel deployment output
         run: |
-          mkdir -p .vercel/output/functions/api/posts.func/node_modules/.prisma/client/
-          cp -r node_modules/.prisma/client/* .vercel/output/functions/api/posts.func/node_modules/.prisma/client/
+          DEST_DIR=".vercel/output/functions/api/posts.func/node_modules/.prisma/client/"
+          if [ ! -d "node_modules/.prisma/client/" ]; then
+            echo "::error::Source Prisma client directory not found"
+            exit 1
+          fi
+          mkdir -p "$DEST_DIR"
+          if ! cp -r node_modules/.prisma/client/* "$DEST_DIR"; then
+            echo "::error::Failed to copy Prisma binaries"
+            exit 1
+          fi
+          echo "Successfully copied Prisma binaries to deployment output"
         working-directory: ./veterans
 
       - name: Deploy to Vercel
