@@ -1,5 +1,7 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import st from './page.module.css';
-import { keystoneContext } from '../../keystone/context';
 
 type Post = {
   id: string;
@@ -20,36 +22,52 @@ type ProcessedPost = {
   content: string | null;
 };
 
-export default async function HomePage() {
-  const posts = Array.from(
-    await keystoneContext.query.Post.findMany({
-      query: `
-      id
-      title
-      content {
-        document
-      }
-    `,
-    }),
-  ) as Post[];
+export default function HomePage() {
+  const [processedPosts, setProcessedPosts] = useState<ProcessedPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const processedPosts: ProcessedPost[] = posts.map((post) => {
-    try {
-      return {
-        ...post,
-        content:
-          post.content?.document
-            .map((paragraph) =>
-              paragraph.children.map((child) => child.text).join(' '),
-            )
-            .join('\n') ?? null,
-      };
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(`Error processing post ${post.id}:`, error);
-      return { ...post, content: null };
+  useEffect(() => {
+    async function fetchPosts() {
+      try {
+        const response = await fetch('/api/posts');
+        if (!response.ok) {
+          throw new Error('Failed to fetch posts');
+        }
+        const posts: Post[] = await response.json();
+
+        const processed = posts.map((post) => {
+          try {
+            return {
+              ...post,
+              content:
+                post.content?.document
+                  .map((paragraph) =>
+                    paragraph.children.map((child) => child.text).join(' '),
+                  )
+                  .join('\n') ?? null,
+            };
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error(`Error processing post ${post.id}:`, error);
+            return { ...post, content: null };
+          }
+        });
+
+        setProcessedPosts(processed);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error fetching posts:', error);
+      } finally {
+        setLoading(false);
+      }
     }
-  });
+
+    fetchPosts();
+  }, []);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <main className={st.container}>

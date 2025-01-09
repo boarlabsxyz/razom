@@ -2,11 +2,12 @@ import { config } from '@keystone-6/core';
 import 'dotenv/config';
 
 import { lists } from './schema';
+import { TypeInfo } from '.keystone/types';
 
 import { withAuth, session } from './auth';
 
 export default withAuth(
-  config({
+  config<TypeInfo>({
     db: {
       provider: 'postgresql',
       url: (() => {
