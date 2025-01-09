@@ -5,6 +5,7 @@
   "scripts": {
     "keystone:dev": "keystone dev",
     "keystone:build": "keystone build",
+    "keystone:test:build": "NODE_ENV=test keystone build",
     "keystone:prod:build": "NODE_ENV=production keystone build",
     "keystone:prod:start": "NODE_ENV=production keystone start",
     "start": "next start --port 8000",
