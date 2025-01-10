@@ -15,6 +15,12 @@
   margin-right: auto;
 }
 
+@media (max-width: 640px) {
+  .content {
+    height: 80px;
+  }
+}
+
 .bannerContainer {
   width: 146px;
   height: 34px;
