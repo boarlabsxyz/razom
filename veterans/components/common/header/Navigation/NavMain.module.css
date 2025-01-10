@@ -54,3 +54,133 @@
 .active::after {
   transform: scaleX(1);
 }
+
+.wrapper,
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mobileMenuButton {
+  display: none;
+}
+
+.modalImg {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .wrapper {
+    width: 34px;
+    justify-content: flex-end;
+  }
+
+  .navList {
+    flex-direction: column;
+  }
+
+  .modalImg {
+    display: block;
+  }
+
+  .content {
+    height: 0;
+    transition: height 1s ease-in-out;
+    overflow: hidden;
+    z-index: -1;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 80px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    background-color: #f8fafb;
+    width: 100vw;
+    justify-content: flex-end;
+    justify-content: center;
+    gap: 80px;
+  }
+
+  .mobileMenuButton {
+    display: block;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    text-align: inherit;
+    outline: none;
+    appearance: none;
+
+    height: 32px;
+    width: 32px;
+    position: relative;
+    transform: rotate(0deg);
+    transition: 0.5s ease-in-out;
+    cursor: pointer;
+  }
+
+  .mobileMenuButton span {
+    display: block;
+    position: absolute;
+    height: 2px;
+    width: 22px;
+    background-color: #0f172a;
+    border-radius: 1px;
+    opacity: 1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(0deg);
+    transition: 0.5s ease-in-out;
+  }
+
+  .mobileMenuButton span:nth-child(1) {
+    transform: translate(-50%, calc(-50% - 6px));
+  }
+
+  .mobileMenuButton span:nth-child(2) {
+    transform: translate(-50%, -50%);
+  }
+
+  .mobileMenuButton span:nth-child(3) {
+    transform: translate(-50%, calc(-50% + 6px));
+  }
+
+  .mobileMenuIsOpen {
+    .content {
+      height: calc(100vh - 80px);
+    }
+
+    .mobileMenuButton span:nth-child(1) {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      width: 22px;
+    }
+
+    .mobileMenuButton span:nth-child(2) {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      width: 22px;
+    }
+
+    .mobileMenuButton span:nth-child(3) {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      width: 22px;
+    }
+
+    .mobileMenuButton span:nth-child(4) {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      width: 0;
+    }
+  }
+}
