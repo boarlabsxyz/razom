@@ -3,6 +3,7 @@ import 'dotenv/config';
 
 import { lists } from './schema';
 import { TypeInfo } from '.keystone/types';
+import { seedDemoData } from './scripts/seedDemoData';
 
 import { withAuth, session } from './auth';
 
@@ -35,6 +36,9 @@ export default withAuth(
             return process.env.DEVELOPMENT_DATABASE_URL;
         }
       })(),
+      onConnect: async (context) => {
+        await seedDemoData(context);
+      },
     },
     lists,
     session,
