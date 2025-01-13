@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import st from './NavMain.module.css';
+import NavMenu from '../../NavMenu/NavMenu';
 
 const pages = {
   goal: 'Мета',
@@ -15,27 +15,7 @@ const pages = {
 function NavMain() {
   const pathname = usePathname();
 
-  return (
-    <nav className={st.navContainer} aria-label="Main navigation">
-      <ul className={st.navList}>
-        {Object.entries(pages).map(([key, value]) => {
-          const isActive = pathname === `/${key}`;
-          return (
-            <li key={key} data-cy={`${key}-header-link`}>
-              <Link
-                href={`/${key}`}
-                prefetch={false}
-                className={`${st.link} ${isActive ? st.active : ''}`}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                {value}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
-  );
+  return <NavMenu pages={pages} pathname={pathname} st={st} />;
 }
 
 export default NavMain;

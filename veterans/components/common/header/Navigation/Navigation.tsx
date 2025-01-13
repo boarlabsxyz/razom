@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, ElementRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import NavMain from './NavMain';
 import st from './NavMain.module.css';
@@ -17,16 +17,15 @@ export default function Navigation({
   name = 'modal_logo',
   height = 34,
 }: BannerProps) {
-  const menuRef = useRef<ElementRef<'div'> | null>(null);
-  const buttonRef = useRef<ElementRef<'button'> | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
     const onClick = () => {
-      if (menuRef.current) {
-        menuRef.current.classList.toggle(`${st.mobileMenuIsOpen}`);
-        document.body.classList.toggle('no-scroll');
-      }
+      setIsMenuOpen((prev) => !prev);
+      document.body.classList.toggle('no-scroll', !isMenuOpen);
     };
 
     const menuButtonRef = buttonRef.current;
@@ -40,17 +39,18 @@ export default function Navigation({
         menuButtonRef.removeEventListener('click', onClick);
       }
     };
-  }, []);
+  }, [isMenuOpen]);
 
   useEffect(() => {
-    if (menuRef.current) {
-      menuRef.current.classList.toggle(`${st.mobileMenuIsOpen}`);
-      document.body.classList.toggle('no-scroll');
-    }
+    setIsMenuOpen(false);
+    document.body.classList.remove('no-scroll');
   }, [pathname]);
 
   return (
-    <div ref={menuRef} className={st.wrapper}>
+    <div
+      ref={menuRef}
+      className={`${st.wrapper} ${isMenuOpen ? st.mobileMenuIsOpen : ''}`}
+    >
       <button
         ref={buttonRef}
         className={st.mobileMenuButton}
