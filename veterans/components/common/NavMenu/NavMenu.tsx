@@ -9,7 +9,7 @@ export interface NavigationMenuProps {
 
 export default function NavMenu({ pages, pathname, st }: NavigationMenuProps) {
   return (
-    <nav className={st.navContainer} aria-label="Main navigation">
+    <nav className={st.navContainer} aria-label="Menu navigation">
       <ul className={st.navList}>
         {Object.entries(pages).map(([key, value]) => {
           const isActive = pathname === `/${key}`;

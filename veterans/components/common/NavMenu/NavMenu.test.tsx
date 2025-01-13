@@ -47,7 +47,7 @@ describe('NavMenu', () => {
   it('does not set any link as active if pathname is null', () => {
     render(<NavMenu pages={mockPages} pathname={null} st={mockStyles} />);
 
-    Object.entries(mockPages).forEach(([_, value]) => {
+    Object.entries(mockPages).forEach(([, value]) => {
       const link = screen.getByText(value);
       expect(link).not.toHaveClass(mockStyles.active);
       expect(link).not.toHaveAttribute('aria-current');
