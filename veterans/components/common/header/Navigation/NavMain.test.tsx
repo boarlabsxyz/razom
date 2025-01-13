@@ -17,7 +17,7 @@ jest.mock('../../NavMenu/NavMenu', () => {
         {Object.entries(pages).map(([key, value]) => {
           const isActive = pathname === `/${key}`;
           return (
-            <li key={key} data-cy={`${key}-header-link`}>
+            <li key={key} data-cy={`${key}-navMenu-link`}>
               <a
                 href={`/${key}`}
                 className={`${st.link} ${isActive ? st.active : ''}`}
@@ -84,9 +84,9 @@ describe('NavMain Component', () => {
     render(<NavMain />);
 
     Object.keys(mockPages).forEach((key) => {
-      const element = document.querySelector(`[data-cy="${key}-header-link"]`);
+      const element = document.querySelector(`[data-cy="${key}-navMenu-link"]`);
       expect(element).toBeInTheDocument();
-      expect(element).toHaveAttribute('data-cy', `${key}-header-link`);
+      expect(element).toHaveAttribute('data-cy', `${key}-navMenu-link`);
     });
   });
 

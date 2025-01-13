@@ -14,7 +14,7 @@ export default function NavMenu({ pages, pathname, st }: NavigationMenuProps) {
         {Object.entries(pages).map(([key, value]) => {
           const isActive = pathname === `/${key}`;
           return (
-            <li key={key} data-cy={`${key}-header-link`}>
+            <li key={key} data-cy={`${key}-navMenu-link`}>
               <Link
                 href={`/${key}`}
                 prefetch={false}
