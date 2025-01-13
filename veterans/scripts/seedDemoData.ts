@@ -1,8 +1,9 @@
-import type { Context } from '../node_modules/.keystone/types';
+import { KeystoneContext } from '@keystone-6/core/types';
+import { TypeInfo } from '.keystone/types';
 
 import demoInitiatives from '../data/demoInitiatives';
 
-export async function seedDemoData(context: Context) {
+export async function seedDemoData(context: KeystoneContext<TypeInfo>) {
   if ((await context.db.Post.count()) > 0) {
     return;
   }
