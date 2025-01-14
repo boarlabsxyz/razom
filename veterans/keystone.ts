@@ -1,14 +1,14 @@
 import { config } from '@keystone-6/core';
+import type { BaseKeystoneTypeInfo } from '@keystone-6/core/types';
 import 'dotenv/config';
 
 import { lists } from './schema';
-import { TypeInfo } from '.keystone/types';
 import { seedDemoData } from './scripts/seedDemoData';
 
 import { withAuth, session } from './auth';
 
 export default withAuth(
-  config<TypeInfo>({
+  config<BaseKeystoneTypeInfo>({
     db: {
       provider: 'postgresql',
       url: (() => {
