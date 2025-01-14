@@ -70,6 +70,13 @@
   display: none;
 }
 
+.imgWrapper {
+  display: flex;
+  flex-direction: row;
+  max-width: 492px;
+  gap: 0;
+}
+
 @media (max-width: 1024px) {
   .wrapper {
     width: 34px;

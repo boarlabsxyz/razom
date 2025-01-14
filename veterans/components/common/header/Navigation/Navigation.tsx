@@ -14,7 +14,7 @@ type RazomProps = {
 type BannerProps = RazomProps;
 
 export default function Navigation({
-  name = 'modal_logo',
+  name = 'logotype',
   height = 34,
 }: BannerProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,6 +46,8 @@ export default function Navigation({
     document.body.classList.remove('no-scroll');
   }, [pathname]);
 
+  const images = Array.from({ length: 3 });
+
   return (
     <div
       ref={menuRef}
@@ -63,14 +65,19 @@ export default function Navigation({
       </button>
       <div className={st.content}>
         <NavMain />
-        <CustomImage
-          className={st.modalImg}
-          src={`/img/${name}.svg`}
-          alt={name}
-          width={492}
-          height={height}
-          priority
-        />
+        <div className={st.imgWrapper}>
+          {images.map((_, index) => (
+            <CustomImage
+              key={index}
+              className={st.modalImg}
+              src={`/img/logo/${name}.svg`}
+              alt={name}
+              width={492}
+              height={height}
+              priority
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
