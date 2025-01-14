@@ -3,11 +3,35 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 import { usePathname } from 'next/navigation';
+import { NavigationMenuProps } from '../../NavMenu/NavMenu';
 import NavMain from './NavMain';
 
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),
 }));
+
+jest.mock('../../NavMenu/NavMenu', () => {
+  return jest.fn(({ pages, pathname, st }: NavigationMenuProps) => (
+    <nav className={st.navContainer} aria-label="Main navigation">
+      <ul className={st.navList}>
+        {Object.entries(pages).map(([key, value]) => {
+          const isActive = pathname === `/${key}`;
+          return (
+            <li key={key} data-cy={`${key}-navMenu-link`}>
+              <a
+                href={`/${key}`}
+                className={`${st.link} ${isActive ? st.active : ''}`}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {value}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  ));
+});
 
 jest.mock('./NavMain.module.css', () => ({
   navContainer: 'navContainer',
@@ -60,11 +84,12 @@ describe('NavMain Component', () => {
     render(<NavMain />);
 
     Object.keys(mockPages).forEach((key) => {
-      const element = document.querySelector(`[data-cy="${key}-header-link"]`);
+      const element = document.querySelector(`[data-cy="${key}-navMenu-link"]`);
       expect(element).toBeInTheDocument();
-      expect(element).toHaveAttribute('data-cy', `${key}-header-link`);
+      expect(element).toHaveAttribute('data-cy', `${key}-navMenu-link`);
     });
   });
+
   it('supports keyboard navigation', async () => {
     const user = userEvent.setup();
     render(<NavMain />);
