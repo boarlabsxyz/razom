@@ -1,7 +1,6 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import Banner from '../../header/banner';
 import NavMenu from '../../NavMenu/NavMenu';
 
 import st from './FooterContent.module.css';
