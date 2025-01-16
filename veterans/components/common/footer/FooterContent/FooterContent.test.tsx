@@ -29,6 +29,6 @@ describe('FooterContent Component', () => {
         <div>{mockChildText}</div>
       </FooterContent>,
     );
-    expect(screen.getByText('Developed by BoarLabz')).toBeInTheDocument();
+    expect(screen.getByText('Developed by BoarLabs')).toBeInTheDocument();
   });
 });
