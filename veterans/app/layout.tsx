@@ -1,8 +1,12 @@
 import React from 'react';
 import { Lato, Golos_Text } from 'next/font/google';
+
 import Header from '../components/common/header/Header';
 import Banner from '../components/common/header/banner';
 import HeaderContent from '../components/common/header/HeaderContent/HeaderContent';
+import Footer from '../components/common/footer/Footer';
+import FooterContent from '../components/common/footer/FooterContent/FooterContent';
+
 import '../styles/global.css';
 
 const lato = Lato({
@@ -40,6 +44,11 @@ export default function RootLayout({
           </HeaderContent>
         </Header>
         <main>{children}</main>
+        <Footer>
+          <FooterContent>
+            <Banner name="logotype" height={34} />
+          </FooterContent>
+        </Footer>
       </body>
     </html>
   );
