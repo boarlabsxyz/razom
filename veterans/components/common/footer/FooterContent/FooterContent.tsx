@@ -25,7 +25,7 @@ function FooterContent({ children }: FooterContentProps) {
         <NavMenu pages={pages} pathname={pathname} st={st} />
       </div>
       <div className={st.footerBottom} data-testid="footer-devs">
-        <p className={st.footerDevs}> Developed by BoarLabz</p>
+        <p className={st.footerDevs}> Developed by BoarLabs</p>
       </div>
     </div>
   );
