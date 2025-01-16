@@ -9,14 +9,22 @@ jest.mock('next/navigation', () => ({
 
 describe('FooterContent Component', () => {
   it('renders all elements correctly', () => {
-    render(<FooterContent />);
+    const mockChildText = 'This is a child element';
+
+    render(<FooterContent>
+      <div>{mockChildText}</div>
+    </FooterContent>);
     expect(screen.getByTestId('footer')).toBeInTheDocument();
     expect(screen.getByTestId('footerContainer')).toBeInTheDocument();
     expect(screen.getByTestId('footer-devs')).toBeInTheDocument();
   });
 
   it('displays the correct footer text', () => {
-    render(<FooterContent />);
+    const mockChildText = 'This is a child element';
+    
+    render(<FooterContent>
+      <div>{mockChildText}</div>
+    </FooterContent>);
     expect(screen.getByText('Developed by BoarLabz')).toBeInTheDocument();
   });
 });
