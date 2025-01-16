@@ -23,7 +23,6 @@ function FooterContent({ children }: FooterContentProps) {
     <div className={st.footerWrapper} data-testid="footer">
       <div className={st.footerContainer} data-testid="footerContainer">
         {children}
-        <Banner name="logotype" height={34}></Banner>
         <NavMenu pages={pages} pathname={pathname} st={st} />
       </div>
       <div className={st.footerBottom} data-testid="footer-devs">
