@@ -70,7 +70,7 @@ Before you begin, ensure you have met the following requirements:
 
    - Implement issue.
    - Keep PR as small as possible.
-   - Create several PRs if issue requires significan changes.
+   - Create several PRs if issue requires significant changes.
    - Ensure your code adheres to the project's coding standards and guidelines.
 
 4. **Create a Pull Request (PR):**
