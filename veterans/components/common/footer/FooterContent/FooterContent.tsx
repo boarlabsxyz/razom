@@ -1,9 +1,9 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-import NavMenu from '../../NavMenu/NavMenu';
-
 import st from './FooterContent.module.css';
+
+import { usePathname } from 'next/navigation';
+import NavMenu from '@comComps/NavMenu';
 
 const pages = {
   about_us: 'Про нас',

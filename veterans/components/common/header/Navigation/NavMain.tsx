@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import st from './NavMain.module.css';
-import NavMenu from '../../NavMenu/NavMenu';
+import NavMenu from '@comComps/NavMenu';
 
 const pages = {
   goal: 'Мета',

@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { render, screen, act } from '@testing-library/react';
 import Header from './Header';
 
-jest.mock('../container', () => ({
+jest.mock('@comComps/container', () => ({
   __esModule: true,
   default: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>

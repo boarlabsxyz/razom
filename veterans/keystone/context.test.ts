@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as PrismaModule from '.prisma/client';
-import config from '../keystone';
+import config from 'keystone';
 
 jest.mock('@keystone-6/core/context', () => ({
   getContext: jest.fn(),
@@ -8,7 +8,7 @@ jest.mock('@keystone-6/core/context', () => ({
 
 jest.mock('.prisma/client', () => ({}));
 
-jest.mock('../keystone', () => ({}));
+jest.mock('keystone', () => ({}));
 
 describe('keystoneContext', () => {
   let originalKeystoneContext: any;

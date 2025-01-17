@@ -1,10 +1,10 @@
 'use client';
 
 import { FC, useEffect, useRef } from 'react';
-import { throttle } from '../../../helpers/throttle';
 
 import st from './Header.module.css';
-import Container from '../container';
+import { throttle } from '@helpers/throttle';
+import Container from '@comComps/container';
 
 type Props = {
   children: React.ReactElement;

@@ -1,13 +1,12 @@
 import React from 'react';
 import { Lato, Golos_Text } from 'next/font/google';
 
-import Header from '../components/common/header/Header';
-import Banner from '../components/common/header/banner';
-import HeaderContent from '../components/common/header/HeaderContent/HeaderContent';
-import Footer from '../components/common/footer/Footer';
-import FooterContent from '../components/common/footer/FooterContent/FooterContent';
-
-import '../styles/global.css';
+import 'styles/global.css';
+import Header from '@comComps/header/Header';
+import HeaderContent from '@comComps/header/HeaderContent';
+import Banner from '@comComps/header/banner';
+import Footer from '@comComps/footer/Footer';
+import FooterContent from '@comComps/footer/FooterContent';
 
 const lato = Lato({
   weight: ['300', '400', '700'],

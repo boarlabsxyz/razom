@@ -1,4 +1,4 @@
-import { keystoneContext } from '../../keystone/context';
+import { keystoneContext } from 'keystone/context';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(

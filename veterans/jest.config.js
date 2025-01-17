@@ -34,6 +34,11 @@ module.exports = {
   moduleNameMapper: {
     '\\.css$': 'identity-obj-proxy',
     '\\.module\\.css$': 'identity-obj-proxy',
+    '^@helpers/(.*)$': '<rootDir>/helpers/$1',
+    '^@comComps/(.*)$': '<rootDir>/components/common/$1',
+    '^@comps/(.*)$': '<rootDir>/components/$1',
+    '^keystone/context$': '<rootDir>/keystone/context',
+    '^keystone$': '<rootDir>/keystone',
   },
   testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
 };
