@@ -75,18 +75,22 @@ export default function HomePage() {
   return (
     <Container>
       <main className={st.wrapper}>
-        <div>
-          <ul>
-            {processedPosts.map((post) => (
-              <li key={post.id}>
-                <div>
-                  <h3>{post.title}</h3>
-                  <p>{post.content}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <section aria-label="Blog initiatives">
+          {processedPosts.length === 0 ? (
+            <p>No initiatives available at the moment.</p>
+          ) : (
+            <ul>
+              {processedPosts.map((post) => (
+                <li key={post.id}>
+                  <article>
+                    <h3>{post.title}</h3>
+                    <p>{post.content}</p>
+                  </article>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </main>
     </Container>
   );
