@@ -7,7 +7,7 @@ afterEach(() => {
   cleanup();
 });
 
-jest.mock('../container', () => ({
+jest.mock('@comComps/container', () => ({
   __esModule: true,
   default: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>

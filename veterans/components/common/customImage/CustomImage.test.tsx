@@ -2,9 +2,9 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import CustomImage from './CustomImage';
-import getImageQuality from '../../../helpers/getImageQuality';
+import getImageQuality from '@helpers/getImageQuality';
 
-jest.mock('../../../helpers/getImageQuality', () => jest.fn());
+jest.mock('@helpers/getImageQuality', () => jest.fn());
 
 describe('CustomImage Component', () => {
   it('renders correctly with provided props', () => {

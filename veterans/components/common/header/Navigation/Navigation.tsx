@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import NavMain from './NavMain';
+
 import st from './NavMain.module.css';
-import CustomImage from '../../customImage/CustomImage';
+
+import NavMain from './NavMain';
+import CustomImage from '@comComps/customImage';
 
 type RazomProps = {
   name?: string;

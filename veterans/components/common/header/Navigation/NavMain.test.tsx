@@ -3,14 +3,14 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 import { usePathname } from 'next/navigation';
-import { NavigationMenuProps } from '../../NavMenu/NavMenu';
 import NavMain from './NavMain';
+import { NavigationMenuProps } from '@comComps/NavMenu/NavMenu';
 
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),
 }));
 
-jest.mock('../../NavMenu/NavMenu', () => {
+jest.mock('@comComps/NavMenu', () => {
   return jest.fn(({ pages, pathname, st }: NavigationMenuProps) => (
     <nav className={st.navContainer} aria-label="Main navigation">
       <ul className={st.navList}>

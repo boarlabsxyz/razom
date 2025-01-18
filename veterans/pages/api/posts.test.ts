@@ -2,9 +2,9 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { createMocks } from 'node-mocks-http';
 import handler from './posts';
-import { keystoneContext } from '../../keystone/context';
+import { keystoneContext } from 'keystone/context';
 
-jest.mock('../../keystone/context', () => ({
+jest.mock('keystone/context', () => ({
   keystoneContext: {
     query: {
       Post: {

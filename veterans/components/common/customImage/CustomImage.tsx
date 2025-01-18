@@ -1,5 +1,5 @@
 import Image, { ImageProps } from 'next/image';
-import getImageQuality from '../../../helpers/getImageQuality';
+import getImageQuality from '@helpers/getImageQuality';
 
 interface CustomImageProps extends Omit<ImageProps, 'quality'> {
   alt: string;

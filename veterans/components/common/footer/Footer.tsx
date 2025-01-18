@@ -1,9 +1,9 @@
 'use client';
 
 import { FC } from 'react';
-import Container from '../container';
 
 import st from './Footer.module.css';
+import Container from '@comComps/container';
 
 type Props = {
   children: React.ReactElement;

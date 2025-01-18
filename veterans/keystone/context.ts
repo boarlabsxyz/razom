@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getContext } from '@keystone-6/core/context';
-import config from '../keystone';
+import config from 'keystone';
 // import { Context } from '.keystone/types';
 import * as PrismaModule from '.prisma/client';
 
