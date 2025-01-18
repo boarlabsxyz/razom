@@ -1,7 +1,8 @@
-.container {
+.wrapper {
+  padding: 80px 40px;
+}
+.wrapper ul {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 1024px;
-  margin-top: 200px;
+  flex-direction: column;
+  gap: 20px;
 }
