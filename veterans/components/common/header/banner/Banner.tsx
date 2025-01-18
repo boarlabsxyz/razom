@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
-import CustomImage from '../../customImage';
-import st from '../Header.module.css';
+import st from '@comComps/header/Header.module.css';
+import CustomImage from '@comComps/customImage';
 
 type RazomProps = {
   name: 'logotype';

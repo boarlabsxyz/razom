@@ -1,5 +1,11 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@comComps/*": ["components/common/*"],
+      "@comps/*": ["components/*"],
+      "@helpers/*": ["helpers/*"]
+    },
     "jsx": "preserve",
     "target": "esnext",
     "module": "commonjs",

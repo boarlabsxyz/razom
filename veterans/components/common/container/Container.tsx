@@ -1,7 +1,7 @@
 import { FC, ReactElement } from 'react';
 
-import concatClassNames from '../../../helpers/concatClassNames';
 import styles from './Container.module.css';
+import concatClassNames from '@helpers/concatClassNames';
 
 interface IProps {
   children: ReactElement | ReactElement[];

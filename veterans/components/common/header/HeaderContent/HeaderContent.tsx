@@ -1,5 +1,5 @@
-import st from '../Header.module.css';
-import Navigation from '../Navigation/Navigation';
+import st from '@comComps/header/Header.module.css';
+import Navigation from '@comComps/header/Navigation';
 
 type HeaderContentProps = {
   children: React.ReactNode;

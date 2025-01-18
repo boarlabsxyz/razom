@@ -1,11 +1,13 @@
-import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
-import Banner from './Banner';
-import CustomImage from '../../customImage';
-import { LinkProps } from 'next/link';
 import React from 'react';
 
-jest.mock('../../customImage', () =>
+import { LinkProps } from 'next/link';
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
+
+import Banner from './Banner';
+import customImage from '@comComps/customImage';
+
+jest.mock('@comComps/customImage', () =>
   jest.fn(() => <div data-testid="custom-image" />),
 );
 
@@ -20,7 +22,7 @@ jest.mock('next/link', () => {
   };
 });
 
-jest.mock('../Header.module.css', () => ({
+jest.mock('@comComps/header/Header.module.css', () => ({
   bannerContainer: 'bannerContainer',
   bannerLink: 'bannerLink',
 }));
@@ -44,7 +46,7 @@ describe('Banner Component', () => {
   it('passes correct props to CustomImage', () => {
     render(<Banner {...mockProps} />);
 
-    expect(CustomImage).toHaveBeenCalledWith(
+    expect(customImage).toHaveBeenCalledWith(
       expect.objectContaining({
         src: '/img/logo/logotype.svg',
         alt: 'logotype',

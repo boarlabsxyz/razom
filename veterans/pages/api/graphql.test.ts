@@ -1,7 +1,7 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
 const mockWithRequest = jest.fn(() => ({ user: 'mock-user' }));
-jest.mock('../../keystone/context', () => {
+jest.mock('keystone/context', () => {
   const typeDefs = `
       type Query {
         _empty: String
@@ -19,7 +19,7 @@ jest.mock('../../keystone/context', () => {
   };
 });
 
-import { keystoneContext } from '../../keystone/context';
+import { keystoneContext } from 'keystone/context';
 import { config } from './graphql';
 
 describe('/api/graphql API handler', () => {
