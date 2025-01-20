@@ -1,6 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
+import Container from '@comComps/container';
+
 import st from './page.module.css';
 
 type Post = {
@@ -70,22 +73,25 @@ export default function HomePage() {
   }
 
   return (
-    <main className={st.container}>
-      <div>
-        <h1>Coming soon...</h1>
-        <p>The site is under construction</p>
-        <p>Test posts:</p>
-        <ul>
-          {processedPosts.map((post) => (
-            <li key={post.id}>
-              <div>
-                <h3>{post.title}</h3>
-                <p>{post.content}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </main>
+    <Container>
+      <main className={st.wrapper}>
+        <section aria-label="Blog initiatives">
+          {processedPosts.length === 0 ? (
+            <p>No initiatives available at the moment.</p>
+          ) : (
+            <ul>
+              {processedPosts.map((post) => (
+                <li key={post.id}>
+                  <article>
+                    <h3>{post.title}</h3>
+                    <p>{post.content}</p>
+                  </article>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </main>
+    </Container>
   );
 }
