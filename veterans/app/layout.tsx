@@ -27,6 +27,11 @@ export const metadata = {
   title: 'Razom for veterans',
   description:
     'Razom - portal for helping veterans get reintegrated into society',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/shortcut-icon.png',
+    apple: '/apple-icon.png',
+  },
 };
 
 export default function RootLayout({
