@@ -3,21 +3,20 @@ import { test, expect } from '@playwright/test';
 test('Snapshot for Home Page without Hero Section', async ({ page }) => {
   await page.goto('http://localhost:8000/');
 
-  const selector = '[data-test-id="blog-initiatives"]';
+  const heroSection = await page.waitForSelector(
+    'section[aria-label="Blog initiatives"]',
+    { timeout: 5000 },
+  );
 
-  try {
-    await page.waitForSelector(selector, { timeout: 5000 });
-
-    await page.evaluate((sel) => {
-      const hero = document.querySelector(sel);
-      hero?.remove();
-    }, selector);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.warn(`Hero section not found: ${error.message}`);
-    } else {
-      console.warn('An unknown error occurred');
-    }
+  if (heroSection) {
+    await page.evaluate(() => {
+      const hero = document.querySelector(
+        'section[aria-label="Blog initiatives"]',
+      );
+      if (hero) {
+        hero.remove();
+      }
+    });
   }
 
   await page.waitForLoadState('networkidle');
