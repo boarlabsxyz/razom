@@ -25,3 +25,4 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
 
   expect(snapshot).toMatchSnapshot('homepage-no-hero.png');
 });
+
