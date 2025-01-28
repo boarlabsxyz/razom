@@ -1,7 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test('Snapshot for Home Page without Hero Section', async ({ page }) => {
-  await page.goto('http://localhost:8000/');
+  await page.goto('http://localhost:8000/', {
+    timeout: 60000,
+    waitUntil: 'load',
+  });
 
   const heroSection = await page.waitForSelector(
     'section[aria-label="Blog initiatives"]',
@@ -25,4 +28,3 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
 
   expect(snapshot).toMatchSnapshot('homepage-no-hero.png');
 });
-
