@@ -1,20 +1,20 @@
 import { test, expect } from '@playwright/test';
 
 test('Snapshot for Home Page without Hero Section', async ({ page }) => {
-  await page.goto('http://localhost:8000/', {
+  await page.goto(process.env.BASE_URL || 'http://localhost:8000/', {
     timeout: 60000,
     waitUntil: 'load',
   });
 
   const heroSection = await page.waitForSelector(
-    'section[aria-label="Blog initiatives"]',
+    'section[data-test-id="blog-initiatives"]',
     { timeout: 5000 },
   );
 
   if (heroSection) {
     await page.evaluate(() => {
       const hero = document.querySelector(
-        'section[aria-label="Blog initiatives"]',
+        'section[data-test-id="blog-initiatives"]',
       );
       if (hero) {
         hero.remove();
@@ -22,8 +22,8 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
     });
   }
 
-  await page.waitForLoadState('networkidle');
-
+  await page.waitForLoadState('load');
+  await page.setViewportSize({ width: 1280, height: 720 });
   const snapshot = await page.screenshot({ fullPage: true });
 
   expect(snapshot).toMatchSnapshot('homepage-no-hero.png');
