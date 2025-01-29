@@ -19,5 +19,6 @@ schema.graphql
 schema.prisma
 .vercel
 
-e2e/screenshot-test.spec.ts-snapshots/
+/e2e/nextjs-test/screenshot-test.spec.ts-snapshots/
+
 
