@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 
 test('Snapshot for Home Page without Hero Section', async ({ page }) => {
   await page.goto(process.env.BASE_URL || 'http://localhost:8000/', {
@@ -24,7 +24,7 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
 
   await page.waitForLoadState('load');
   await page.setViewportSize({ width: 1280, height: 720 });
-  const snapshot = await page.screenshot({ fullPage: true });
+  await page.screenshot({ fullPage: true });
 
   // expect(snapshot).toMatchSnapshot('homepage-no-hero.png');
 });
