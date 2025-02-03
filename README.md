@@ -57,13 +57,13 @@ Before you begin, ensure you have met the following requirements:
 
 1. **Take an issue from GitHub:**
 
-   - Browse the [issues](https://github.com/boarlabsxyz/razom/issues) and select one to work on.
+   - Browse the issues on the [Current Sprint Board](https://github.com/orgs/boarlabsxyz/projects/1) in the "To Do" column and select one to work on.
    - Assign the issue to yourself to avoid duplication of work.
 
 2. **Create a new branch:**
 
    ```sh
-   git checkout -b feature/issue-<issue-number>-<short-description>
+   git checkout -b <issue-number>-<short-description>
    ```
 
 3. **Implement the changes:**
@@ -77,7 +77,7 @@ Before you begin, ensure you have met the following requirements:
 
    - Push your branch to the remote repository:
      ```sh
-     git push origin feature/issue-<issue-number>
+     git push origin <issue-number>-<short-description>
      ```
    - Open a PR against the `main` branch.
    - Provide a clear and concise description of the changes made.
@@ -92,4 +92,18 @@ Before you begin, ensure you have met the following requirements:
    - Address any feedback or requested changes.
    - Once approved, merge the PR into the `main` branch.
 
-For more detailed instructions, refer to the [documentation](./docs).
+## Changelog
+
+We use Semantic Versioning (SemVer) and track all changes in the [`CHANGELOG.md`](/CHANGELOG.md) file. Please refer to it for details about updates, new features, bug fixes, and other modifications.
+
+## Semantic Versioning (SemVer)
+
+Format: MAJOR.MINOR.PATCH
+
+- MAJOR: incremented for significant changes that are not backward compatible.
+- MINOR: incremented when new functionality is added that is backward compatible.
+- PATCH: incremented for bug fixes or minor changes.
+
+Example: 1.2.3 — the third patch of the second minor update of the first major version.
+
+The SemVer is updated in the `version` field of the `veterans/package.json` file.
