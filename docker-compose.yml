@@ -41,6 +41,7 @@ services:
       - shared-volume:/usr/src/app/shared
       - ./veterans/coverage:/usr/src/app/coverage
       - ./veterans/playwright-report:/usr/src/app/playwright-report
+      - ./veterans/e2e/nextjs-test:/usr/src/app/e2e/nextjs-test
     env_file:
       - ./veterans/.env
     develop:
