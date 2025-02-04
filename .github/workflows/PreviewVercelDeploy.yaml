@@ -64,6 +64,15 @@ jobs:
           echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> veterans/.env
 
+      - name: Download Playwright snapshots artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-snapshots
+          path: e2e/nextjs-test/screenshot-test.spec.ts-snapshots
+
+      - name: Verify downloaded snapshots
+        run: ls -la e2e/nextjs-test/screenshot-test.spec.ts-snapshots
+
       - name: Docker starts services
         run: docker compose up -d --build
 
