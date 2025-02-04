@@ -24,8 +24,10 @@ jobs:
       - name: Run Playwright tests (app-nextjs)
         run: docker compose exec app-nextjs sh -c "npm run test:e2e -- e2e/nextjs-test --update-snapshots"
 
+      - name: Copy snapshots from container
+        run: docker cp app-nextjs:/usr/src/app/e2e/nextjs-test/screenshot-test.spec.ts-snapshots e2e/nextjs-test/
+
       - name: Upload snapshots as new artifact
-        # if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-snapshots
