@@ -36,7 +36,7 @@ jobs:
       - name: Ensure e2e directory exists
         run: mkdir -p e2e/nextjs-test/
       - name: Copy snapshots from container
-        run: docker cp app-nextjs:/usr/src/app/e2e/nextjs-test/screenshot-test.spec.ts-snapshots e2e/nextjs-test/
+        run: docker cp razom-app-nextjs-1:/usr/src/app/e2e/nextjs-test/screenshot-test.spec.ts-snapshots e2e/nextjs-test/
       - name: Debug copied snapshots
         run: ls -R e2e/nextjs-test/
 
