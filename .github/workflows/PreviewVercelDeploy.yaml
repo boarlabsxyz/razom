@@ -118,7 +118,7 @@ jobs:
 
       - name: Copy snapshots to Docker container
         run: |
-          docker cp e2e/nextjs-test/screenshot-test.spec.ts-snapshots app-nextjs:/usr/src/app/e2e/nextjs-test/
+          docker cp e2e/nextjs-test/screenshot-test.spec.ts-snapshots razom-app-nextjs-1:/usr/src/app/e2e/nextjs-test/
 
       - name: Run Playwright tests (app-nextjs)
         run: |
