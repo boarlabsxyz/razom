@@ -110,17 +110,19 @@ jobs:
 
       - name: Run Playwright tests (app-keystone)
         run: |
-          docker compose exec app-keystone sh -c "npm run test:e2e -- e2e/keystone-test" \
-          || echo "TESTS_FAILED=true" >> $GITHUB_ENV
+          docker compose exec app-keystone sh -c "npm run test:e2e -- e2e/keystone-test" || echo "TESTS_FAILED=true" >> $GITHUB_ENV
         continue-on-error: true
 
       - name: Install Playwright Browsers (app-nextjs)
         run: docker compose exec app-nextjs npx playwright install --with-deps
 
+      - name: Copy snapshots to Docker container
+        run: |
+          docker cp e2e/nextjs-test/screenshot-test.spec.ts-snapshots app-nextjs:/usr/src/app/e2e/nextjs-test/
+
       - name: Run Playwright tests (app-nextjs)
         run: |
-          docker compose exec app-nextjs sh -c "npm run test:e2e -- e2e/nextjs-test" \
-          || echo "TESTS_FAILED=true" >> $GITHUB_ENV
+          docker compose exec app-nextjs sh -c "npm run test:e2e -- e2e/nextjs-test" || echo "TESTS_FAILED=true" >> $GITHUB_ENV
         continue-on-error: true
 
       - uses: actions/upload-artifact@v4
@@ -131,7 +133,7 @@ jobs:
           retention-days: 30
 
       - name: Fail workflow if tests failed
-        if: env.TESTS_FAILED == 'true'
+        if: ${{ env.TESTS_FAILED == 'true' }}
         run: exit 1
 
   lint:
