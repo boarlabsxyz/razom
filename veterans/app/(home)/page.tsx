@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
+import Spinner from '@comComps/spinner';
 import Container from '@comComps/container';
 
 import st from './page.module.css';
@@ -69,7 +69,7 @@ export default function HomePage() {
   }, []);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <Spinner />;
   }
 
   return (

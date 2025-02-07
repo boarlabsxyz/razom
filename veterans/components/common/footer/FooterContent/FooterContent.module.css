@@ -3,7 +3,6 @@
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
-  max-width: 1440px;
   min-height: 160px;
   padding-top: 40px;
 }
@@ -32,7 +31,7 @@
   line-height: 19px;
   white-space: nowrap;
   text-decoration: none;
-  padding: 0px 24px;
+  padding: 0 24px;
   position: relative;
 }
 

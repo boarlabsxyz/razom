@@ -16,7 +16,8 @@ describe('HomePage Component', () => {
 
     render(<HomePage />);
 
-    expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
+    // expect(screen.getByTestId('test-spinner')).toBeInTheDocument();
+    expect(screen.getByTestId('loader')).toBeInTheDocument();
   });
 
   it('renders posts after fetching successfully', async () => {
@@ -45,7 +46,7 @@ describe('HomePage Component', () => {
     render(<HomePage />);
 
     await waitFor(() =>
-      expect(screen.queryByText(/Loading.../i)).not.toBeInTheDocument(),
+      expect(screen.queryByTestId('loader')).not.toBeInTheDocument(),
     );
 
     expect(screen.getByText(/Post 1/i)).toBeInTheDocument();
@@ -62,7 +63,7 @@ describe('HomePage Component', () => {
     render(<HomePage />);
 
     await waitFor(() =>
-      expect(screen.queryByText(/Loading.../i)).not.toBeInTheDocument(),
+      expect(screen.queryByTestId('loader')).not.toBeInTheDocument(),
     );
 
     expect(screen.queryByRole('listitem')).not.toBeInTheDocument();
