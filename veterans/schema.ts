@@ -8,6 +8,7 @@ import {
   relationship,
   timestamp,
 } from '@keystone-6/core/fields';
+import { document } from '@keystone-6/fields-document';
 import type { Lists } from '.keystone/types';
 
 type Session = {
@@ -16,6 +17,10 @@ type Session = {
     role: 'Administrator' | 'Moderator' | 'Initiative Manager' | 'User';
   };
 };
+
+type SlateTextNode = { text?: string };
+
+type SlateNode = { children?: SlateTextNode[] };
 
 function hasSession({ session }: { session?: Session }) {
   return Boolean(session);
@@ -38,11 +43,16 @@ function isSameUser({
   item,
 }: {
   session?: Session;
-  item: { id: string };
+  item: { id?: string; createdById?: string | null };
 }) {
   if (!session) {
     return false;
   }
+
+  if ('createdById' in item) {
+    return session.itemId === item.createdById;
+  }
+
   return session.itemId === item.id;
 }
 
@@ -97,6 +107,12 @@ export const lists = {
           update: ({ session, item }) => isAdminOrSameUser({ session, item }),
         },
         validation: { isRequired: true },
+        ui: {
+          itemView: {
+            fieldMode: ({ session, item }) =>
+              isAdminOrSameUser({ session, item }) ? 'edit' : 'read',
+          },
+        },
       }),
 
       email: text({
@@ -197,8 +213,8 @@ export const lists = {
             return true;
           }
 
-          if (isInitiativeManager({ session }) && session) {
-            return { createdBy: { id: { equals: session.itemId } } };
+          if (isInitiativeManager({ session })) {
+            return { createdBy: { id: { equals: session?.itemId } } };
           }
 
           return false;
@@ -218,9 +234,73 @@ export const lists = {
     },
 
     fields: {
-      title: text({ validation: { isRequired: true } }),
+      title: text({
+        validation: { isRequired: true },
+        ui: {
+          createView: {
+            fieldMode: ({ session }: { session?: Session }) =>
+              isAdminOrModerator({ session }) ||
+              isInitiativeManager({ session })
+                ? 'edit'
+                : 'hidden',
+          },
+          itemView: {
+            fieldMode: ({ session, item }) =>
+              isAdminOrModerator({ session }) || isSameUser({ session, item })
+                ? 'edit'
+                : 'read',
+          },
+        },
+      }),
 
-      description: text({ validation: { isRequired: true } }),
+      description: document({
+        formatting: true,
+        links: true,
+        dividers: true,
+        hooks: {
+          validateInput: async ({ resolvedData, item, addValidationError }) => {
+            try {
+              const description =
+                (resolvedData.description as string) || item?.description;
+
+              if (!description) {
+                addValidationError('Description is required.');
+                return;
+              }
+
+              const parsedDescription: SlateNode[] = JSON.parse(description);
+
+              const hasText = parsedDescription.some((block) =>
+                block.children?.some(
+                  (child) => child.text && child.text.trim().length > 0,
+                ),
+              );
+
+              if (!hasText) {
+                addValidationError('Description must contain some text.');
+              }
+              // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+            } catch (error) {
+              addValidationError('Invalid description format.');
+            }
+          },
+        },
+        ui: {
+          createView: {
+            fieldMode: ({ session }: { session?: Session }) =>
+              isAdminOrModerator({ session }) ||
+              isInitiativeManager({ session })
+                ? 'edit'
+                : 'hidden',
+          },
+          itemView: {
+            fieldMode: ({ session, item }) =>
+              isAdminOrModerator({ session }) || isSameUser({ session, item })
+                ? 'edit'
+                : 'read',
+          },
+        },
+      }),
 
       category: relationship({
         ref: 'Category',
@@ -311,7 +391,12 @@ export const lists = {
         defaultValue: false,
         ui: {
           createView: { fieldMode: 'hidden' },
-          itemView: { fieldMode: 'edit' },
+          itemView: {
+            fieldMode: ({ session, item }) =>
+              isAdminOrModerator({ session }) || isSameUser({ session, item })
+                ? 'edit'
+                : 'read',
+          },
           listView: { fieldMode: 'read' },
         },
       }),
