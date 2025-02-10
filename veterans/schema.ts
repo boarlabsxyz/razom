@@ -253,6 +253,37 @@ export const lists = {
         },
       }),
 
+      source: relationship({
+        ref: 'Source',
+        many: false,
+        hooks: {
+          validateInput: async ({ resolvedData, item, addValidationError }) => {
+            const isSourceBeingRemoved =
+              resolvedData.source && 'disconnect' in resolvedData.source;
+            const isSourceMissing =
+              (!resolvedData.source?.connect?.id && !item?.sourceId) ||
+              isSourceBeingRemoved;
+
+            if (isSourceMissing) {
+              addValidationError('Source is required.');
+            }
+          },
+        },
+        ui: {
+          createView: {
+            fieldMode: ({ session }: { session?: Session }) =>
+              isAdminOrModerator({ session }) ||
+              isInitiativeManager({ session })
+                ? 'edit'
+                : 'hidden',
+          },
+          itemView: {
+            fieldMode: ({ session }) =>
+              isAdmin({ session }) ? 'edit' : 'read',
+          },
+        },
+      }),
+
       status: select({
         options: [
           { label: 'Approved', value: 'approved' },
@@ -305,6 +336,50 @@ export const lists = {
   }),
 
   Category: list({
+    access: {
+      operation: {
+        create: ({ session }) => isAdminOrModerator({ session }),
+        update: ({ session }) => isAdminOrModerator({ session }),
+        delete: ({ session }) => isAdminOrModerator({ session }),
+        query: allowAll,
+      },
+    },
+
+    fields: {
+      title: text({
+        validation: { isRequired: true },
+        ui: {
+          createView: {
+            fieldMode: ({ session }: { session?: Session }) =>
+              isAdminOrModerator({ session }) ? 'edit' : 'hidden',
+          },
+          itemView: {
+            fieldMode: ({ session }) =>
+              isAdminOrModerator({ session }) ? 'edit' : 'read',
+          },
+        },
+      }),
+
+      createdBy: relationship({
+        ref: 'User',
+        many: false,
+        ui: {
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'read' },
+        },
+      }),
+
+      createdAt: timestamp({
+        defaultValue: { kind: 'now' },
+        ui: {
+          createView: { fieldMode: 'hidden' },
+          itemView: { fieldMode: 'read' },
+        },
+      }),
+    },
+  }),
+
+  Source: list({
     access: {
       operation: {
         create: ({ session }) => isAdminOrModerator({ session }),
