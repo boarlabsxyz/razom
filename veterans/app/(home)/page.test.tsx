@@ -16,7 +16,6 @@ describe('HomePage Component', () => {
 
     render(<HomePage />);
 
-    // expect(screen.getByTestId('test-spinner')).toBeInTheDocument();
     expect(screen.getByTestId('loader')).toBeInTheDocument();
   });
 
