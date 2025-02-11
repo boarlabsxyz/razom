@@ -1,0 +1,43 @@
+name: Update Snapshots
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-snapshots:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: |
+          echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> veterans/.env
+
+      - name: Docker starts services
+        run: docker compose up -d --build
+
+      - name: Wait for services to start
+        run: sleep 10
+
+      - name: Install Playwright Browsers (app-nextjs)
+        run: docker compose exec app-nextjs npx playwright install --with-deps
+
+      - name: Run Playwright tests (app-nextjs)
+        run: docker compose exec app-nextjs sh -c "npm run test:e2e -- e2e/nextjs-test --update-snapshots"
+
+      - name: Ensure e2e directory exists
+        run: mkdir -p e2e/nextjs-test/
+
+      - name: Copy snapshots from container
+        run: docker cp razom-app-nextjs-1:/usr/src/app/e2e/nextjs-test/screenshot-test.spec.ts-snapshots e2e/nextjs-test/
+
+      - name: Upload snapshots as new artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-snapshots
+          path: e2e/nextjs-test/screenshot-test.spec.ts-snapshots
+          overwrite: true
+          retention-days: 45

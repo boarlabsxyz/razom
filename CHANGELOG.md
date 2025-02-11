@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - html/css markup for footer [#75](https://github.com/boarlabsxyz/razom/pull/75)
 - seed file with data for local usage ([#74](https://github.com/boarlabsxyz/razom/pull/74))
 - favicon to the web application ([#79](https://github.com/boarlabsxyz/razom/pull/79))
+- E2E tests for front-end snapshots in Razom ([#83](https://github.com/boarlabsxyz/razom/pull/83))
+- opportunity to update screenshots in playwright e2e tests ([#87](https://github.com/boarlabsxyz/razom/pull/87))
 - spinner as a reusable component ([#89](https://github.com/boarlabsxyz/razom/pull/89))
 
 ## [1.2.0] - Unreleased
