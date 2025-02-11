@@ -43,13 +43,13 @@ describe('HomePage Component', () => {
     );
 
     render(<HomePage />);
+    expect(screen.queryByTestId('loader')).toBeInTheDocument();
 
-    await waitFor(() =>
-      expect(screen.queryByTestId('loader')).not.toBeInTheDocument(),
-    );
-
-    expect(screen.getByText(/Post 1/i)).toBeInTheDocument();
-    expect(screen.getByText(/This is the first post./i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/Post 1/i)).toBeInTheDocument();
+      expect(screen.getByText(/This is the first post./i)).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('loader')).not.toBeInTheDocument();
   });
 
   it('handles fetch error gracefully', async () => {
