@@ -25,16 +25,13 @@ const { withAuth } = createAuth({
 
   secretField: 'password',
 
-  initFirstItem:
-    process.env.NODE_ENV === 'production'
-      ? undefined
-      : {
-          fields: ['name', 'email', 'password'],
-          itemData: {
-            role: 'Administrator',
-          },
-          skipKeystoneWelcome: true,
-        },
+  initFirstItem: {
+    fields: ['name', 'email', 'password'],
+    itemData: {
+      role: 'Administrator',
+    },
+    skipKeystoneWelcome: true,
+  },
 
   sessionData: 'id role',
 });
