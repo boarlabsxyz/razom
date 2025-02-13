@@ -9,7 +9,7 @@ const pages = {
   partners: 'Партнери',
   news: 'Новини',
   initiatives: 'Ініціативи',
-  events: 'Події',
+  login: 'Увійти',
 };
 
 function NavMain() {
