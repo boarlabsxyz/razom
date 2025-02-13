@@ -10,7 +10,7 @@ describe('Auth Forms', () => {
       render(<RegisterForm />);
 
       expect(
-        screen.getByRole('heading', { name: /sing up/i }),
+        screen.getByRole('heading', { name: /sign up/i }),
       ).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Name')).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
