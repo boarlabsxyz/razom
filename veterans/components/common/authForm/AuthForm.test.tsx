@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import RegisterForm from './RegisterForm';
 import LoginForm from './LoginForm';
 
@@ -44,6 +44,78 @@ describe('Auth Forms', () => {
       expect(passwordInput).toHaveAttribute('type', 'password');
       expect(toggleButton).toHaveTextContent('Show Password');
     });
+
+    it('should show validation errors when submitting empty fields', async () => {
+      render(<RegisterForm />);
+
+      fireEvent.click(screen.getByRole('button', { name: /get started/i }));
+
+      expect(await screen.findByText('Name is required')).toBeInTheDocument();
+      expect(await screen.findByText('Email is required')).toBeInTheDocument();
+      expect(
+        await screen.findByText('Password is required'),
+      ).toBeInTheDocument();
+      expect(
+        await screen.findByText('Confirm password is required'),
+      ).toBeInTheDocument();
+    });
+
+    it('should show error if passwords do not match', async () => {
+      render(<RegisterForm />);
+
+      fireEvent.change(screen.getByPlaceholderText('New Password'), {
+        target: { value: 'StrongPass123' },
+      });
+      fireEvent.change(screen.getByPlaceholderText('Confirm Password'), {
+        target: { value: 'Mismatch123' },
+      });
+      fireEvent.click(screen.getByRole('button', { name: /get started/i }));
+
+      expect(
+        await screen.findByText('Passwords must match'),
+      ).toBeInTheDocument();
+    });
+
+    it('should show toggle button for both password fields', () => {
+      render(<RegisterForm />);
+
+      expect(
+        screen.getByRole('button', { name: /show password/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /show password/i }),
+      ).toBeInTheDocument();
+    });
+
+    it('should show error for invalid email format in RegisterForm', async () => {
+      render(<RegisterForm />);
+
+      fireEvent.change(screen.getByPlaceholderText('Email'), {
+        target: { value: 'invalidemail' },
+      });
+
+      const form = screen.getByRole('form');
+      fireEvent.submit(form);
+
+      const errorMessage = await screen.findByTestId('email-error');
+
+      expect(errorMessage).toBeInTheDocument();
+    });
+
+    it('should clear error messages when correcting fields', async () => {
+      render(<RegisterForm />);
+
+      fireEvent.click(screen.getByRole('button', { name: /get started/i }));
+      await screen.findByText('Email is required');
+
+      fireEvent.change(screen.getByPlaceholderText('Email'), {
+        target: { value: 'john.doe@example.com' },
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText('Email is required')).not.toBeInTheDocument();
+      });
+    });
   });
 
   describe('LoginForm', () => {
@@ -59,6 +131,47 @@ describe('Auth Forms', () => {
         screen.getByRole('button', { name: /sign in/i }),
       ).toBeInTheDocument();
       expect(screen.getByText(/register here/i)).toBeInTheDocument();
+    });
+
+    it('should show validation errors when submitting empty fields', async () => {
+      render(<LoginForm />);
+
+      fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
+      expect(await screen.findByText('Email is required')).toBeInTheDocument();
+      expect(
+        await screen.findByText('Password is required'),
+      ).toBeInTheDocument();
+    });
+
+    it('should show validation error for invalid email', async () => {
+      render(<LoginForm />);
+
+      fireEvent.change(screen.getByPlaceholderText('Email'), {
+        target: { value: 'invalidemail' },
+      });
+
+      const form = screen.getByRole('form');
+      fireEvent.submit(form);
+
+      const errorMessage = await screen.findByTestId('email-error');
+
+      expect(errorMessage).toBeInTheDocument();
+    });
+
+    it('should clear error messages when correcting fields in LoginForm', async () => {
+      render(<LoginForm />);
+
+      fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+      await screen.findByText('Email is required');
+
+      fireEvent.change(screen.getByPlaceholderText('Email'), {
+        target: { value: 'john.doe@example.com' },
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText('Email is required')).not.toBeInTheDocument();
+      });
     });
   });
 });
