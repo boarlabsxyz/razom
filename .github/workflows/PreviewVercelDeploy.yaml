@@ -109,25 +109,6 @@ jobs:
       - name: Install Playwright Browsers (app-keystone)
         run: docker compose exec app-keystone npx playwright install --with-deps
 
-      # - name: Show Keystone logs
-      #   run: docker compose logs app-keystone
-
-      # - name: Wait for Keystone to be ready
-      #   run: |
-      #     for i in {1..30}; do
-      #       if docker compose exec app-keystone curl -s http://localhost:3000 > /dev/null; then
-      #         echo "Keystone is up!"
-      #         exit 0
-      #       fi
-      #       echo "Waiting for Keystone..."
-      #       sleep 2
-      #     done
-      #     echo "Keystone did not start in time"
-      #     exit 1
-
-      # - name: Show Keystone logs
-      #   run: docker compose logs app-keystone
-
       - name: Run Playwright tests (app-keystone)
         run: |
           timeout 600s docker compose exec app-keystone sh -c "npm run test:e2e -- e2e/keystone-test" || echo "TESTS_FAILED=true" >> $GITHUB_ENV

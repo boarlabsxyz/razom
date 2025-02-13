@@ -8,6 +8,12 @@ import { Session } from './keystone/access';
 import { createAuth } from '@keystone-6/auth';
 import { statelessSessions } from '@keystone-6/core/session';
 
+if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
+  throw new Error(
+    'SESSION_SECRET environment variable must be set and at least 32 characters long',
+  );
+}
+
 const sessionSecret = process.env.SESSION_SECRET;
 
 const sessionMaxAge = 60 * 60;
@@ -19,15 +25,16 @@ const { withAuth } = createAuth({
 
   secretField: 'password',
 
-  // WARNING: do not use initFirstItem in production
-  //   see https://keystonejs.com/docs/config/auth#init-first-item for more
-  initFirstItem: {
-    fields: ['name', 'email', 'password'],
-    itemData: {
-      role: 'Administrator',
-    },
-    skipKeystoneWelcome: true,
-  },
+  initFirstItem:
+    process.env.NODE_ENV === 'production'
+      ? undefined
+      : {
+          fields: ['name', 'email', 'password'],
+          itemData: {
+            role: 'Administrator',
+          },
+          skipKeystoneWelcome: true,
+        },
 
   sessionData: 'id role',
 });
@@ -68,8 +75,12 @@ export default withAuth<TypeInfo<Session>>(
     },
     lists,
     session: statelessSessions({
-      maxAge: sessionMaxAge,
-      secret: sessionSecret,
+      maxAge: sessionMaxAge || 3600,
+      secret:
+        sessionSecret ||
+        (() => {
+          throw new Error('Session secret is required for stateless sessions');
+        })(),
     }),
   }),
 );
