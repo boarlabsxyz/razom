@@ -8,7 +8,9 @@ import { Session } from './keystone/access';
 import { createAuth } from '@keystone-6/auth';
 import { statelessSessions } from '@keystone-6/core/session';
 
-const sessionSecret = process.env.SESSION_SECRET || 'some-secure-random-value';
+const sessionSecret =
+  process.env.SESSION_SECRET ||
+  'some-secure-random-value-some-secure-random-value';
 
 const sessionMaxAge = 60 * 60;
 
