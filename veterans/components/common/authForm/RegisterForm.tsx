@@ -15,7 +15,7 @@ export default function RegisterForm() {
     <div className={styles.container}>
       <form className={styles.form}>
         <div className={styles.header}>
-          <h1>Sing Up</h1>
+          <h1>Sign Up</h1>
         </div>
 
         <p className={styles.subheader}>
