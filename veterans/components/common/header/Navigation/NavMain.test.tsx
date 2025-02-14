@@ -46,7 +46,7 @@ describe('NavMain Component', () => {
     partners: 'Партнери',
     news: 'Новини',
     initiatives: 'Ініціативи',
-    events: 'Події',
+    login: 'Увійти',
   };
 
   it('renders all navigation links correctly', () => {
