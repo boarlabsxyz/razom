@@ -8,6 +8,7 @@ env:
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
   PRODUCTION_DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+  SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
   NODE_ENV: 'production'
 
 jobs:
@@ -54,6 +55,7 @@ jobs:
         run: |
           echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> veterans/.env
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> veterans/.env
 
       - name: Docker starts services
         run: docker compose up -d --build
