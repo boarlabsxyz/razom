@@ -61,6 +61,9 @@ jobs:
       - name: Install Playwright Browsers
         run: docker compose exec app-keystone npx playwright install --with-deps
 
+      - name: Show Keystone logs
+        run: docker compose logs app-keystone
+
       - name: Run Playwright tests
         run: docker compose exec app-keystone npm run test:e2e
 
