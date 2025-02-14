@@ -49,7 +49,7 @@ export const commonTaxonomyModel = () =>
         },
         ui: {
           createView: { fieldMode: 'hidden' },
-          itemView: { fieldMode: 'read' },
+          itemView: { fieldMode: 'hidden' },
         },
       }),
       createdAt: timestamp({
