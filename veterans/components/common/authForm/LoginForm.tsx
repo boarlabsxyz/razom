@@ -24,6 +24,7 @@ export default function LoginForm() {
     resolver: yupResolver(loginSchema),
   });
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const onSubmit = (data: any) => {
     // eslint-disable-next-line no-console
     console.log('Login Data:', data);

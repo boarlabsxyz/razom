@@ -41,6 +41,7 @@ export default function RegisterForm() {
     setPasswordVisible(!passwordVisible);
   };
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const onSubmit = (data: any) => {
     // eslint-disable-next-line no-console
     console.log('Register Data:', data);

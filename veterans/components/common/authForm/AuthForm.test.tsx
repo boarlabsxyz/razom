@@ -116,6 +116,34 @@ describe('Auth Forms', () => {
         expect(screen.queryByText('Email is required')).not.toBeInTheDocument();
       });
     });
+
+    it('should show error for password without uppercase letter', async () => {
+      render(<RegisterForm />);
+
+      fireEvent.change(screen.getByPlaceholderText('New Password'), {
+        target: { value: 'password123' },
+      });
+      fireEvent.click(screen.getByRole('button', { name: /get started/i }));
+
+      expect(
+        await screen.findByText(
+          'Password must contain at least one uppercase letter',
+        ),
+      ).toBeInTheDocument();
+    });
+
+    it('should show error for password without number', async () => {
+      render(<RegisterForm />);
+
+      fireEvent.change(screen.getByPlaceholderText('New Password'), {
+        target: { value: 'Password' },
+      });
+      fireEvent.click(screen.getByRole('button', { name: /get started/i }));
+
+      expect(
+        await screen.findByText('Password must contain at least one number'),
+      ).toBeInTheDocument();
+    });
   });
 
   describe('LoginForm', () => {
