@@ -7,13 +7,13 @@ on:
       - synchronize
       - reopened
 
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-  VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
-  TEST_DATABASE_URL: ${{ secrets.DEVELOPMENT_DATABASE_URL }}
-  SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-  NODE_ENV: 'test'
+# env:
+#   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+#   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+#   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
+#   TEST_DATABASE_URL: ${{ secrets.DEVELOPMENT_DATABASE_URL }}
+#   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+#   NODE_ENV: 'test'
 
 jobs:
   docker-lint:

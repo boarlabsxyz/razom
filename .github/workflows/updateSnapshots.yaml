@@ -15,6 +15,7 @@ jobs:
         run: |
           echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> veterans/.env
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> veterans/.env
 
       - name: Docker starts services
         run: docker compose up -d --build
