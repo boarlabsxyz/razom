@@ -8,14 +8,14 @@ describe('seedDemoData', () => {
   });
 
   const mockPrisma = {
-    post: {
+    initiative: {
       create: jest.fn(),
     },
   };
 
   const mockContext = {
     db: {
-      Post: {
+      Initiative: {
         count: jest.fn(),
       },
     },
@@ -28,29 +28,29 @@ describe('seedDemoData', () => {
     jest.clearAllMocks();
   });
 
-  it('should not create posts if there are existing posts', async () => {
-    mockContext.db.Post.count.mockResolvedValue(1);
+  it('should not create initiatives if there are existing initiatives', async () => {
+    mockContext.db.Initiative.count.mockResolvedValue(1);
 
     await seedDemoData(mockContext as any);
 
-    expect(mockContext.db.Post.count).toHaveBeenCalledTimes(1);
+    expect(mockContext.db.Initiative.count).toHaveBeenCalledTimes(1);
     expect(mockTransaction).not.toHaveBeenCalled();
-    expect(mockPrisma.post.create).not.toHaveBeenCalled();
+    expect(mockPrisma.initiative.create).not.toHaveBeenCalled();
   });
 
-  it('should create posts for each initiative if there are no existing posts', async () => {
-    mockContext.db.Post.count.mockResolvedValue(0);
+  it('should create initiatives for each initiative if there are no existing initiatives', async () => {
+    mockContext.db.Initiative.count.mockResolvedValue(0);
 
     await seedDemoData(mockContext as any);
 
-    expect(mockContext.db.Post.count).toHaveBeenCalledTimes(1);
+    expect(mockContext.db.Initiative.count).toHaveBeenCalledTimes(1);
     expect(mockTransaction).toHaveBeenCalledTimes(1);
-    expect(mockPrisma.post.create).toHaveBeenCalledTimes(
+    expect(mockPrisma.initiative.create).toHaveBeenCalledTimes(
       demoInitiatives.length,
     );
 
     demoInitiatives.forEach((initiative, index) => {
-      expect(mockPrisma.post.create).toHaveBeenNthCalledWith(index + 1, {
+      expect(mockPrisma.initiative.create).toHaveBeenNthCalledWith(index + 1, {
         data: initiative,
       });
     });
