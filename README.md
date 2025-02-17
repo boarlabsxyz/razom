@@ -10,6 +10,10 @@ For more information and useful resources, refer to the following links:
 - [KeynoteJS GitHub Repository](https://github.com/keynotejs/keynote)
 - [KeynoteJS Tutorials](https://keynotejs.com/docs/tutorials/getting-started/)
 
+## Workflow diagram
+
+The visual diagram illustrating the workflow for Project Initialization and Development Cycle is available in the [Wiki](https://github.com/boarlabsxyz/razom/wiki/Workflow-diagram) and also in [Miro](https://miro.com/app/board/uXjVNmpbvbU=/) for enhanced clarity and quality.
+
 ## Get started
 
 Follow these steps to get the project up and running using Docker Compose:
