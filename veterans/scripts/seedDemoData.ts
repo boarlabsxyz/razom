@@ -9,10 +9,10 @@ export async function seedDemoData(
   context: KeystoneContext<BaseKeystoneTypeInfo>,
 ) {
   try {
-    console.log('Checking existing posts...');
-    const existingCount = await context.db.Post.count();
+    console.log('Checking existing initiatives...');
+    const existingCount = await context.db.Initiative.count();
     if (existingCount > 0) {
-      console.log('Posts already exist, skipping seed');
+      console.log('Initiatives already exist, skipping seed');
       return;
     }
 
@@ -20,7 +20,7 @@ export async function seedDemoData(
 
     await context.prisma.$transaction(async (prisma: PrismaClient) => {
       for (const initiative of demoInitiatives) {
-        await prisma.post.create({
+        await prisma.initiative.create({
           data: initiative,
         });
       }
