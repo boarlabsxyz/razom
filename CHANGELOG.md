@@ -5,18 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2024-12-23
+## [1.3.0] - 2025-02-15
 
 ### Added
 
-- implementation of work with the database for storing and displaying data on Vercel ([#54](https://github.com/boarlabsxyz/razom/pull/54))
-- html/css markup for header ([#53](https://github.com/boarlabsxyz/razom/pull/53))
-- global CSS stylesheet for consistent styling across the application ([#48](https://github.com/boarlabsxyz/razom/pull/48))
-- table with user roles and permissions into [Requirements](https://github.com/boarlabsxyz/razom/wiki/Requirements)
-
-### Changed
-
-- NextJS version to 15.0.3 ([#45](https://github.com/boarlabsxyz/razom/pull/45))
+- the visual diagram illustrating the workflow for Project Initialization and Development Cycle in Wiki ([#64](https://github.com/boarlabsxyz/razom/issues/64))
 
 ## [1.1.0] - 2025-01-15
 
@@ -34,4 +27,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - opportunity to update screenshots in playwright e2e tests ([#87](https://github.com/boarlabsxyz/razom/pull/87))
 - spinner as a reusable component ([#89](https://github.com/boarlabsxyz/razom/pull/89))
 
-## [1.2.0] - Unreleased
+## [1.0.0] - 2024-12-23
+
+### Added
+
+- implementation of work with the database for storing and displaying data on Vercel ([#54](https://github.com/boarlabsxyz/razom/pull/54))
+- html/css markup for header ([#53](https://github.com/boarlabsxyz/razom/pull/53))
+- global CSS stylesheet for consistent styling across the application ([#48](https://github.com/boarlabsxyz/razom/pull/48))
+- table with user roles and permissions into [Requirements](https://github.com/boarlabsxyz/razom/wiki/Requirements)
+
+### Changed
+
+- NextJS version to 15.0.3 ([#45](https://github.com/boarlabsxyz/razom/pull/45))
