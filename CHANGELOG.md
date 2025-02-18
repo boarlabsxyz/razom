@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - the visual diagram illustrating the workflow for Project Initialization and Development Cycle in Wiki ([#64](https://github.com/boarlabsxyz/razom/issues/64))
+- keystone schemas(models) for entities and keystone access file for setting roles and their permissions([#90](https://github.com/boarlabsxyz/razom/pull/90))
 
 ## [1.1.0] - 2025-01-15
 
