@@ -4,7 +4,9 @@
     "paths": {
       "@comComps/*": ["components/common/*"],
       "@comps/*": ["components/*"],
-      "@helpers/*": ["helpers/*"]
+      "@helpers/*": ["helpers/*"],
+      "@lib/*": ["lib/*"],
+      "@kestone/*": ["keystone/*"]
     },
     "jsx": "preserve",
     "target": "esnext",
