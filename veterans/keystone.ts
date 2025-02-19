@@ -79,5 +79,11 @@ export default withAuth<TypeInfo<Session>>(
           throw new Error('Session secret is required for stateless sessions');
         })(),
     }),
+    server: {
+      cors: {
+        origin: ['http://localhost:8000'],
+        credentials: true,
+      },
+    },
   }),
 );

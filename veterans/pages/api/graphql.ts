@@ -17,4 +17,8 @@ export default createYoga<{
   graphqlEndpoint: '/api/graphql',
   schema: keystoneContext.graphql.schema,
   context: ({ req, res }) => keystoneContext.withRequest(req, res),
+  cors: {
+    origin: '*',
+    credentials: true,
+  },
 });
