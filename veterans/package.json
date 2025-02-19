@@ -21,6 +21,7 @@
     "format:staged": "prettier --write $(git diff --cached --name-only --diff-filter=ACMR | grep -E '\\.(js|jsx|ts|tsx|json|css|md)$' | xargs)"
   },
   "dependencies": {
+    "@apollo/client": "^3.13.1",
     "@hookform/resolvers": "^4.0.0",
     "@keystone-6/auth": "^8.0.0",
     "@keystone-6/core": "^6.3.1",
