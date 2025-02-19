@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import Spinner from '@comComps/spinner';
 import Container from '@comComps/container';
+import { useUser } from 'hooks/useUser';
 
 import st from './page.module.css';
 
@@ -68,6 +70,8 @@ export default function HomePage() {
     fetchPosts();
   }, []);
 
+  const { user } = useUser();
+
   if (loading) {
     return <Spinner />;
   }
@@ -75,6 +79,9 @@ export default function HomePage() {
   return (
     <Container>
       <main className={st.wrapper}>
+        <p>
+          Привіт, {user?.name}! Твоя роль: {user?.role}
+        </p>
         <section aria-label="Blog initiatives" data-test-id="blog-initiatives">
           {processedPosts.length === 0 ? (
             <p>No initiatives available at the moment.</p>

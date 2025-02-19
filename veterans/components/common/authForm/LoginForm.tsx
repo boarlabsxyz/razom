@@ -6,62 +6,65 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import styles from './AuthForm.module.css';
 import Link from 'next/link';
+import { LoginFormData } from 'types';
 
 const loginSchema = yup.object().shape({
-  identity: yup
+  email: yup
     .string()
     .email('Invalid email format')
     .required('Email is required'),
   password: yup.string().required('Password is required'),
 });
 
-export default function LoginForm() {
+type Props = {
+  onSubmit: (formData: LoginFormData) => Promise<void>;
+};
+
+export default function LoginForm({ onSubmit }: Props) {
   const {
     control,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm({
     resolver: yupResolver(loginSchema),
   });
-
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  const onSubmit = (data: any) => {
-    // eslint-disable-next-line no-console
-    console.log('Login Data:', data);
-  };
 
   return (
     <div className={styles.container}>
       <form
         className={styles.form}
         role="form"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(() => {
+          const values = getValues();
+          onSubmit(values);
+        })}
       >
         <div className={styles.header}>
           <h1>Sign In</h1>
         </div>
 
         <div className={styles.inputGroup}>
-          <label htmlFor="identity" className={styles.label}>
+          <label htmlFor="email" className={styles.label}>
             Email
           </label>
           <Controller
             control={control}
-            name="identity"
+            name="email"
             render={({ field }) => (
               <input
                 type="email"
-                id="identity"
+                id="email"
                 placeholder="Email"
-                className={`${styles.input} ${errors.identity ? styles.inputError : ''}`}
+                className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
                 value={field.value || ''}
                 onChange={(e) => field.onChange(e.target.value)}
               />
             )}
           />
-          {errors.identity && (
+          {errors.email && (
             <p className={styles.error} data-testid="email-error">
-              {errors.identity.message}
+              {errors.email.message}
             </p>
           )}
         </div>
