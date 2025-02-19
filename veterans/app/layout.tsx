@@ -7,6 +7,7 @@ import HeaderContent from '@comComps/header/HeaderContent';
 import Banner from '@comComps/header/banner';
 import Footer from '@comComps/footer/Footer';
 import FooterContent from '@comComps/footer/FooterContent';
+import ApolloProviderWrapper from '@comps/apollowProvider';
 
 const lato = Lato({
   weight: ['300', '400', '700'],
@@ -47,7 +48,9 @@ export default function RootLayout({
             <Banner name="logotype" height={34} />
           </HeaderContent>
         </Header>
-        <main>{children}</main>
+        <main>
+          <ApolloProviderWrapper>{children}</ApolloProviderWrapper>
+        </main>
         <Footer>
           <FooterContent>
             <Banner name="logotype" height={34} />
