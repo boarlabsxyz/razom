@@ -95,7 +95,7 @@ export default function HomePage() {
   return (
     <Container>
       <main className={st.wrapper}>
-        <section aria-label="Blog initiatives">
+        <section aria-label="Blog initiatives" data-test-id="blog-initiatives">
           {processedInitiatives.length === 0 ? (
             <p>No initiatives available at the moment.</p>
           ) : (

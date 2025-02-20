@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { useApolloClient } from '@apollo/client';
 
-import ApolloProviderWrapper from './apollowProvider';
+import ApolloProviderWrapper from './apolloProvider';
 
 describe('ApolloProviderWrapper', () => {
   it('renders children and provides Apollo Client', () => {
