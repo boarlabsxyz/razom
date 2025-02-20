@@ -7,7 +7,7 @@ import HeaderContent from '@comComps/header/HeaderContent';
 import Banner from '@comComps/header/banner';
 import Footer from '@comComps/footer/Footer';
 import FooterContent from '@comComps/footer/FooterContent';
-import ApolloProviderWrapper from '@comps/apollowProvider';
+import ApolloProviderWrapper from '@comps/apolloProvider';
 
 const lato = Lato({
   weight: ['300', '400', '700'],

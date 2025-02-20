@@ -1,12 +1,13 @@
+'use client';
 import { ApolloProvider } from '@apollo/client';
-import { ErrorBoundary } from 'react-error-boundary';
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { client } from '@lib/apollo';
 import React from 'react';
 
-const ErrorFallback: React.FC<{
-  error: Error;
-  resetErrorBoundary: () => void;
-}> = ({ error, resetErrorBoundary }) => (
+const ErrorFallback: React.FC<FallbackProps> = ({
+  error,
+  resetErrorBoundary,
+}) => (
   <div role="alert">
     <p>Something went wrong:</p>
     <pre>{error.message}</pre>
@@ -14,17 +15,20 @@ const ErrorFallback: React.FC<{
   </div>
 );
 
+const ErrorBoundaryWrapper: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
+  <ErrorBoundary FallbackComponent={ErrorFallback}>{children}</ErrorBoundary>
+);
+
 export default function ApolloProviderWrapper({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ErrorBoundaryAny = ErrorBoundary as any;
-
   return (
-    <ErrorBoundaryAny FallbackComponent={ErrorFallback}>
+    <ErrorBoundaryWrapper>
       <ApolloProvider client={client}>{children}</ApolloProvider>
-    </ErrorBoundaryAny>
+    </ErrorBoundaryWrapper>
   );
 }
