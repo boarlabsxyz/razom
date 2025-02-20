@@ -18,9 +18,10 @@ const loginSchema = yup.object().shape({
 
 type Props = {
   onSubmit: (formData: LoginFormData) => Promise<void>;
+  error?: string;
 };
 
-export default function LoginForm({ onSubmit }: Props) {
+export default function LoginForm({ onSubmit, error }: Props) {
   const {
     control,
     handleSubmit,
@@ -92,6 +93,8 @@ export default function LoginForm({ onSubmit }: Props) {
           )}
         </div>
 
+        {error && <p className={styles.error}>{error}</p>}
+
         <div className={styles.buttonContainer}>
           <button type="submit" className={styles.button}>
             Sign in
@@ -100,7 +103,7 @@ export default function LoginForm({ onSubmit }: Props) {
 
         <div className={styles.textContainer}>
           <p>
-            If you don’t have an account, please{' '}
+            If you don't have an account, please{' '}
             <Link href="/register">register here</Link>.
           </p>
         </div>

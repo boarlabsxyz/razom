@@ -1,59 +1,106 @@
-import fetchMock from 'jest-fetch-mock';
-
-fetchMock.enableMocks();
-
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import HomePage from './page';
 
-describe('HomePage Component', () => {
-  beforeEach(() => {
-    fetchMock.resetMocks();
+beforeEach(() => {
+  jest.clearAllMocks();
+  global.fetch = jest.fn();
+});
+
+describe('HomePage', () => {
+  it('renders loading spinner while fetching data', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce(
+      new Promise((resolve) =>
+        setTimeout(
+          () =>
+            resolve(
+              new Response(JSON.stringify({ data: { initiatives: [] } }), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+              }),
+            ),
+          100,
+        ),
+      ),
+    );
+
+    await act(async () => {
+      render(<HomePage />);
+    });
+
+    await waitFor(() =>
+      expect(screen.getByTestId('loader')).toBeInTheDocument(),
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByTestId('loader')).not.toBeInTheDocument(),
+    );
   });
 
-  it('renders loading state initially with pending fetch', async () => {
-    (fetch as jest.Mock).mockImplementationOnce(() => new Promise(() => {}));
-
-    render(<HomePage />);
-
-    expect(screen.getByTestId('loader')).toBeInTheDocument();
-  });
-
-  it('renders posts after fetching successfully', async () => {
-    const mockPosts = [
+  it('displays initiatives once loaded', async () => {
+    const initiatives = [
       {
         id: '1',
-        title: 'Post 1',
-        content: {
-          document: [
-            {
-              type: 'paragraph',
-              children: [{ text: 'This is the first post.' }],
-            },
-          ],
-        },
+        title: 'Initiative 1',
+        content: 'This is initiative 1 content',
+      },
+      {
+        id: '2',
+        title: 'Initiative 2',
+        content: 'This is initiative 2 content',
       },
     ];
 
-    fetchMock.mockResolvedValueOnce(
-      new Response(JSON.stringify(mockPosts), {
-        status: 200,
-        statusText: 'OK',
-      }),
+    (global.fetch as jest.Mock).mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          data: {
+            initiatives,
+          },
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      ),
     );
 
     render(<HomePage />);
-    expect(screen.queryByTestId('loader')).toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(screen.getByText(/Post 1/i)).toBeInTheDocument();
-      expect(screen.getByText(/This is the first post./i)).toBeInTheDocument();
-    });
-    expect(screen.queryByTestId('loader')).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText('Initiative 1')).toBeInTheDocument(),
+    );
+    expect(screen.getByText('Initiative 2')).toBeInTheDocument();
   });
 
-  it('handles fetch error gracefully', async () => {
-    (fetch as jest.Mock).mockRejectedValueOnce(new Error('Failed to fetch'));
+  it('displays a message when no initiatives are available', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          data: {
+            initiatives: [],
+          },
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      ),
+    );
+
+    render(<HomePage />);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText('No initiatives available at the moment.'),
+      ).toBeInTheDocument(),
+    );
+  });
+
+  it('displays an error message if fetch fails', async () => {
+    (global.fetch as jest.Mock).mockRejectedValueOnce(
+      new Error('Failed to fetch initiatives'),
+    );
 
     const consoleErrorSpy = jest
       .spyOn(console, 'error')
@@ -61,12 +108,13 @@ describe('HomePage Component', () => {
 
     render(<HomePage />);
 
+    expect(screen.getByTestId('loader')).toBeInTheDocument();
+
     await waitFor(() =>
-      expect(screen.queryByTestId('loader')).not.toBeInTheDocument(),
+      expect(
+        screen.getByText('Failed to fetch initiatives'),
+      ).toBeInTheDocument(),
     );
-
-    expect(screen.queryByRole('listitem')).not.toBeInTheDocument();
-
     consoleErrorSpy.mockRestore();
   });
 });

@@ -3,6 +3,7 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jest-environment-jsdom',
+  setupFiles: ['./jest.setup.ts'],
   transform: {
     '^.+\\.tsx?$': [
       'ts-jest',
@@ -41,6 +42,8 @@ module.exports = {
     '^@comps/(.*)$': '<rootDir>/components/$1',
     '^keystone/context$': '<rootDir>/keystone/context',
     '^keystone$': '<rootDir>/keystone',
+    '^hooks/(.*)$': '<rootDir>/hooks/$1',
+    '^constants/(.*)$': '<rootDir>/constants/$1',
   },
   testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
 };

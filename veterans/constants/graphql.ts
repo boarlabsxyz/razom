@@ -3,10 +3,12 @@ import { gql } from '@apollo/client';
 export const CURRENT_USER_QUERY = gql`
   query {
     authenticatedItem {
-      id
-      name
-      email
-      role
+      ... on User {
+        id
+        name
+        email
+        role
+      }
     }
   }
 `;
@@ -26,5 +28,11 @@ export const LOGIN_MUTATION = gql`
         message
       }
     }
+  }
+`;
+
+export const LOGOUT_MUTATION = gql`
+  mutation {
+    endSession
   }
 `;

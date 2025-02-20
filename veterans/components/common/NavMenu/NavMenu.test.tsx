@@ -2,10 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import NavMenu from './NavMenu';
+import { useUser } from 'hooks/useUser';
 
-jest.mock('next/router', () => ({
-  useRouter: jest.fn(),
-}));
+jest.mock('hooks/useUser');
 
 describe('NavMenu', () => {
   const mockPages = {
@@ -20,6 +19,11 @@ describe('NavMenu', () => {
     link: 'link',
     active: 'active',
   };
+  beforeEach(() => {
+    (useUser as jest.Mock).mockReturnValue({
+      user: { id: '123', email: 'test@example.com' },
+    });
+  });
 
   it('renders all navigation links correctly', () => {
     render(<NavMenu pages={mockPages} pathname={null} st={mockStyles} />);

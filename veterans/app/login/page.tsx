@@ -1,35 +1,46 @@
 'use client';
-import React from 'react';
-import { useMutation } from '@apollo/client';
+
+import React, { useState } from 'react';
+import { useApolloClient, useMutation } from '@apollo/client';
+import { useRouter } from 'next/navigation';
 
 import LoginForm from '@comComps/authForm/LoginForm';
 import { LoginFormData } from 'types';
 import { CURRENT_USER_QUERY, LOGIN_MUTATION } from 'constants/graphql';
 
 export default function LoginPage() {
-  const [login] = useMutation<{
-    authenticateUserWithPassword:
-      | { item: { id: string; email: string; role: string; name: string } }
-      | { message: string };
-  }>(LOGIN_MUTATION, {
-    update(cache, { data }) {
+  const [error, setError] = useState<string | null>(null);
+  const client = useApolloClient();
+  const router = useRouter();
+
+  const [login] = useMutation(LOGIN_MUTATION, {
+    onCompleted(data) {
       const authResult = data?.authenticateUserWithPassword;
+
       if (authResult && 'item' in authResult) {
-        cache.writeQuery({
+        client.writeQuery({
           query: CURRENT_USER_QUERY,
           data: { authenticatedItem: authResult.item },
         });
+
+        if (window.history.length > 1) {
+          router.back();
+        } else {
+          router.push('/');
+        }
       } else {
-        // eslint-disable-next-line no-console
-        console.error('❌ Помилка входу');
+        setError(authResult?.message || 'Невідома помилка входу');
       }
+    },
+    onError(err) {
+      setError(err.message);
     },
   });
 
-  const onSubmit = async (formData: LoginFormData): Promise<void> => {
-    const { email, password } = formData;
-    await login({ variables: { email, password } });
+  const onSubmit = async (formData: LoginFormData) => {
+    setError(null);
+    await login({ variables: formData });
   };
 
-  return <LoginForm onSubmit={onSubmit} />;
+  return <LoginForm onSubmit={onSubmit} error={error ?? undefined} />;
 }

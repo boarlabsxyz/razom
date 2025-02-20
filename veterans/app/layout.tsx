@@ -43,19 +43,19 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${lato.variable} ${golosText.variable}`}>
       <body>
-        <Header>
-          <HeaderContent>
-            <Banner name="logotype" height={34} />
-          </HeaderContent>
-        </Header>
-        <main>
-          <ApolloProviderWrapper>{children}</ApolloProviderWrapper>
-        </main>
-        <Footer>
-          <FooterContent>
-            <Banner name="logotype" height={34} />
-          </FooterContent>
-        </Footer>
+        <ApolloProviderWrapper>
+          <Header>
+            <HeaderContent>
+              <Banner name="logotype" height={34} />
+            </HeaderContent>
+          </Header>
+          <main>{children}</main>
+          <Footer>
+            <FooterContent>
+              <Banner name="logotype" height={34} />
+            </FooterContent>
+          </Footer>
+        </ApolloProviderWrapper>
       </body>
     </html>
   );

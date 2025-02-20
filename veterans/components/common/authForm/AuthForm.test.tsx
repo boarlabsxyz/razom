@@ -147,8 +147,13 @@ describe('Auth Forms', () => {
   });
 
   describe('LoginForm', () => {
+    const mockOnSubmit = jest.fn();
+
+    beforeEach(() => {
+      mockOnSubmit.mockClear();
+    });
     it('should render LoginForm correctly', () => {
-      render(<LoginForm />);
+      render(<LoginForm onSubmit={mockOnSubmit} />);
 
       expect(
         screen.getByRole('heading', { name: /sign in/i }),
@@ -162,7 +167,7 @@ describe('Auth Forms', () => {
     });
 
     it('should show validation errors when submitting empty fields', async () => {
-      render(<LoginForm />);
+      render(<LoginForm onSubmit={mockOnSubmit} />);
 
       fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
@@ -173,7 +178,7 @@ describe('Auth Forms', () => {
     });
 
     it('should show validation error for invalid email', async () => {
-      render(<LoginForm />);
+      render(<LoginForm onSubmit={mockOnSubmit} />);
 
       fireEvent.change(screen.getByPlaceholderText('Email'), {
         target: { value: 'invalidemail' },
@@ -188,7 +193,7 @@ describe('Auth Forms', () => {
     });
 
     it('should clear error messages when correcting fields in LoginForm', async () => {
-      render(<LoginForm />);
+      render(<LoginForm onSubmit={mockOnSubmit} />);
 
       fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
       await screen.findByText('Email is required');
