@@ -206,5 +206,31 @@ describe('Auth Forms', () => {
         expect(screen.queryByText('Email is required')).not.toBeInTheDocument();
       });
     });
+    it('should call onSubmit with form data when submission is successful', async () => {
+      render(<LoginForm onSubmit={mockOnSubmit} />);
+
+      fireEvent.change(screen.getByPlaceholderText('Email'), {
+        target: { value: 'test@example.com' },
+      });
+      fireEvent.change(screen.getByPlaceholderText('Password'), {
+        target: { value: 'password123' },
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
+      await waitFor(() => {
+        expect(mockOnSubmit).toHaveBeenCalledWith({
+          email: 'test@example.com',
+          password: 'password123',
+        });
+      });
+    });
+
+    it('should display error message when provided', () => {
+      const errorMessage = 'Invalid credentials';
+      render(<LoginForm onSubmit={mockOnSubmit} error={errorMessage} />);
+
+      expect(screen.getByText(errorMessage)).toBeInTheDocument();
+    });
   });
 });

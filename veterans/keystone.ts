@@ -81,7 +81,10 @@ export default withAuth<TypeInfo<Session>>(
     }),
     server: {
       cors: {
-        origin: ['http://localhost:8000'],
+        origin:
+          process.env.NODE_ENV === 'production'
+            ? process.env.ALLOWED_FRONTEND_URL?.split(',') || []
+            : ['http://localhost:8000'],
         credentials: true,
       },
     },
