@@ -11,6 +11,7 @@ describe('NavMenu', () => {
     home: 'Home',
     about: 'About',
     contact: 'Contact',
+    login: 'Login',
   };
 
   const mockStyles = {
@@ -19,10 +20,10 @@ describe('NavMenu', () => {
     link: 'link',
     active: 'active',
   };
+
   beforeEach(() => {
-    (useUser as jest.Mock).mockReturnValue({
-      user: { id: '123', email: 'test@example.com' },
-    });
+    jest.clearAllMocks();
+    (useUser as jest.Mock).mockReturnValue({ user: null });
   });
 
   it('renders all navigation links correctly', () => {
@@ -56,5 +57,22 @@ describe('NavMenu', () => {
       expect(link).not.toHaveClass(mockStyles.active);
       expect(link).not.toHaveAttribute('aria-current');
     });
+  });
+
+  it('renders LogoutButton when user is present', () => {
+    (useUser as jest.Mock).mockReturnValueOnce({
+      user: { id: '123', email: 'test@example.com' },
+    });
+    render(<NavMenu pages={mockPages} pathname={null} st={mockStyles} />);
+
+    expect(screen.getByRole('link', { name: 'Login' })).toBeInTheDocument();
+  });
+
+  it('does not render LogoutButton when user is null', () => {
+    render(<NavMenu pages={mockPages} pathname={null} st={mockStyles} />);
+
+    expect(
+      screen.queryByRole('button', { name: 'Login' }),
+    ).not.toBeInTheDocument();
   });
 });
