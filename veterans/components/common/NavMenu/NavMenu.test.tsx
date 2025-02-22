@@ -23,7 +23,12 @@ describe('NavMenu', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     (useUser as jest.Mock).mockReturnValue({ user: null });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('renders all navigation links correctly', () => {
