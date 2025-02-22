@@ -254,20 +254,20 @@ jobs:
         timeout-minutes: 10
         working-directory: ./veterans
 
-      - name: Copy Prisma binaries to Vercel deployment output
-        run: |
-          DEST_DIR=".vercel/output/functions/api/posts.func/node_modules/.prisma/client/"
-          if [ ! -d "node_modules/.prisma/client/" ]; then
-            echo "::error::Source Prisma client directory not found"
-            exit 1
-          fi
-          mkdir -p "$DEST_DIR"
-          if ! cp -r node_modules/.prisma/client/* "$DEST_DIR"; then
-            echo "::error::Failed to copy Prisma binaries"
-            exit 1
-          fi
-          echo "Successfully copied Prisma binaries to deployment output"
-        working-directory: ./veterans
+      # - name: Copy Prisma binaries to Vercel deployment output
+      #   run: |
+      #     DEST_DIR=".vercel/output/functions/api/posts.func/node_modules/.prisma/client/"
+      #     if [ ! -d "node_modules/.prisma/client/" ]; then
+      #       echo "::error::Source Prisma client directory not found"
+      #       exit 1
+      #     fi
+      #     mkdir -p "$DEST_DIR"
+      #     if ! cp -r node_modules/.prisma/client/* "$DEST_DIR"; then
+      #       echo "::error::Failed to copy Prisma binaries"
+      #       exit 1
+      #     fi
+      #     echo "Successfully copied Prisma binaries to deployment output"
+      #   working-directory: ./veterans
 
       - name: Deploy to Vercel
         id: deploy
