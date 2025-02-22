@@ -9,7 +9,7 @@ import { onError } from '@apollo/client/link/error';
 import { RetryLink } from '@apollo/client/link/retry';
 import { Observable } from 'zen-observable-ts';
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
+export const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.forEach(({ message, locations, path }) =>
       // eslint-disable-next-line no-console
@@ -24,12 +24,11 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 });
 
-// Реалізація TimeoutLink через Observable
 const timeoutLink = new ApolloLink((operation, forward) => {
   return new Observable((observer) => {
     const timeout = setTimeout(() => {
       observer.error(new Error('Запит перевищив час очікування'));
-    }, 10000); // 10 секунд
+    }, 10000);
 
     const subscription = forward(operation).subscribe({
       next: (data) => {
@@ -53,7 +52,7 @@ const timeoutLink = new ApolloLink((operation, forward) => {
   });
 });
 
-const retryLink = new RetryLink({
+export const retryLink = new RetryLink({
   delay: {
     initial: 300,
     max: Infinity,
