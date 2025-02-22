@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -31,18 +31,36 @@ export default function LoginForm({ onSubmit, error }: Props) {
     resolver: yupResolver(loginSchema),
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   return (
     <div className={styles.container}>
       <form
         className={styles.form}
         role="form"
-        onSubmit={handleSubmit(() => {
-          const values = getValues();
-          onSubmit(values);
+        onSubmit={handleSubmit(async () => {
+          setIsSubmitting(true);
+          setSubmitError(null);
+          try {
+            const values = getValues();
+            await onSubmit(values);
+          } catch (error) {
+            setSubmitError(
+              error instanceof Error ? error.message : 'An error occurred',
+            );
+          } finally {
+            setIsSubmitting(false);
+          }
         })}
       >
+        {submitError && (
+          <p className={styles.error} role="alert">
+            {submitError}
+          </p>
+        )}
         <div className={styles.header}>
-          <h1>Sign In</h1>
+          {isSubmitting ? <h1>Signing in...</h1> : <h1>Sign in</h1>}
         </div>
 
         <div className={styles.inputGroup}>
@@ -96,8 +114,12 @@ export default function LoginForm({ onSubmit, error }: Props) {
         {error && <p className={styles.error}>{error}</p>}
 
         <div className={styles.buttonContainer}>
-          <button type="submit" className={styles.button}>
-            Sign in
+          <button
+            type="submit"
+            className={styles.button}
+            aria-live={isSubmitting ? 'assertive' : 'polite'}
+          >
+            {isSubmitting ? 'Signing in...' : 'Sign in'}
           </button>
         </div>
 

@@ -3,5 +3,10 @@ import { CURRENT_USER_QUERY } from 'constants/graphql';
 
 export function useUser() {
   const { data, loading, error } = useQuery(CURRENT_USER_QUERY);
-  return { user: data?.authenticatedItem, loading, error };
+
+  return {
+    user: error ? null : data?.authenticatedItem,
+    loading,
+    error,
+  };
 }

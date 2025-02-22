@@ -54,7 +54,9 @@ describe('LoginPage', () => {
       </MockedProvider>,
     );
 
-    expect(screen.getByText('Sign In')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /sign in/i }),
+    ).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
     expect(
