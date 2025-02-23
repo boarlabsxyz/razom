@@ -46,7 +46,7 @@ if (!allowedFrontends.length) {
   if (vercelEnv === 'production') {
     allowedFrontends = ['https://razom.vercel.com'];
   } else if (vercelEnv === 'preview') {
-    allowedFrontends = [`https://${process.env.VERCEL_URL}`];
+    allowedFrontends = [`https://${process.env.DEPLOYMENT_URL}`];
   } else {
     allowedFrontends = ['http://localhost:8000'];
   }

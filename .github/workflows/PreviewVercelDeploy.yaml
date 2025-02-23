@@ -261,6 +261,6 @@ jobs:
             echo "::error::Deployment failed"
             exit 1
           fi
-          echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
+          echo "url=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
           echo "Preview URL: $DEPLOYMENT_URL"
         working-directory: ./veterans
