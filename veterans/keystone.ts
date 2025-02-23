@@ -36,22 +36,6 @@ const { withAuth } = createAuth({
   sessionData: 'id role',
 });
 
-const envAllowedUrls = process.env.ALLOWED_FRONTEND_URL?.split(',') || [];
-
-const vercelEnv = process.env.VERCEL_ENV;
-
-let allowedFrontends = envAllowedUrls;
-
-if (!allowedFrontends.length) {
-  if (vercelEnv === 'production') {
-    allowedFrontends = ['https://razom.vercel.com'];
-  } else if (vercelEnv === 'preview') {
-    allowedFrontends = ['*'];
-  } else {
-    allowedFrontends = ['http://localhost:8000'];
-  }
-}
-
 export default withAuth<TypeInfo<Session>>(
   config<TypeInfo>({
     db: {
@@ -97,7 +81,7 @@ export default withAuth<TypeInfo<Session>>(
     }),
     server: {
       cors: {
-        origin: allowedFrontends,
+        origin: '*',
         credentials: true,
       },
     },
