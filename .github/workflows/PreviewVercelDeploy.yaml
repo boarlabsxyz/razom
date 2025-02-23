@@ -13,7 +13,7 @@ env:
   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
   TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-  NODE_ENV: 'test'
+  NODE_ENV: 'preview'
 
 jobs:
   docker-lint:
@@ -261,6 +261,7 @@ jobs:
             echo "::error::Deployment failed"
             exit 1
           fi
+          echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
           echo "url=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
           echo "Preview URL: $DEPLOYMENT_URL"
         working-directory: ./veterans
