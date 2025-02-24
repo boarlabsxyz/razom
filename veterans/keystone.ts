@@ -73,6 +73,7 @@ if (!allowedFrontends.length) {
   }
 }
 
+// eslint-disable-next-line no-console
 console.log('Allowed Origins:', allowedFrontends);
 
 export default withAuth<TypeInfo<Session>>(
