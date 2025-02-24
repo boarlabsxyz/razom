@@ -14,6 +14,7 @@ env:
   TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
   NODE_ENV: 'preview'
+  VERCEL_ENV: 'preview'
 
 jobs:
   docker-lint:
