@@ -58,9 +58,16 @@ let allowedFrontends = validUrls;
 
 if (!allowedFrontends.length) {
   if (vercelEnv === 'production') {
-    allowedFrontends = ['https://razom.vercel.app', 'razom.vercel.app'];
+    allowedFrontends = ['https://razom.vercel.app'];
   } else if (vercelEnv === 'preview') {
-    allowedFrontends = [`https://${process.env.DEPLOYMENT_URL}`];
+    if (!process.env.DEPLOYMENT_URL) {
+      throw new Error('DEPLOYMENT_URL is required in preview environment');
+    }
+    const previewUrl = `https://${process.env.DEPLOYMENT_URL}`;
+    if (!isValidUrl(previewUrl)) {
+      throw new Error(`Invalid preview URL: ${previewUrl}`);
+    }
+    allowedFrontends = [previewUrl];
   } else {
     allowedFrontends = ['http://localhost:8000'];
   }
