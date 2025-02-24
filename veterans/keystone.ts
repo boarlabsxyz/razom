@@ -38,13 +38,27 @@ const { withAuth } = createAuth({
 
 const envAllowedUrls = process.env.ALLOWED_FRONTEND_URL?.split(',') || [];
 
+const isValidUrl = (url: string) => {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const validUrls = envAllowedUrls.filter(isValidUrl);
+if (envAllowedUrls.length && !validUrls.length) {
+  throw new Error('ALLOWED_FRONTEND_URL contains invalid URLs');
+}
+
 const vercelEnv = process.env.VERCEL_ENV;
 
-let allowedFrontends = envAllowedUrls;
+let allowedFrontends = validUrls;
 
 if (!allowedFrontends.length) {
   if (vercelEnv === 'production') {
-    allowedFrontends = ['https://razom.vercel.com'];
+    allowedFrontends = ['https://razom.vercel.app', 'razom.vercel.app'];
   } else if (vercelEnv === 'preview') {
     allowedFrontends = [`https://${process.env.DEPLOYMENT_URL}`];
   } else {
