@@ -60,8 +60,8 @@ if (!allowedFrontends.length) {
   if (vercelEnv === 'production') {
     allowedFrontends = ['https://razom.vercel.app'];
   } else if (vercelEnv === 'preview') {
-    if (!process.env.DEPLOYMENT_URL) {
-      throw new Error('DEPLOYMENT_URL is required in preview environment');
+    if (!process.env.VERCEL_URL) {
+      throw new Error('VERCEL_URL is required in preview environment');
     }
     const previewUrl = `https://${process.env.DEPLOYMENT_URL}`;
     if (!isValidUrl(previewUrl)) {
@@ -72,6 +72,8 @@ if (!allowedFrontends.length) {
     allowedFrontends = ['http://localhost:8000'];
   }
 }
+
+console.log('Allowed Origins:', allowedFrontends);
 
 export default withAuth<TypeInfo<Session>>(
   config<TypeInfo>({
