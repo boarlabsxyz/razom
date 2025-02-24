@@ -52,26 +52,19 @@ if (envAllowedUrls.length && !validUrls.length) {
   throw new Error('ALLOWED_FRONTEND_URL contains invalid URLs');
 }
 
-const vercelEnv = process.env.VERCEL_ENV;
+// const vercelEnv = process.env.VERCEL_ENV;
 
-let allowedFrontends = validUrls;
+const allowedFrontends = validUrls;
 
-if (!allowedFrontends.length) {
-  if (vercelEnv === 'production') {
-    allowedFrontends = ['https://razom.vercel.app'];
-  } else if (vercelEnv === 'preview') {
-    if (!process.env.VERCEL_URL) {
-      throw new Error('VERCEL_URL is required in preview environment');
-    }
-    const previewUrl = `https://${process.env.DEPLOYMENT_URL}`;
-    if (!isValidUrl(previewUrl)) {
-      throw new Error(`Invalid preview URL: ${previewUrl}`);
-    }
-    allowedFrontends = [previewUrl];
-  } else {
-    allowedFrontends = ['http://localhost:8000'];
-  }
-}
+// if (!allowedFrontends.length) {
+//   if (vercelEnv === 'production') {
+//     allowedFrontends = ['https://razom.vercel.app'];
+//   } else if (vercelEnv === 'preview') {
+//     allowedFrontends = [/^https:\/\/razom-.*-kavoon\.vercel\.app$/];
+//   } else {
+//     allowedFrontends = ['http://localhost:8000'];
+//   }
+// }
 
 // eslint-disable-next-line no-console
 console.log('Allowed Origins:', allowedFrontends);
