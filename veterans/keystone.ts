@@ -52,19 +52,19 @@ if (envAllowedUrls.length && !validUrls.length) {
   throw new Error('ALLOWED_FRONTEND_URL contains invalid URLs');
 }
 
-// const vercelEnv = process.env.VERCEL_ENV;
+const nodeEnv = process.env.NODE_ENV;
 
-const allowedFrontends = validUrls;
+let allowedFrontends = validUrls;
 
-// if (!allowedFrontends.length) {
-//   if (vercelEnv === 'production') {
-//     allowedFrontends = ['https://razom.vercel.app'];
-//   } else if (vercelEnv === 'preview') {
-//     allowedFrontends = [/^https:\/\/razom-.*-kavoon\.vercel\.app$/];
-//   } else {
-//     allowedFrontends = ['http://localhost:8000'];
-//   }
-// }
+if (!allowedFrontends.length) {
+  if (nodeEnv === 'production') {
+    allowedFrontends = ['https://razom.vercel.app'];
+  } else if (nodeEnv === 'test') {
+    allowedFrontends = ['*'];
+  } else {
+    allowedFrontends = ['http://localhost:8000'];
+  }
+}
 
 // eslint-disable-next-line no-console
 console.log('Allowed Origins:', allowedFrontends);
@@ -115,7 +115,7 @@ export default withAuth<TypeInfo<Session>>(
     server: {
       cors: {
         origin: allowedFrontends,
-        credentials: true,
+        credentials: nodeEnv !== 'test',
       },
     },
   }),
