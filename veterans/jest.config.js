@@ -3,6 +3,7 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jest-environment-jsdom',
+  setupFiles: ['./jest.setup.ts'],
   transform: {
     '^.+\\.tsx?$': [
       'ts-jest',
@@ -35,10 +36,14 @@ module.exports = {
     '\\.css$': 'identity-obj-proxy',
     '\\.module\\.css$': 'identity-obj-proxy',
     '^@helpers/(.*)$': '<rootDir>/helpers/$1',
+    '^@lib/(.*)$': '<rootDir>/lib/$1',
+    '^@keystone/(.*)$': '<rootDir>/keystone/$1',
     '^@comComps/(.*)$': '<rootDir>/components/common/$1',
     '^@comps/(.*)$': '<rootDir>/components/$1',
     '^keystone/context$': '<rootDir>/keystone/context',
     '^keystone$': '<rootDir>/keystone',
+    '^hooks/(.*)$': '<rootDir>/hooks/$1',
+    '^constants/(.*)$': '<rootDir>/constants/$1',
   },
   testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
 };

@@ -147,8 +147,13 @@ describe('Auth Forms', () => {
   });
 
   describe('LoginForm', () => {
+    const mockOnSubmit = jest.fn();
+
+    beforeEach(() => {
+      mockOnSubmit.mockClear();
+    });
     it('should render LoginForm correctly', () => {
-      render(<LoginForm />);
+      render(<LoginForm onSubmit={mockOnSubmit} />);
 
       expect(
         screen.getByRole('heading', { name: /sign in/i }),
@@ -162,7 +167,7 @@ describe('Auth Forms', () => {
     });
 
     it('should show validation errors when submitting empty fields', async () => {
-      render(<LoginForm />);
+      render(<LoginForm onSubmit={mockOnSubmit} />);
 
       fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
@@ -173,7 +178,7 @@ describe('Auth Forms', () => {
     });
 
     it('should show validation error for invalid email', async () => {
-      render(<LoginForm />);
+      render(<LoginForm onSubmit={mockOnSubmit} />);
 
       fireEvent.change(screen.getByPlaceholderText('Email'), {
         target: { value: 'invalidemail' },
@@ -188,7 +193,7 @@ describe('Auth Forms', () => {
     });
 
     it('should clear error messages when correcting fields in LoginForm', async () => {
-      render(<LoginForm />);
+      render(<LoginForm onSubmit={mockOnSubmit} />);
 
       fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
       await screen.findByText('Email is required');
@@ -200,6 +205,32 @@ describe('Auth Forms', () => {
       await waitFor(() => {
         expect(screen.queryByText('Email is required')).not.toBeInTheDocument();
       });
+    });
+    it('should call onSubmit with form data when submission is successful', async () => {
+      render(<LoginForm onSubmit={mockOnSubmit} />);
+
+      fireEvent.change(screen.getByPlaceholderText('Email'), {
+        target: { value: 'test@example.com' },
+      });
+      fireEvent.change(screen.getByPlaceholderText('Password'), {
+        target: { value: 'password123' },
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
+      await waitFor(() => {
+        expect(mockOnSubmit).toHaveBeenCalledWith({
+          email: 'test@example.com',
+          password: 'password123',
+        });
+      });
+    });
+
+    it('should display error message when provided', () => {
+      const errorMessage = 'Invalid credentials';
+      render(<LoginForm onSubmit={mockOnSubmit} error={errorMessage} />);
+
+      expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
   });
 });

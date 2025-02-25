@@ -2,12 +2,16 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import FooterContent from './FooterContent';
+import { useUser } from 'hooks/useUser';
 
-jest.mock('next/navigation', () => ({
-  usePathname: jest.fn(),
-}));
+jest.mock('hooks/useUser');
 
 describe('FooterContent Component', () => {
+  beforeEach(() => {
+    (useUser as jest.Mock).mockReturnValue({
+      user: { id: '123', email: 'test@example.com' },
+    });
+  });
   it('renders all elements correctly', () => {
     const mockChildText = 'This is a child element';
 

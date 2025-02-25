@@ -36,6 +36,39 @@ const { withAuth } = createAuth({
   sessionData: 'id role',
 });
 
+const envAllowedUrls = process.env.ALLOWED_FRONTEND_URL?.split(',') || [];
+
+const isValidUrl = (url: string) => {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const validUrls = envAllowedUrls.filter(isValidUrl);
+if (envAllowedUrls.length && !validUrls.length) {
+  throw new Error('ALLOWED_FRONTEND_URL contains invalid URLs');
+}
+
+// const vercelEnv = process.env.VERCEL_ENV;
+
+const allowedFrontends = validUrls;
+
+// if (!allowedFrontends.length) {
+//   if (vercelEnv === 'production') {
+//     allowedFrontends = ['https://razom.vercel.app'];
+//   } else if (vercelEnv === 'preview') {
+//     allowedFrontends = [/^https:\/\/razom-.*-kavoon\.vercel\.app$/];
+//   } else {
+//     allowedFrontends = ['http://localhost:8000'];
+//   }
+// }
+
+// eslint-disable-next-line no-console
+console.log('Allowed Origins:', allowedFrontends);
+
 export default withAuth<TypeInfo<Session>>(
   config<TypeInfo>({
     db: {
@@ -79,5 +112,11 @@ export default withAuth<TypeInfo<Session>>(
           throw new Error('Session secret is required for stateless sessions');
         })(),
     }),
+    server: {
+      cors: {
+        origin: allowedFrontends,
+        credentials: true,
+      },
+    },
   }),
 );

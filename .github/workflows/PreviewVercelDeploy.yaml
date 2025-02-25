@@ -11,9 +11,10 @@ env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
-  TEST_DATABASE_URL: ${{ secrets.DEVELOPMENT_DATABASE_URL }}
+  TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-  NODE_ENV: 'test'
+  NODE_ENV: 'preview'
+  VERCEL_ENV: 'preview'
 
 jobs:
   docker-lint:
@@ -254,21 +255,6 @@ jobs:
         timeout-minutes: 10
         working-directory: ./veterans
 
-      - name: Copy Prisma binaries to Vercel deployment output
-        run: |
-          DEST_DIR=".vercel/output/functions/api/posts.func/node_modules/.prisma/client/"
-          if [ ! -d "node_modules/.prisma/client/" ]; then
-            echo "::error::Source Prisma client directory not found"
-            exit 1
-          fi
-          mkdir -p "$DEST_DIR"
-          if ! cp -r node_modules/.prisma/client/* "$DEST_DIR"; then
-            echo "::error::Failed to copy Prisma binaries"
-            exit 1
-          fi
-          echo "Successfully copied Prisma binaries to deployment output"
-        working-directory: ./veterans
-
       - name: Deploy to Vercel
         id: deploy
         run: |
@@ -277,5 +263,6 @@ jobs:
             exit 1
           fi
           echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
+          echo "url=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
           echo "Preview URL: $DEPLOYMENT_URL"
         working-directory: ./veterans

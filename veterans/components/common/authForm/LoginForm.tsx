@@ -1,67 +1,89 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import styles from './AuthForm.module.css';
 import Link from 'next/link';
+import { LoginFormData } from 'types';
 
 const loginSchema = yup.object().shape({
-  identity: yup
+  email: yup
     .string()
     .email('Invalid email format')
     .required('Email is required'),
   password: yup.string().required('Password is required'),
 });
 
-export default function LoginForm() {
+type Props = {
+  onSubmit: (formData: LoginFormData) => Promise<void>;
+  error?: string;
+};
+
+export default function LoginForm({ onSubmit, error }: Props) {
   const {
     control,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm({
     resolver: yupResolver(loginSchema),
   });
 
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  const onSubmit = (data: any) => {
-    // eslint-disable-next-line no-console
-    console.log('Login Data:', data);
-  };
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   return (
     <div className={styles.container}>
       <form
         className={styles.form}
         role="form"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(async () => {
+          setIsSubmitting(true);
+          setSubmitError(null);
+          try {
+            const values = getValues();
+            await onSubmit(values);
+          } catch (error) {
+            setSubmitError(
+              error instanceof Error ? error.message : 'An error occurred',
+            );
+          } finally {
+            setIsSubmitting(false);
+          }
+        })}
       >
+        {submitError && (
+          <p className={styles.error} role="alert">
+            {submitError}
+          </p>
+        )}
         <div className={styles.header}>
-          <h1>Sign In</h1>
+          {isSubmitting ? <h1>Signing in...</h1> : <h1>Sign in</h1>}
         </div>
 
         <div className={styles.inputGroup}>
-          <label htmlFor="identity" className={styles.label}>
+          <label htmlFor="email" className={styles.label}>
             Email
           </label>
           <Controller
             control={control}
-            name="identity"
+            name="email"
             render={({ field }) => (
               <input
                 type="email"
-                id="identity"
+                id="email"
                 placeholder="Email"
-                className={`${styles.input} ${errors.identity ? styles.inputError : ''}`}
+                className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
                 value={field.value || ''}
                 onChange={(e) => field.onChange(e.target.value)}
               />
             )}
           />
-          {errors.identity && (
+          {errors.email && (
             <p className={styles.error} data-testid="email-error">
-              {errors.identity.message}
+              {errors.email.message}
             </p>
           )}
         </div>
@@ -89,15 +111,21 @@ export default function LoginForm() {
           )}
         </div>
 
+        {error && <p className={styles.error}>{error}</p>}
+
         <div className={styles.buttonContainer}>
-          <button type="submit" className={styles.button}>
-            Sign in
+          <button
+            type="submit"
+            className={styles.button}
+            aria-live={isSubmitting ? 'assertive' : 'polite'}
+          >
+            {isSubmitting ? 'Signing in...' : 'Sign in'}
           </button>
         </div>
 
         <div className={styles.textContainer}>
           <p>
-            If you don’t have an account, please{' '}
+            If you don't have an account, please{' '}
             <Link href="/register">register here</Link>.
           </p>
         </div>
