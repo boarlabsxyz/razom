@@ -118,7 +118,7 @@ export default withAuth<TypeInfo<Session>>(
       // },
       cors: {
         origin: '*',
-        credentials: true,
+        // credentials: true,
       },
     },
   }),

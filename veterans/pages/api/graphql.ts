@@ -23,6 +23,6 @@ export default createYoga<{
   // },
   cors: {
     origin: '*',
-    credentials: true,
+    // credentials: true,
   },
 });
