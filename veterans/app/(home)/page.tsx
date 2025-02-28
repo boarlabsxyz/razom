@@ -30,7 +30,7 @@ export default function HomePage() {
     ProcessedInitiative[]
   >([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // Додаємо стан для помилки
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchInitiatives() {
@@ -75,7 +75,7 @@ export default function HomePage() {
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Error fetching initiatives:', error);
-        setError(error instanceof Error ? error.message : 'Unknown error'); // Оновлюємо стан помилки
+        setError(error instanceof Error ? error.message : 'Unknown error');
       } finally {
         setLoading(false);
       }
@@ -89,7 +89,7 @@ export default function HomePage() {
   }
 
   if (error) {
-    return <p data-test-id="error-message">{error}</p>; // Додаємо id для тесту
+    return <p data-test-id="error-message">{error}</p>;
   }
 
   return (
