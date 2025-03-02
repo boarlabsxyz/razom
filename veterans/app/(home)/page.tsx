@@ -84,34 +84,32 @@ export default function HomePage() {
     fetchInitiatives();
   }, []);
 
-  if (loading) {
-    return <Spinner data-test-id="loader" />;
-  }
-
-  if (error) {
-    return <p data-test-id="error-message">{error}</p>;
-  }
-
   return (
     <Container>
-      <main className={st.wrapper}>
-        <section aria-label="Blog initiatives" data-test-id="blog-initiatives">
-          {processedInitiatives.length === 0 ? (
-            <p>No initiatives available at the moment.</p>
-          ) : (
-            <ul>
-              {processedInitiatives.map((post) => (
-                <li key={post.id}>
-                  <article>
-                    <h3>{post.title}</h3>
-                    <p>{post.content}</p>
-                  </article>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      </main>
+      <section
+        className={st.section}
+        aria-label="Blog initiatives"
+        data-test-id="blog-initiatives"
+      >
+        {loading ? (
+          <Spinner data-test-id="loader" />
+        ) : error ? (
+          <p data-test-id="error-message">{error}</p>
+        ) : processedInitiatives.length === 0 ? (
+          <p>No initiatives available at the moment.</p>
+        ) : (
+          <ul>
+            {processedInitiatives.map((post) => (
+              <li key={post.id}>
+                <article>
+                  <h3>{post.title}</h3>
+                  <p>{post.content}</p>
+                </article>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </Container>
   );
 }

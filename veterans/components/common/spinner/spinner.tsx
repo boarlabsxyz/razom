@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import BeatLoader from 'react-spinners/BeatLoader';
 
-import st from '@comComps/spinner/spinner.module.css';
+import st from './spinner.module.css';
 
 interface IProps {
   loading?: boolean;

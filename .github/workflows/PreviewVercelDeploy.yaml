@@ -36,7 +36,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create .env file
-        run: echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
+        run: |
+          echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> veterans/.env
 
       - name: Build app image
         run: docker compose build
