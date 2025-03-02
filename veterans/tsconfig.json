@@ -33,6 +33,13 @@
       }
     ]
   },
-  "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "keystone-fallback.d.ts",
+    ".keystone/types.ts"
+  ],
   "exclude": ["node_modules"]
 }
