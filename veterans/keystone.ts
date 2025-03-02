@@ -36,34 +36,6 @@ const { withAuth } = createAuth({
   sessionData: 'id role',
 });
 
-// const allowedOrigins = (origin: string | undefined) => {
-//   if (!origin) {
-//     return true;
-//   }
-
-//   return (
-//     origin.includes('localhost:3000') ||
-//     origin.includes('localhost:8000') ||
-//     origin.endsWith('.vercel.app')
-//   );
-// };
-
-// export const corsOptions = {
-//   origin: ((
-//     requestOrigin: string | undefined,
-//     callback: (err: Error | null, allow?: string | boolean) => void,
-//   ) => {
-//     if (allowedOrigins(requestOrigin)) {
-//       callback(null, requestOrigin);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   }) as unknown as string | string[],
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-// };
-
 const allowedOrigins = (origin: string | undefined) => {
   if (!origin) {
     return true;
