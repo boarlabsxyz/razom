@@ -35,23 +35,25 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchInitiatives() {
       try {
-        const response = await fetch('/api/graphql', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            query: `
-              query {
-                initiatives {
-                  id
-                  title
-                  description {
-                    document
-                  }
-                }
-              }
-            `,
-          }),
-        });
+        // const response = await fetch('/api/graphql', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify({
+        //     query: `
+        //       query {
+        //         initiatives {
+        //           id
+        //           title
+        //           description {
+        //             document
+        //           }
+        //         }
+        //       }
+        //     `,
+        //   }),
+        // });
+
+        const response = null;
 
         if (!response.ok) {
           throw new Error('Failed to fetch initiatives');

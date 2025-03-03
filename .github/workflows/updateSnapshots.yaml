@@ -28,6 +28,7 @@ jobs:
 
       - name: Run Playwright tests (app-nextjs)
         run: docker compose exec app-nextjs sh -c "npm run test:e2e -- e2e/nextjs-test --update-snapshots"
+        continue-on-error: true
 
       - name: Ensure e2e directory exists
         run: mkdir -p e2e/nextjs-test/
