@@ -1,10 +1,8 @@
-export type AuthFormData = {
+export type LoginFormData = {
   email: string;
   password: string;
 };
 
-export type LoginFormData = AuthFormData;
-
-export type RegisterFormData = AuthFormData & {
+export type RegisterFormData = LoginFormData & {
   name: string;
 };

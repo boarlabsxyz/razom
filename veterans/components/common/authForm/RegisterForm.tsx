@@ -23,7 +23,7 @@ const registerSchema = yup.object().shape({
     .string()
     .min(8, 'Password must be at least 8 characters')
     .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .matches(/[0-9]/, 'Password must contain at least one number')
+    .matches(/\d/, 'Password must contain at least one number')
     .required('Password is required'),
   confirmPassword: yup
     .string()
@@ -84,11 +84,7 @@ export default function RegisterForm() {
 
   return (
     <div className={styles.container}>
-      <form
-        className={styles.form}
-        role="form"
-        onSubmit={handleSubmit(onSubmit)}
-      >
+      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <div className={styles.header}>
           <h1>Sign Up</h1>
         </div>

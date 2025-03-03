@@ -91,13 +91,12 @@ export default function HomePage() {
         aria-label="Blog initiatives"
         data-test-id="blog-initiatives"
       >
-        {loading ? (
-          <Spinner data-test-id="loader" />
-        ) : error ? (
-          <p data-test-id="error-message">{error}</p>
-        ) : processedInitiatives.length === 0 ? (
+        {loading && <Spinner data-test-id="loader" />}
+        {!loading && error && <p data-test-id="error-message">{error}</p>}
+        {!loading && !error && processedInitiatives.length === 0 && (
           <p>No initiatives available at the moment.</p>
-        ) : (
+        )}
+        {!loading && !error && processedInitiatives.length > 0 && (
           <ul>
             {processedInitiatives.map((post) => (
               <li key={post.id}>
