@@ -91,7 +91,7 @@ export default function HomePage() {
         aria-label="Blog initiatives"
         data-test-id="blog-initiatives"
       >
-        {loading && <Spinner data-test-id="loader" />}
+        {loading && <Spinner />}
         {!loading && error && <p data-test-id="error-message">{error}</p>}
         {!loading && !error && processedInitiatives.length === 0 && (
           <p>No initiatives available at the moment.</p>

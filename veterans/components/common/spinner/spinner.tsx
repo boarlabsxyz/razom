@@ -12,7 +12,7 @@ const Spinner: FC<IProps> = ({
   loading = true,
   color = 'var(--fiji-green)',
 }) => (
-  <div className={st.wrapper}>
+  <div className={st.wrapper} data-test-id="loader">
     <BeatLoader
       color={color}
       loading={loading}
