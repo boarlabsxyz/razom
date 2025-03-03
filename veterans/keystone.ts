@@ -42,7 +42,9 @@ const allowedOrigins = (origin: string | undefined) => {
   }
 
   if (process.env.NODE_ENV === 'production') {
-    return origin === 'https://razom.vercel.app';
+    return (
+      origin === 'https://razom.vercel.app' || origin.includes('localhost:3000')
+    );
   }
 
   return (
