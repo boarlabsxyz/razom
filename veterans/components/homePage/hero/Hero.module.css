@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 92px;
+  text-align: center;
+}
+
+.textWrapper {
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.mainTextWrapper {
+  max-width: 720px;
+}
+
+.secondTextWrapper {
+  max-width: 420px;
+}
+
+.mainText {
+  font-size: 40px;
+}
+
+.greenText {
+  color: #176420;
+}

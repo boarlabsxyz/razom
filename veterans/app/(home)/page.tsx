@@ -5,6 +5,7 @@ import Spinner from '@comComps/spinner';
 import Container from '@comComps/container';
 
 import st from './page.module.css';
+import Hero from '@comps/homePage/hero/Hero';
 
 type Initiative = {
   id: string;
@@ -88,30 +89,38 @@ export default function HomePage() {
     return <Spinner data-test-id="loader" />;
   }
 
-  if (error) {
-    return <p data-test-id="error-message">{error}</p>; // Додаємо id для тесту
+  if (loading) {
+    return <Spinner data-test-id="loader" />;
   }
 
   return (
     <Container>
-      <main className={st.wrapper}>
-        <section aria-label="Blog initiatives" data-test-id="blog-initiatives">
-          {processedInitiatives.length === 0 ? (
-            <p>No initiatives available at the moment.</p>
-          ) : (
-            <ul>
-              {processedInitiatives.map((post) => (
-                <li key={post.id}>
-                  <article>
-                    <h3>{post.title}</h3>
-                    <p>{post.content}</p>
-                  </article>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      </main>
+      <Hero />
+      {error ? (
+        <p data-test-id="error-message">{error}</p>
+      ) : (
+        <div className={st.wrapper}>
+          <section
+            aria-label="Blog initiatives"
+            data-test-id="blog-initiatives"
+          >
+            {processedInitiatives.length === 0 ? (
+              <p>No initiatives available at the moment.</p>
+            ) : (
+              <ul>
+                {processedInitiatives.map((post) => (
+                  <li key={post.id}>
+                    <article>
+                      <h3>{post.title}</h3>
+                      <p>{post.content}</p>
+                    </article>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
+      )}
     </Container>
   );
 }
