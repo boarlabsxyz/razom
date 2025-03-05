@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import BeatLoader from 'react-spinners/BeatLoader';
 
-import st from '@comComps/spinner/spinner.module.css';
+import st from './spinner.module.css';
 
 interface IProps {
   loading?: boolean;
@@ -12,7 +12,7 @@ const Spinner: FC<IProps> = ({
   loading = true,
   color = 'var(--forest-jade)',
 }) => (
-  <div className={st.wrapper}>
+  <div className={st.wrapper} data-test-id="loader">
     <BeatLoader
       color={color}
       loading={loading}

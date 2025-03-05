@@ -3,6 +3,7 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 import { createYoga } from 'graphql-yoga';
 
 import { keystoneContext } from 'keystone/context';
+import { corsOptions } from 'keystone';
 
 export const config = {
   api: {
@@ -17,8 +18,5 @@ export default createYoga<{
   graphqlEndpoint: '/api/graphql',
   schema: keystoneContext.graphql.schema,
   context: ({ req, res }) => keystoneContext.withRequest(req, res),
-  cors: {
-    origin: process.env.ALLOWED_FRONTEND_URL || 'http://localhost:8000',
-    credentials: true,
-  },
+  cors: corsOptions,
 });

@@ -36,38 +36,39 @@ const { withAuth } = createAuth({
   sessionData: 'id role',
 });
 
-const envAllowedUrls = process.env.ALLOWED_FRONTEND_URL?.split(',') || [];
-
-const isValidUrl = (url: string) => {
-  try {
-    new URL(url);
+const allowedOrigins = (origin: string | undefined) => {
+  if (!origin) {
     return true;
-  } catch {
-    return false;
   }
+
+  if (process.env.NODE_ENV === 'production') {
+    return (
+      origin === 'https://razom.vercel.app' || origin.includes('localhost:3000')
+    );
+  }
+
+  return (
+    origin.includes('localhost:3000') ||
+    origin.includes('localhost:8000') ||
+    origin.endsWith('.vercel.app')
+  );
 };
 
-const validUrls = envAllowedUrls.filter(isValidUrl);
-if (envAllowedUrls.length && !validUrls.length) {
-  throw new Error('ALLOWED_FRONTEND_URL contains invalid URLs');
-}
-
-// const vercelEnv = process.env.VERCEL_ENV;
-
-const allowedFrontends = validUrls;
-
-// if (!allowedFrontends.length) {
-//   if (vercelEnv === 'production') {
-//     allowedFrontends = ['https://razom.vercel.app'];
-//   } else if (vercelEnv === 'preview') {
-//     allowedFrontends = [/^https:\/\/razom-.*-kavoon\.vercel\.app$/];
-//   } else {
-//     allowedFrontends = ['http://localhost:8000'];
-//   }
-// }
-
-// eslint-disable-next-line no-console
-console.log('Allowed Origins:', allowedFrontends);
+export const corsOptions = {
+  origin: ((
+    requestOrigin: string | undefined,
+    callback: (err: Error | null, allow?: string | boolean) => void,
+  ) => {
+    if (allowedOrigins(requestOrigin)) {
+      callback(null, requestOrigin);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }) as unknown as string | string[],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
 export default withAuth<TypeInfo<Session>>(
   config<TypeInfo>({
@@ -113,10 +114,7 @@ export default withAuth<TypeInfo<Session>>(
         })(),
     }),
     server: {
-      cors: {
-        origin: allowedFrontends,
-        credentials: true,
-      },
+      cors: corsOptions,
     },
   }),
 );
