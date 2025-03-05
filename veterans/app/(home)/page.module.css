@@ -1,7 +1,7 @@
-.wrapper {
-  padding: 80px 40px;
+.section {
+  padding: 100px 40px;
 }
-.wrapper ul {
+.section ul {
   display: flex;
   flex-direction: column;
   gap: 20px;

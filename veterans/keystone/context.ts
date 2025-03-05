@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getContext } from '@keystone-6/core/context';
 import config from 'keystone';
-// import { Context } from '.keystone/types';
 import * as PrismaModule from '.prisma/client';
 
-// Making sure multiple prisma clients are not created during hot reloading
-// export const keystoneContext: Context = (() => {
 export const keystoneContext = (() => {
   try {
     return (
