@@ -38,7 +38,6 @@ export default function LoginForm({ onSubmit, error }: Props) {
     <div className={styles.container}>
       <form
         className={styles.form}
-        role="form"
         onSubmit={handleSubmit(async () => {
           setIsSubmitting(true);
           setSubmitError(null);

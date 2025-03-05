@@ -1,45 +1,45 @@
-name: Vercel Deployment
+name: Vercel Preview Deployment
 
 on:
   pull_request:
-      types:
+    types:
       - opened
       - synchronize
       - reopened
-  workflow_dispatch:
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
+  TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-  NODE_ENV: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
+  NODE_ENV: 'preview'
+  VERCEL_ENV: 'preview'
 
 jobs:
   docker-lint:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Lint Dockerfiles
-        run: |
-          docker run --rm -i hadolint/hadolint < Dockerfile.keystone
-          docker run --rm -i hadolint/hadolint < Dockerfile.nextjs
+      - name: Lint Dockerfile.keystone
+        run: docker run --rm -i hadolint/hadolint < Dockerfile.keystone
+
+      - name: Lint Dockerfile.nextjs
+        run: docker run --rm -i hadolint/hadolint < Dockerfile.nextjs
 
   unit-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Create .env file
         run: |
-             echo "DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
-             echo "TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }}" >> veterans/.env
-             echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> veterans/.env
+          echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
+          echo "TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }}" >> veterans/.env
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> veterans/.env
 
       - name: Build app image
         run: docker compose build
@@ -53,25 +53,13 @@ jobs:
           name: coverage-report
           path: veterans/coverage/lcov.info
 
-  lint:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Create .env file
-        run: echo "DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
-
-      - name: Build app image
-        run: docker compose build
-
-      - name: Run linters
-        run: docker compose run --rm app-nextjs npm run lint
-
   e2e-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    if: ${{ github.actor != 'dependabot[bot]' }}
+
+    strategy:
+      fail-fast: true
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -95,15 +83,16 @@ jobs:
               latest=$(echo "$response" | \
                 jq -r '[.artifacts[] | select(.name == "playwright-snapshots")] | sort_by(.created_at) | last')
 
-              if [ "$latest" != "null" ]; then
-                run_id=$(echo "$latest" | jq -r '.workflow_run.id')
-                echo "latest_run_id=$run_id" >> $GITHUB_ENV
-                echo "Found latest run ID: $run_id"
-                break
-              fi
+            if [ "$latest" != "null" ]; then
+              run_id=$(echo "$latest" | jq -r '.workflow_run.id')
+              echo "latest_run_id=$run_id" >> $GITHUB_ENV
+              echo "Found latest run ID: $run_id"
+              break
             fi
+          fi
+
             echo "Attempt $i failed, retrying..."
-            sleep 5
+              sleep 5
           done
 
       - name: Download Playwright snapshots artifact
@@ -143,10 +132,7 @@ jobs:
       - name: Run Playwright tests (app-nextjs)
         run: |
           timeout 600s docker compose exec app-nextjs sh -c "npm run test:e2e -- e2e/nextjs-test" || echo "TESTS_FAILED=true" >> $GITHUB_ENV
-          if [ $? -ne 0 ]; then
-            echo "::error:: Playwright E2E tests failed!"
-            exit 1
-          fi
+        continue-on-error: true
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
@@ -158,6 +144,21 @@ jobs:
       - name: Fail workflow if tests failed
         if: ${{ env.TESTS_FAILED == 'true' }}
         run: exit 1
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
+
+      - name: Build app image
+        run: docker compose build
+
+      - name: Run linters
+        run: docker compose run --rm app-nextjs npm run lint
 
   sonarqube:
     runs-on: ubuntu-latest
@@ -185,25 +186,27 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  deployment:
+  preview-deployment:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
-      name: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
-      url: ${{ github.event_name == 'pull_request' && 'https://' || 'https://razom.vercel.app/' }}
+      name: preview
+      url: ${{ steps.deploy.outputs.url }}
+
     needs:
       - lint
       - unit-tests
       - e2e-tests
       - sonarqube
+
     steps:
-      - name: Checkout repository
+      - name: Check out repository
         uses: actions/checkout@v4
 
       - name: Validate required secrets
         run: |
-          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "$VERCEL_CLI_TOKEN" ]; then
-            echo "::error::Missing required Vercel secrets"
+          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "$VERCEL_CLI_TOKEN" ] || [ -z "$TEST_DATABASE_URL" ]; then
+            echo "::error::Required secrets VERCEL_ORG_ID, VERCEL_PROJECT_ID, VERCEL_CLI_TOKEN and TEST_DATABASE_URL must be set"
             exit 1
           fi
 
@@ -218,36 +221,51 @@ jobs:
         run: npm ci
         working-directory: ./veterans
 
-      - name: Build project
+      - name: Run Keystone test build
+        run: npm run keystone:test:build
+        working-directory: ./veterans
+
+      - name: Clean node_modules/.prisma
         run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            npx vercel build --yes --token="$VERCEL_CLI_TOKEN" --force
-          else
-            npx vercel build --yes --prod --token="$VERCEL_CLI_TOKEN" --force
+          if [ -d "node_modules/.prisma" ]; then
+            rm -rf node_modules/.prisma
+            echo "Cleaned .prisma directory"
+          fi
+        working-directory: ./veterans
+
+      - name: Add binaryTargets to schema.prisma
+        run: |
+          if ! node scripts/add-binary-targets.js; then
+            echo "::error::Failed to add binary targets to schema.prisma"
+            exit 1
+          fi
+
+      - name: Generate Prisma Client
+        run: |
+          if ! npx prisma generate; then
+            echo "::error::Failed to generate Prisma Client"
+            exit 1
+          fi
+        working-directory: ./veterans
+
+      - name: Pull Vercel Environment
+        run: |
+          npx vercel pull --yes --environment=preview --token="$VERCEL_CLI_TOKEN"
+          echo "Vercel Environment pulled successfully."
+
+      - name: Build project
+        run: npx vercel build --yes --token="$VERCEL_CLI_TOKEN"
+        timeout-minutes: 10
         working-directory: ./veterans
 
       - name: Deploy to Vercel
         id: deploy
         run: |
-          # For Preview Deployment
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
-          else
-          # For Production Deployment
-            DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
-          fi
-          echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
-        working-directory: ./veterans
-
-      - name: Check if DEPLOYMENT_URL is set
-        run: |
-          if [ -z "${{ env.DEPLOYMENT_URL }}" ]; then
-            echo "::error::DEPLOYMENT_URL is not set. This might be due to:"
-            echo "1. Failed Vercel deployment"
-            echo "2. Missing or invalid VERCEL_CLI_TOKEN"
-            echo "3. Network connectivity issues"
-            echo "Please check the deployment logs above for more details."
+          if ! DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN"); then
+            echo "::error::Deployment failed"
             exit 1
-          else
-            echo "DEPLOYMENT_URL is set to: ${{ env.DEPLOYMENT_URL }}"
           fi
+          echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
+          echo "url=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
+          echo "Preview URL: $DEPLOYMENT_URL"
+        working-directory: ./veterans

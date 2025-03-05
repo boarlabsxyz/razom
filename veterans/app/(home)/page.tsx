@@ -30,7 +30,7 @@ export default function HomePage() {
     ProcessedInitiative[]
   >([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // Додаємо стан для помилки
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchInitiatives() {
@@ -75,7 +75,7 @@ export default function HomePage() {
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Error fetching initiatives:', error);
-        setError(error instanceof Error ? error.message : 'Unknown error'); // Оновлюємо стан помилки
+        setError(error instanceof Error ? error.message : 'Unknown error');
       } finally {
         setLoading(false);
       }
@@ -84,34 +84,31 @@ export default function HomePage() {
     fetchInitiatives();
   }, []);
 
-  if (loading) {
-    return <Spinner data-test-id="loader" />;
-  }
-
-  if (error) {
-    return <p data-test-id="error-message">{error}</p>; // Додаємо id для тесту
-  }
-
   return (
     <Container>
-      <main className={st.wrapper}>
-        <section aria-label="Blog initiatives" data-test-id="blog-initiatives">
-          {processedInitiatives.length === 0 ? (
-            <p>No initiatives available at the moment.</p>
-          ) : (
-            <ul>
-              {processedInitiatives.map((post) => (
-                <li key={post.id}>
-                  <article>
-                    <h3>{post.title}</h3>
-                    <p>{post.content}</p>
-                  </article>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      </main>
+      <section
+        className={st.section}
+        aria-label="Blog initiatives"
+        data-test-id="blog-initiatives"
+      >
+        {loading && <Spinner />}
+        {!loading && error && <p data-test-id="error-message">{error}</p>}
+        {!loading && !error && processedInitiatives.length === 0 && (
+          <p>No initiatives available at the moment.</p>
+        )}
+        {!loading && !error && processedInitiatives.length > 0 && (
+          <ul>
+            {processedInitiatives.map((post) => (
+              <li key={post.id}>
+                <article>
+                  <h3>{post.title}</h3>
+                  <p>{post.content}</p>
+                </article>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </Container>
   );
 }
