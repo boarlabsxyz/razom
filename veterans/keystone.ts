@@ -1,12 +1,15 @@
 import { config } from '@keystone-6/core';
 import 'dotenv/config';
 
+import cors from 'cors';
+
 import { lists } from './schema';
 import { type TypeInfo } from '.keystone/types';
 
 import { Session } from './keystone/access';
 import { createAuth } from '@keystone-6/auth';
 import { statelessSessions } from '@keystone-6/core/session';
+import { CorsCallback } from 'types';
 
 if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
   throw new Error(
@@ -15,16 +18,12 @@ if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
 }
 
 const sessionSecret = process.env.SESSION_SECRET;
-
 const sessionMaxAge = 60 * 60;
 
 const { withAuth } = createAuth({
   listKey: 'User',
-
   identityField: 'email',
-
   secretField: 'password',
-
   initFirstItem: {
     fields: ['name', 'email', 'password'],
     itemData: {
@@ -32,43 +31,42 @@ const { withAuth } = createAuth({
     },
     skipKeystoneWelcome: true,
   },
-
   sessionData: 'id role',
 });
 
 const allowedOrigins = (origin: string | undefined) => {
+  // console.log('CORS origin check:', origin);
+
   if (!origin) {
     return true;
   }
 
-  if (process.env.NODE_ENV === 'production') {
-    return (
-      origin === 'https://razom.vercel.app' || origin.includes('localhost:3000')
-    );
-  }
+  const allowed = [
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'https://razom.vercel.app',
+  ];
 
-  return (
-    origin.includes('localhost:3000') ||
-    origin.includes('localhost:8000') ||
-    origin.endsWith('.vercel.app')
-  );
+  return allowed.includes(origin) || origin.endsWith('.vercel.app');
 };
 
 export const corsOptions = {
-  origin: ((
-    requestOrigin: string | undefined,
-    callback: (err: Error | null, allow?: string | boolean) => void,
-  ) => {
-    if (allowedOrigins(requestOrigin)) {
-      callback(null, requestOrigin);
+  origin: (requestOrigin: string | undefined, callback: CorsCallback) => {
+    // console.log('CORS request from:', requestOrigin);
+
+    if (!requestOrigin || allowedOrigins(requestOrigin)) {
+      callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
-  }) as unknown as string | string[],
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
+
+// console.log('!!!!!!!corsOptions.origin:', corsOptions.origin);
+// console.log('+++++++++++ corsOptions.origin:', corsOptions.origin());
 
 export default withAuth<TypeInfo<Session>>(
   config<TypeInfo>({
@@ -99,10 +97,6 @@ export default withAuth<TypeInfo<Session>>(
             return process.env.DEVELOPMENT_DATABASE_URL;
         }
       })(),
-      // TODO implement according to new structure of Initiative
-      // onConnect: async (context) => {
-      // await seedDemoData(context);
-      // },
     },
     lists,
     session: statelessSessions({
@@ -114,7 +108,9 @@ export default withAuth<TypeInfo<Session>>(
         })(),
     }),
     server: {
-      cors: corsOptions,
+      extendExpressApp: (app) => {
+        app.use(cors(corsOptions));
+      },
     },
   }),
 );
