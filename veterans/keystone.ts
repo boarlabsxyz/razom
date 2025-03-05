@@ -35,8 +35,6 @@ const { withAuth } = createAuth({
 });
 
 const allowedOrigins = (origin: string | undefined) => {
-  // console.log('CORS origin check:', origin);
-
   if (!origin) {
     return true;
   }
@@ -52,8 +50,6 @@ const allowedOrigins = (origin: string | undefined) => {
 
 export const corsOptions = {
   origin: (requestOrigin: string | undefined, callback: CorsCallback) => {
-    // console.log('CORS request from:', requestOrigin);
-
     if (!requestOrigin || allowedOrigins(requestOrigin)) {
       callback(null, true);
     } else {
@@ -64,9 +60,6 @@ export const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
-
-// console.log('!!!!!!!corsOptions.origin:', corsOptions.origin);
-// console.log('+++++++++++ corsOptions.origin:', corsOptions.origin());
 
 export default withAuth<TypeInfo<Session>>(
   config<TypeInfo>({

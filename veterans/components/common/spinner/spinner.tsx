@@ -12,12 +12,7 @@ const Spinner: FC<IProps> = ({
   loading = true,
   color = 'var(--fiji-green)',
 }) => (
-  <div
-    className={st.wrapper}
-    data-test-id="loader"
-    role="status"
-    aria-live="polite"
-  >
+  <output className={st.wrapper} data-test-id="loader" aria-live="polite">
     <BeatLoader
       color={color}
       loading={loading}
@@ -27,7 +22,7 @@ const Spinner: FC<IProps> = ({
       aria-label="Loading Spinner"
       data-testid="loader"
     />
-  </div>
+  </output>
 );
 
 export default Spinner;
