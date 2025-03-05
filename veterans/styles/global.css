@@ -15,7 +15,7 @@
   --alice-blue: #f8f9fa;
 
   /* Primary */
-  --fiji-green: #596b21;
+  --forest-jade: #176420;
   --finch: #7d8c53;
   --pale-leaf: #c6ceac;
   --rice-flower: #eae8d8;
@@ -122,7 +122,7 @@ p {
 }
 
 .bg-primary {
-  background-color: var(--fiji-green);
+  background-color: var(--forest-jade);
 }
 
 .bg-neutral {
@@ -142,12 +142,13 @@ p {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  padding: 16px 24px;
   transition: all 0.2s ease-in-out;
 }
 
 /* ===== Primary Buttons ===== */
 .button--primary {
-  background-color: var(--fiji-green);
+  background-color: var(--forest-jade);
   color: var(--alice-blue);
 }
 
@@ -160,7 +161,7 @@ p {
 }
 
 .button--primary:active {
-  background-color: var(--fiji-green);
+  background-color: var(--forest-jade);
   transform: scale(0.98);
 }
 

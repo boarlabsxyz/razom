@@ -4,14 +4,10 @@
   justify-content: center;
   align-items: center;
   margin-top: 92px;
-  text-align: center;
 }
 
 .textWrapper {
-  padding-bottom: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding-bottom: 20px;
   text-align: center;
 }
 
@@ -19,14 +15,57 @@
   max-width: 720px;
 }
 
-.secondTextWrapper {
+.secondaryTextWrapper {
   max-width: 420px;
 }
 
 .mainText {
-  font-size: 40px;
+  font-weight: 500;
 }
 
 .greenText {
-  color: #176420;
+  color: var(--forest-jade);
+}
+
+.buttonContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.br {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .container {
+    align-items: start;
+  }
+
+  .textWrapper {
+    text-align: start;
+  }
+
+  .mainTextWrapper {
+    max-width: 250px;
+  }
+
+  .secondaryTextWrapper {
+    max-width: 300px;
+  }
+
+  .mainText {
+    font-size: 1.375rem;
+    line-height: 1.625rem;
+  }
+
+  .secondaryText {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  .br {
+    display: block;
+  }
 }
