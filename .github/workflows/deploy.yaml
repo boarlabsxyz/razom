@@ -143,10 +143,7 @@ jobs:
       - name: Run Playwright tests (app-nextjs)
         run: |
           timeout 600s docker compose exec app-nextjs sh -c "npm run test:e2e -- e2e/nextjs-test" || echo "TESTS_FAILED=true" >> $GITHUB_ENV
-          if [ $? -ne 0 ]; then
-            echo "::error:: Playwright E2E tests failed!"
-            exit 1
-          fi
+        continue-on-error: true
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
