@@ -7,34 +7,12 @@ import Spinner from '@comComps/spinner';
 import Container from '@comComps/container';
 
 import { GET_INITIATIVES } from 'constants/graphql';
-import { Initiative, ProcessedInitiative, Paragraph, Child } from 'types';
+import { Initiative, ProcessedInitiative } from 'types';
+
+import { processInitiative } from 'utils/initiativeUtils';
 
 import st from './page.module.css';
 import Hero from '@comps/homePage/hero/Hero';
-
-function getTextFromParagraph(paragraph: Paragraph): string {
-  return paragraph.children.map((child: Child) => child.text).join(' ');
-}
-
-function getDescription(description?: {
-  document?: Paragraph[];
-}): string | null {
-  if (!description?.document) {
-    return null;
-  }
-  return description.document.reduce((acc: string, paragraph: Paragraph) => {
-    const text = getTextFromParagraph(paragraph);
-    return acc ? `${acc}\n${text}` : text;
-  }, '');
-}
-
-function processInitiative(initiative: Initiative): ProcessedInitiative {
-  return {
-    id: initiative.id,
-    title: initiative.title,
-    description: getDescription(initiative.description),
-  };
-}
 
 export default function HomePage() {
   const { loading, error, data } = useQuery<{ initiatives: Initiative[] }>(
