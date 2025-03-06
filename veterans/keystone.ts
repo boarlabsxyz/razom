@@ -36,7 +36,7 @@ const { withAuth } = createAuth({
 
 const allowedOrigins = (origin: string | undefined) => {
   if (!origin) {
-    return true;
+    return false;
   }
 
   const allowed = [
