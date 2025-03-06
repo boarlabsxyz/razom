@@ -10,6 +10,7 @@ import { GET_INITIATIVES } from 'constants/graphql';
 import { Initiative, ProcessedInitiative, Paragraph, Child } from 'types';
 
 import st from './page.module.css';
+import Hero from '@comps/homePage/hero/Hero';
 
 function getTextFromParagraph(paragraph: Paragraph): string {
   return paragraph.children.map((child: Child) => child.text).join(' ');
@@ -68,6 +69,7 @@ export default function HomePage() {
 
   return (
     <Container>
+      <Hero />
       <section
         className={st.section}
         aria-label="Blog initiatives"
