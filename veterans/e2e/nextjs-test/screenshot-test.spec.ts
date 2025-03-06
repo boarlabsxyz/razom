@@ -25,7 +25,7 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
   await page.waitForLoadState('load');
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.waitForSelector('[data-test-id="loader"]', {
-    state: 'hidden',
+    state: 'detached',
     timeout: 10000,
   });
 
