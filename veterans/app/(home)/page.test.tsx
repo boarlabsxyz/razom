@@ -1,120 +1,102 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { MockedProvider } from '@apollo/client/testing';
 import HomePage from './page';
+import { GET_INITIATIVES } from 'constants/graphql';
 
-beforeEach(() => {
-  jest.clearAllMocks();
-  global.fetch = jest.fn();
-});
+const mockInitiatives = [
+  {
+    id: '1',
+    title: 'Initiative 1',
+    description: {
+      document: [{ type: 'paragraph', children: [{ text: 'Description 1' }] }],
+    },
+  },
+  {
+    id: '2',
+    title: 'Initiative 2',
+    description: {
+      document: [{ type: 'paragraph', children: [{ text: 'Description 2' }] }],
+    },
+  },
+];
+
+const mocks = [
+  {
+    request: {
+      query: GET_INITIATIVES,
+    },
+    result: {
+      data: {
+        initiatives: mockInitiatives,
+      },
+    },
+  },
+];
 
 describe('HomePage', () => {
-  it('renders loading spinner while fetching data', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce(
-      new Promise((resolve) =>
-        setTimeout(
-          () =>
-            resolve(
-              new Response(JSON.stringify({ data: { initiatives: [] } }), {
-                status: 200,
-                headers: { 'Content-Type': 'application/json' },
-              }),
-            ),
-          100,
-        ),
-      ),
+  it('renders loading state initially', () => {
+    render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <HomePage />
+      </MockedProvider>,
     );
 
-    await act(async () => {
-      render(<HomePage />);
-    });
-
-    await waitFor(() =>
-      expect(screen.getByTestId('loader')).toBeInTheDocument(),
-    );
-
-    await waitFor(() =>
-      expect(screen.queryByTestId('loader')).not.toBeInTheDocument(),
-    );
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
-  it('displays initiatives once loaded', async () => {
-    const initiatives = [
+  it('renders initiatives after loading', async () => {
+    render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <HomePage />
+      </MockedProvider>,
+    );
+
+    expect(await screen.findByText('Initiative 1')).toBeInTheDocument();
+    expect(await screen.findByText('Initiative 2')).toBeInTheDocument();
+  });
+
+  it('renders error message on error', async () => {
+    const errorMock = [
       {
-        id: '1',
-        title: 'Initiative 1',
-        content: 'This is initiative 1 content',
-      },
-      {
-        id: '2',
-        title: 'Initiative 2',
-        content: 'This is initiative 2 content',
+        request: {
+          query: GET_INITIATIVES,
+        },
+        error: new Error('GraphQL error'),
       },
     ];
 
-    (global.fetch as jest.Mock).mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({
-          data: {
-            initiatives,
-          },
-        }),
-        {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        },
-      ),
+    render(
+      <MockedProvider mocks={errorMock} addTypename={false}>
+        <HomePage />
+      </MockedProvider>,
     );
 
-    render(<HomePage />);
-
-    await waitFor(() =>
-      expect(screen.getByText('Initiative 1')).toBeInTheDocument(),
-    );
-    expect(screen.getByText('Initiative 2')).toBeInTheDocument();
+    expect(await screen.findByText('GraphQL error')).toBeInTheDocument();
   });
 
-  it('displays a message when no initiatives are available', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({
+  it('renders message when no initiatives are available', async () => {
+    const emptyMock = [
+      {
+        request: {
+          query: GET_INITIATIVES,
+        },
+        result: {
           data: {
             initiatives: [],
           },
-        }),
-        {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
         },
-      ),
+      },
+    ];
+
+    render(
+      <MockedProvider mocks={emptyMock} addTypename={false}>
+        <HomePage />
+      </MockedProvider>,
     );
 
-    render(<HomePage />);
-
-    await waitFor(() =>
-      expect(
-        screen.getByText('No initiatives available at the moment.'),
-      ).toBeInTheDocument(),
-    );
-  });
-
-  it('displays an error message if fetch fails', async () => {
-    (global.fetch as jest.Mock).mockRejectedValueOnce(
-      new Error('Failed to fetch initiatives'),
-    );
-
-    const consoleErrorSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
-
-    render(<HomePage />);
-
-    expect(screen.getByTestId('loader')).toBeInTheDocument();
-
-    await waitFor(() =>
-      expect(
-        screen.getByText('Failed to fetch initiatives'),
-      ).toBeInTheDocument(),
-    );
-    consoleErrorSpy.mockRestore();
+    expect(
+      await screen.findByText('No initiatives available at the moment.'),
+    ).toBeInTheDocument();
   });
 });

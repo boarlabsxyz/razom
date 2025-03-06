@@ -47,3 +47,15 @@ export const REGISTER_MUTATION = gql`
     }
   }
 `;
+
+export const GET_INITIATIVES = gql`
+  query GetInitiatives {
+    initiatives {
+      id
+      title
+      description {
+        document
+      }
+    }
+  }
+`;
