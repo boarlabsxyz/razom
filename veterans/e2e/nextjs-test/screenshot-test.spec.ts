@@ -11,14 +11,17 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
   const heroSection = await page.waitForSelector(
     'section[data-test-id="blog-initiatives"]',
   );
+
+  await page.waitForTimeout(5000);
+
   if (heroSection) {
     await page.evaluate(() => {
       document
         .querySelector('section[data-test-id="blog-initiatives"]')
         ?.remove();
     });
-    await page.waitForTimeout(1000);
   }
+  await page.waitForTimeout(5000);
 
   await page.setViewportSize({ width: 1280, height: 720 });
 
