@@ -5,6 +5,7 @@ import Spinner from '@comComps/spinner';
 import Container from '@comComps/container';
 
 import st from './page.module.css';
+import Hero from '@comps/homePage/hero/Hero';
 
 type Initiative = {
   id: string;
@@ -86,6 +87,7 @@ export default function HomePage() {
 
   return (
     <Container>
+      <Hero />
       <section
         className={st.section}
         aria-label="Blog initiatives"

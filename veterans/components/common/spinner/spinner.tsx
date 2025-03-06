@@ -10,7 +10,7 @@ interface IProps {
 
 const Spinner: FC<IProps> = ({
   loading = true,
-  color = 'var(--fiji-green)',
+  color = 'var(--forest-jade)',
 }) => (
   <div className={st.wrapper} data-test-id="loader">
     <BeatLoader
