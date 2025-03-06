@@ -17,6 +17,7 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
         .querySelector('section[data-test-id="blog-initiatives"]')
         ?.remove();
     });
+    await page.waitForTimeout(1000);
   }
 
   await page.setViewportSize({ width: 1280, height: 720 });

@@ -37,9 +37,12 @@ function processInitiative(initiative: Initiative): ProcessedInitiative {
 }
 
 export default function HomePage() {
-  const { loading, error, data } = useQuery<{ initiatives: Initiative[] }>(
+  // const { loading, error, data } = useQuery<{ initiatives: Initiative[] }>(
+  const { error, data } = useQuery<{ initiatives: Initiative[] }>(
     GET_INITIATIVES,
   );
+
+  const loading = true;
 
   const processedInitiatives: ProcessedInitiative[] = useMemo(() => {
     return data?.initiatives ? data.initiatives.map(processInitiative) : [];
