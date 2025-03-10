@@ -22,6 +22,19 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
     });
   }
 
+  const svgElement = await page.waitForSelector('svg[role="img"]', {
+    timeout: 5000,
+  });
+
+  if (svgElement) {
+    await page.evaluate(() => {
+      const svg = document.querySelector('svg[role="img"]');
+      if (svg) {
+        svg.remove();
+      }
+    });
+  }
+
   await page.waitForLoadState('load');
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.waitForSelector('[data-test-id="loader"]', {
