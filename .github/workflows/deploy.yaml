@@ -222,6 +222,7 @@ jobs:
             npx vercel build --yes --token="$VERCEL_CLI_TOKEN" --force
           else
             npx vercel build --yes --prod --token="$VERCEL_CLI_TOKEN" --force
+          fi
         working-directory: ./veterans
 
       - name: Deploy to Vercel
