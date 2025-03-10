@@ -219,9 +219,9 @@ jobs:
       - name: Build project
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            npx vercel build --yes --token="$VERCEL_CLI_TOKEN" --force
+            npx vercel build --yes --token="$VERCEL_CLI_TOKEN"
           else
-            npx vercel build --yes --prod --token="$VERCEL_CLI_TOKEN" --force
+            npx vercel build --yes --prod --token="$VERCEL_CLI_TOKEN"
           fi
         working-directory: ./veterans
 
