@@ -1,9 +1,9 @@
-import Map from './map/Map';
+import UkraineMap from './map/UkraineMap';
 
 export default function Initiatives() {
   return (
     <section>
-      <Map />
+      <UkraineMap />
     </section>
   );
 }
