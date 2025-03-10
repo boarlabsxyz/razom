@@ -6,6 +6,7 @@ import Container from '@comComps/container';
 
 import st from './page.module.css';
 import Hero from '@comps/homePage/hero/Hero';
+import Initiatives from '@comps/homePage/initiatives/Initiatives';
 
 type Initiative = {
   id: string;
@@ -111,6 +112,7 @@ export default function HomePage() {
           </ul>
         )}
       </section>
+      <Initiatives />
     </Container>
   );
 }

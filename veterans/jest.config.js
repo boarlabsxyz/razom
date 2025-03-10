@@ -43,6 +43,7 @@ module.exports = {
     '^keystone$': '<rootDir>/keystone',
     '^hooks/(.*)$': '<rootDir>/hooks/$1',
     '^constants/(.*)$': '<rootDir>/constants/$1',
+    '^icons/(.*)$': '<rootDir>/icons/$1',
   },
   testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
 };
