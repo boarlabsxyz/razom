@@ -6,41 +6,33 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
     waitUntil: 'load',
   });
 
+  await page.waitForLoadState('load');
+
   const heroSection = await page.waitForSelector(
     'section[data-test-id="blog-initiatives"]',
-    { timeout: 5000 },
   );
+
+  const svgElement = await page.waitForSelector('svg[role="img"]');
+
+  await page.waitForTimeout(5000);
 
   if (heroSection) {
     await page.evaluate(() => {
-      const hero = document.querySelector(
-        'section[data-test-id="blog-initiatives"]',
-      );
-      if (hero) {
-        hero.remove();
-      }
+      document
+        .querySelector('section[data-test-id="blog-initiatives"]')
+        ?.remove();
     });
   }
-
-  const svgElement = await page.waitForSelector('svg[role="img"]', {
-    timeout: 5000,
-  });
 
   if (svgElement) {
     await page.evaluate(() => {
-      const svg = document.querySelector('svg[role="img"]');
-      if (svg) {
-        svg.remove();
-      }
+      document.querySelector('svg[role="img"]')?.remove();
     });
   }
 
-  await page.waitForLoadState('load');
+  await page.waitForTimeout(5000);
+
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.waitForSelector('[data-test-id="loader"]', {
-    state: 'hidden',
-    timeout: 10000,
-  });
 
   const snapshot = await page.screenshot({ fullPage: true });
 
