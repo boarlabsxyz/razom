@@ -21,7 +21,6 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
         ?.remove();
     });
   }
-
   await page.waitForTimeout(5000);
 
   await page.setViewportSize({ width: 1280, height: 720 });
