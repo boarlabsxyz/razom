@@ -7,7 +7,7 @@ export default function UkraineMap() {
       viewBox="0 0 896 597"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      role="img"
+      data-test-id="svg-map"
       aria-labelledby="map-title map-desc"
       className={st.icon}
     >

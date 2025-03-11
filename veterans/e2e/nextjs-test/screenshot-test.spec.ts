@@ -12,7 +12,7 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
     'section[data-test-id="blog-initiatives"]',
   );
 
-  const svgElement = await page.waitForSelector('svg[role="img"]');
+  const svgElement = await page.waitForSelector('svg[data-test-id="svg-map"]');
 
   await page.waitForTimeout(5000);
 
@@ -26,7 +26,7 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
 
   if (svgElement) {
     await page.evaluate(() => {
-      document.querySelector('svg[role="img"]')?.remove();
+      document.querySelector('svg[data-test-id="svg-map"]')?.remove();
     });
   }
 
