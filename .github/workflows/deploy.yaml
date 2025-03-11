@@ -235,7 +235,9 @@ jobs:
           # For Production Deployment
             DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
           fi
+          echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
           echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
+          echo "Preview URL: $DEPLOYMENT_URL"
         working-directory: ./veterans
 
       - name: Check if DEPLOYMENT_URL is set
