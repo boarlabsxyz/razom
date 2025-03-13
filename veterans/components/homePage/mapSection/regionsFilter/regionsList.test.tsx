@@ -34,7 +34,7 @@ describe('RegionsList Component', () => {
     render(<RegionsList />);
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
-    const items = screen.getAllByRole('option');
+    const items = screen.getAllByRole('listitem');
     expect(items.length).toBe(26);
   });
 
@@ -43,7 +43,7 @@ describe('RegionsList Component', () => {
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     let list = screen.getByTestId('list-of-regions');
-    const regions = screen.getAllByRole('option');
+    const regions = screen.getAllByRole('listitem');
 
     list.focus();
 

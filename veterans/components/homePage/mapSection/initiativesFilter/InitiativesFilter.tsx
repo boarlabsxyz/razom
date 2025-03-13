@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import st from './InitiativesFilter.module.css';
 
-type Category = {
+interface Category {
   id: string;
   name: string;
-};
+}
 
 type CheckboxGroupProps = {
   title: string;
@@ -39,6 +39,7 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, categories }) => {
     <div className={st.wrapper}>
       <div
         aria-expanded={isOpen}
+        id={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}`}
         aria-controls={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}`}
         className={`${st.title} ${isOpen ? st.active : ''}`}
         onClick={toggleList}
@@ -54,21 +55,24 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, categories }) => {
       </div>
       <div
         id={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}`}
+        data-testid={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}-content`}
         className={`${st.categoryList} ${isOpen ? st.show : ''}`}
       >
         {categories.map((category, index) => (
-          <label key={category.id} className={st.label}>
+          <label
+            htmlFor={`checkbox-${category.id}`}
+            key={category.id}
+            className={st.label}
+          >
             <div className={st.checkboxContainer}>
               <input
-                id={`checkbox-${title.toLowerCase()}-${index}`}
-                aria-labelledby={`label-${title.toLowerCase()}-${index}`}
+                id={`checkbox-${category.id}`}
+                aria-labelledby={`label-${category.id}`}
                 type="checkbox"
                 value={category.name}
                 className={st.customCheckbox}
               />
-              <span id={`label-${title.toLowerCase()}-${index}`}>
-                {category.name}
-              </span>
+              <span id={`label-${category.id}`}>{category.name}</span>
             </div>
             <p className={st.numberInfo}>({index + 1})</p>
           </label>
@@ -77,6 +81,8 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, categories }) => {
     </div>
   );
 };
+
+export { CheckboxGroup };
 
 export default function InitiativesFilter() {
   return (
