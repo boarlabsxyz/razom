@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import st from './MapCheckbox.module.css';
+import st from './InitiativesFilter.module.css';
 
 type CheckboxGroupProps = {
   title: string;
@@ -45,7 +45,7 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, categories }) => {
               />
               {category}
             </div>
-            <p className={st.numberInfo}>(10)</p>
+            <p className={st.numberInfo}>({index + 1})</p>
           </label>
         ))}
       </div>
@@ -53,7 +53,7 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, categories }) => {
   );
 };
 
-export default function MapCheckbox() {
+export default function InitiativesFilter() {
   return (
     <div>
       <CheckboxGroup title="Вид ініціативи" categories={categoriesList1} />

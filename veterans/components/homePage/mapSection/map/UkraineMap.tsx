@@ -29,9 +29,17 @@ export default function UkraineMap() {
             <path d={pathRegion} fill="#DEDEDE" className={st.regionPath} />
             <path d={pathCircle} fill="white" />
             <path d={pathName} fill="#252138" />
-            <text x={cx} y={cy} fontSize="10" fill="black" textAnchor="middle">
-              {index + 1}
-            </text>
+            {index !== 16 && index !== 17 && (
+              <text
+                x={cx}
+                y={cy}
+                fontSize="10"
+                fill="black"
+                textAnchor="middle"
+              >
+                {index + 1}
+              </text>
+            )}
           </g>
         ),
       )}
