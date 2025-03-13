@@ -82,8 +82,6 @@ function RegionsList() {
   useEffect(() => {
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
@@ -133,6 +131,11 @@ function RegionsList() {
                     itemsRef.current[index] = el;
                   }}
                   onClick={() => handleRegionSelect(region)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      handleRegionSelect(region);
+                    }
+                  }}
                   tabIndex={0}
                   className={`${st.region_selector_item} ${
                     focusedIndex === index ? st.focused : ''
