@@ -45,6 +45,7 @@ module.exports = {
     '^constants/(.*)$': '<rootDir>/constants/$1',
     '^icons/(.*)$': '<rootDir>/icons/$1',
     '^utils/(.*)$': '<rootDir>/utils/$1',
+    '^data/(.*)$': '<rootDir>/data/$1',
   },
   testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
 };

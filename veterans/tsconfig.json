@@ -9,7 +9,8 @@
       "@keystone/*": ["keystone/*"],
       "hooks/*": ["hooks/*"],
       "constants/*": ["constants/*"],
-      "utils/*": ["utils/*"]
+      "utils/*": ["utils/*"],
+      "data": ["data/*"],
     },
     "jsx": "preserve",
     "target": "esnext",

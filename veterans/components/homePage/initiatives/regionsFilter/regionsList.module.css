@@ -1,0 +1,123 @@
+.wrapper {
+  width: 100%;
+  max-width: 240px;
+  padding: 16px;
+}
+
+.regions_wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.region_list_title {
+  height: 20px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.region_selector {
+  position: relative;
+  width: 240px;
+  width: 100%;
+}
+
+.region_selector_btn {
+  position: relative;
+  height: 50px;
+  margin-top: 12px;
+  padding: 12px;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  transition: all 0.3s ease-in-out;
+}
+
+.region_name {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.num_of_initiatives {
+  flex-shrink: 0;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.region_selector_btn:after {
+  content: '';
+  height: 7px;
+  width: 12px;
+  background-image: url('/icons/arrow-up-black.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  transition: transform 0.3s ease-in-out;
+}
+
+.region_selector_btn.open:after {
+  transform: rotate(180deg);
+}
+
+.dropdown_arrow {
+  font-size: 0.8em;
+  color: #0F172A;
+  margin-left: 5px;
+  transition: transform 0.2s ease-in-out;
+  display: inline-block;
+}
+
+.region_selector_list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1;
+  display: none;
+}
+
+.region_selector_list.show {
+  display: block;
+}
+
+.region_selector_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  padding: 12px 12px;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 26px;
+  border: 1px solid #dee2e6;
+}
+
+.region_selector_item:hover,
+.region_selector_item:focus {
+  background-color: #B1B8B2;
+}
+
+@media (max-width: 480px) {
+  .wrapper {
+    width: calc(100% - 32px);
+    max-width: 100%;
+  }
+
+  .region_selector {
+    width: 100%;
+  }
+}
