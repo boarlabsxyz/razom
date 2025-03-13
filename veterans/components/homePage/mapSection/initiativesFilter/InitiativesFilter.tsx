@@ -1,25 +1,34 @@
 import { useState } from 'react';
 import st from './InitiativesFilter.module.css';
 
+type Category = {
+  id: string;
+  name: string;
+};
+
 type CheckboxGroupProps = {
   title: string;
-  categories: string[];
+  categories: Category[];
 };
 
 const categoriesList1 = [
-  'Управління, відділи з ветеранської політики',
-  'Фахівець з супроводу',
-  'Карʼєрне консультування',
-  'Можливості працевлаштування',
-  'Ветеранські програми',
-  'Освіта та бізнес',
-  'Гранти',
-  'Юридичне консультування',
-  'Хаби',
-  'Можливості розвитку та дозвілля',
+  { id: 'cat-1', name: 'Управління, відділи з ветеранської політики' },
+  { id: 'cat-2', name: 'Фахівець з супроводу' },
+  { id: 'cat-3', name: 'Карʼєрне консультування' },
+  { id: 'cat-4', name: 'Можливості працевлаштування' },
+  { id: 'cat-5', name: 'Ветеранські програми' },
+  { id: 'cat-6', name: 'Освіта та бізнес' },
+  { id: 'cat-7', name: 'Гранти' },
+  { id: 'cat-8', name: 'Юридичне консультування' },
+  { id: 'cat-9', name: 'Хаби' },
+  { id: 'cat-10', name: 'Можливості розвитку та дозвілля' },
 ];
 
-const categoriesList2 = ['Державна', 'Приватна', 'Міжнародна'];
+const categoriesList2 = [
+  { id: 'cat-11', name: 'Державна' },
+  { id: 'cat-12', name: 'Приватна' },
+  { id: 'cat-13', name: 'Міжнародна' },
+];
 
 const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, categories }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,22 +37,38 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, categories }) => {
 
   return (
     <div className={st.wrapper}>
-      <p
+      <div
+        aria-expanded={isOpen}
+        aria-controls={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}`}
         className={`${st.title} ${isOpen ? st.active : ''}`}
         onClick={toggleList}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            toggleList();
+          }
+        }}
+        role="button"
+        tabIndex={0}
       >
         {title}
-      </p>
-      <div className={`${st.categoryList} ${isOpen ? st.show : ''}`}>
+      </div>
+      <div
+        id={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}`}
+        className={`${st.categoryList} ${isOpen ? st.show : ''}`}
+      >
         {categories.map((category, index) => (
-          <label key={index} className={st.label}>
+          <label key={category.id} className={st.label}>
             <div className={st.checkboxContainer}>
               <input
+                id={`checkbox-${title.toLowerCase()}-${index}`}
+                aria-labelledby={`label-${title.toLowerCase()}-${index}`}
                 type="checkbox"
-                value={category}
+                value={category.name}
                 className={st.customCheckbox}
               />
-              {category}
+              <span id={`label-${title.toLowerCase()}-${index}`}>
+                {category.name}
+              </span>
             </div>
             <p className={st.numberInfo}>({index + 1})</p>
           </label>
