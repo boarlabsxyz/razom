@@ -17,14 +17,11 @@ describe('CheckboxGroup Component', () => {
     render(<CheckboxGroup title="Test Title" categories={categoriesList} />);
     const titleElement = screen.getByText('Test Title');
 
-    // Click to open the list
     fireEvent.click(titleElement);
 
-    // Use getByTestId to find the category list
     const categoryList = screen.getByTestId('category-list-test-title-content');
     expect(categoryList).toHaveClass('show');
 
-    // Click to close the list
     fireEvent.click(titleElement);
     expect(categoryList).not.toHaveClass('show');
   });

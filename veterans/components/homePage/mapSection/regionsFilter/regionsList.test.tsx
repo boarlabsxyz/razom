@@ -11,15 +11,21 @@ jest.mock('data/RegionsArray', () =>
 );
 
 describe('RegionsList Component', () => {
+  let mockSetSelectedRegion: jest.Mock;
+
+  beforeEach(() => {
+    mockSetSelectedRegion = jest.fn();
+  });
+
   test('correctly renders and shows default region', () => {
-    render(<RegionsList />);
+    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
 
     expect(screen.getByTestId('btn-for-region-selection')).toBeInTheDocument();
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
 
   test('dropdown opens and closes when button is clicked', () => {
-    render(<RegionsList />);
+    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
 
     const button = screen.getByTestId('btn-for-region-selection');
 
@@ -31,7 +37,7 @@ describe('RegionsList Component', () => {
   });
 
   test('contains exactly 26 regions', () => {
-    render(<RegionsList />);
+    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
     const items = screen.getAllByRole('listitem');
@@ -39,7 +45,7 @@ describe('RegionsList Component', () => {
   });
 
   test('keyboard navigation works (ArrowDown, ArrowUp, Enter, Space)', () => {
-    render(<RegionsList />);
+    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     let list = screen.getByTestId('list-of-regions');
@@ -76,7 +82,7 @@ describe('RegionsList Component', () => {
   });
 
   test('closes dropdown on Escape key', () => {
-    render(<RegionsList />);
+    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     const list = screen.getByTestId('list-of-regions');
@@ -86,7 +92,7 @@ describe('RegionsList Component', () => {
   });
 
   test('closes dropdown when clicking outside', () => {
-    render(<RegionsList />);
+    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     expect(screen.getByTestId('list-of-regions')).toBeInTheDocument();

@@ -5,13 +5,17 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import st from './regionsList.module.css';
 
-function RegionsList() {
+interface RegionsListProps {
+  setSelectedRegion: (region: string) => void;
+}
+
+function RegionsList({ setSelectedRegion }: RegionsListProps) {
   const defaultRegion = regionsArray.find(
     (region) => region.name === 'Всі',
   ) || { name: '', numOfInitiatives: 0 };
 
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
+  const [selectedRegion, setLocalSelectedRegion] = useState<string | undefined>(
     defaultRegion.name,
   );
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
@@ -29,6 +33,7 @@ function RegionsList() {
     name: string;
     numOfInitiatives?: number;
   }) => {
+    setLocalSelectedRegion(region.name);
     setSelectedRegion(region.name);
     setIsOpen(false);
     setFocusedIndex(null);
@@ -119,7 +124,9 @@ function RegionsList() {
             ref={listRef}
             className={`${st.region_selector_list} ${isOpen ? st.show : ''}`}
             role="listbox"
-            tabIndex={-1}
+            aria-activedescendant={
+              focusedIndex !== null ? `region-${focusedIndex}` : undefined
+            }
             onKeyDown={handleKeyDown}
           >
             {regionsArray.map((region, index) => (

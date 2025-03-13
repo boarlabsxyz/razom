@@ -39,7 +39,6 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, categories }) => {
     <div className={st.wrapper}>
       <div
         aria-expanded={isOpen}
-        id={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}`}
         aria-controls={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}`}
         className={`${st.title} ${isOpen ? st.active : ''}`}
         onClick={toggleList}
@@ -54,7 +53,7 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, categories }) => {
         {title}
       </div>
       <div
-        id={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}`}
+        id={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}-content`}
         data-testid={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}-content`}
         className={`${st.categoryList} ${isOpen ? st.show : ''}`}
       >

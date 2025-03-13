@@ -9,6 +9,11 @@
   stroke: #2196f3;
 }
 
+.selectedRegion {
+  fill: #b1b8b2;
+  stroke: #2196f3;
+}
+
 @media (max-width: 480px) {
   .iconMap {
     display: none;
