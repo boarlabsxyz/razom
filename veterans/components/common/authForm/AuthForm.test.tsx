@@ -1,19 +1,24 @@
 import '@testing-library/jest-dom';
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  RenderOptions,
+} from '@testing-library/react';
 import RegisterForm from './RegisterForm';
 import LoginForm from './LoginForm';
 
-import { MockedProvider } from '@apollo/client/testing';
-import { REGISTER_MUTATION } from 'constants/graphql';
+import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 
 import { useRouter } from 'next/navigation';
 
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-}));
+import { SessionProvider } from 'next-auth/react';
 
-const filledMocks = [
+import { REGISTER_MUTATION } from 'constants/graphql';
+
+const mocks: MockedResponse[] = [
   {
     request: {
       query: REGISTER_MUTATION,
@@ -27,17 +32,16 @@ const filledMocks = [
     result: {
       data: {
         createUser: {
-          id: '1',
+          id: '123',
           name: 'Test User',
           email: 'test@example.com',
-          role: 'USER',
         },
       },
     },
   },
 ];
 
-const errorMocks = [
+const errorMocks: MockedResponse[] = [
   {
     request: {
       query: REGISTER_MUTATION,
@@ -52,16 +56,33 @@ const errorMocks = [
   },
 ];
 
-const renderWithMockedProvider = (
-  ui: React.ReactElement,
-  mocks = filledMocks,
-) => {
-  return render(
-    <MockedProvider mocks={mocks} addTypename={false}>
-      {ui}
-    </MockedProvider>,
+const AllProviders: React.FC<{
+  children: React.ReactNode;
+  mocks?: MockedResponse[];
+}> = ({ children, mocks = [] }) => {
+  return (
+    <SessionProvider session={null}>
+      <MockedProvider mocks={mocks} addTypename={false}>
+        {children}
+      </MockedProvider>
+    </SessionProvider>
   );
 };
+
+const customRender = (
+  ui: React.ReactElement,
+  mocks: MockedResponse[] = [],
+  options?: RenderOptions,
+) =>
+  render(ui, {
+    wrapper: ({ children }) => (
+      <AllProviders mocks={mocks}>{children}</AllProviders>
+    ),
+    ...options,
+  });
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(),
+}));
 
 const fillRegisterForm = () => {
   fireEvent.change(screen.getByPlaceholderText('Name'), {
@@ -95,39 +116,34 @@ describe('Auth Forms', () => {
 
   describe('RegisterForm', () => {
     it('should render correctly', () => {
-      renderWithMockedProvider(<RegisterForm />);
+      customRender(<RegisterForm />);
       expect(
         screen.getByRole('heading', { name: /sign up/i }),
       ).toBeInTheDocument();
     });
-
     it('should toggle password visibility', () => {
-      renderWithMockedProvider(<RegisterForm />);
+      customRender(<RegisterForm />);
       const toggleButton = screen.getByRole('button', {
         name: /show password/i,
       });
       const passwordInput = screen.getByPlaceholderText('New Password');
-
       expect(passwordInput).toHaveAttribute('type', 'password');
       fireEvent.click(toggleButton);
       expect(passwordInput).toHaveAttribute('type', 'text');
       fireEvent.click(toggleButton);
       expect(passwordInput).toHaveAttribute('type', 'password');
     });
-
     it('should show validation errors for empty fields', async () => {
-      renderWithMockedProvider(<RegisterForm />);
+      customRender(<RegisterForm />);
       fireEvent.click(screen.getByRole('button', { name: /get started/i }));
-
       expect(await screen.findByText('Name is required')).toBeInTheDocument();
       expect(await screen.findByText('Email is required')).toBeInTheDocument();
       expect(
         await screen.findByText('Confirm password is required'),
       ).toBeInTheDocument();
     });
-
     it('should register successfully with valid input', async () => {
-      renderWithMockedProvider(<RegisterForm />);
+      customRender(<RegisterForm />, mocks);
       fillRegisterForm();
       fireEvent.click(screen.getByRole('button', { name: /get started/i }));
 
@@ -135,17 +151,12 @@ describe('Auth Forms', () => {
         expect(mockPush).toHaveBeenCalledWith('/');
       });
     });
-
     it('should show an error if the email is already taken', async () => {
       const consoleErrorMock = jest
         .spyOn(console, 'error')
         .mockImplementation(() => {});
 
-      render(
-        <MockedProvider mocks={errorMocks} addTypename={false}>
-          <RegisterForm />
-        </MockedProvider>,
-      );
+      customRender(<RegisterForm />, errorMocks);
       fillRegisterForm();
       fireEvent.click(screen.getByRole('button', { name: /get started/i }));
 
@@ -165,14 +176,15 @@ describe('Auth Forms', () => {
     });
 
     it('should render correctly', () => {
-      render(<LoginForm onSubmit={mockOnSubmit} />);
+      customRender(<LoginForm />);
       expect(
         screen.getByRole('heading', { name: /sign in/i }),
       ).toBeInTheDocument();
     });
 
     it('should show validation errors for empty fields', async () => {
-      render(<LoginForm onSubmit={mockOnSubmit} />);
+      customRender(<LoginForm />);
+
       fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
       expect(await screen.findByText('Email is required')).toBeInTheDocument();
@@ -182,7 +194,7 @@ describe('Auth Forms', () => {
     });
 
     it('should clear error messages when correcting fields', async () => {
-      render(<LoginForm onSubmit={mockOnSubmit} />);
+      customRender(<LoginForm />);
       fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
       fireEvent.change(screen.getByPlaceholderText('Email'), {
@@ -191,24 +203,6 @@ describe('Auth Forms', () => {
 
       await waitFor(() => {
         expect(screen.queryByText('Email is required')).not.toBeInTheDocument();
-      });
-    });
-
-    it('should call onSubmit with form data', async () => {
-      render(<LoginForm onSubmit={mockOnSubmit} />);
-      fireEvent.change(screen.getByPlaceholderText('Email'), {
-        target: { value: 'test@example.com' },
-      });
-      fireEvent.change(screen.getByPlaceholderText('Password'), {
-        target: { value: 'password123' },
-      });
-      fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-
-      await waitFor(() => {
-        expect(mockOnSubmit).toHaveBeenCalledWith({
-          email: 'test@example.com',
-          password: 'password123',
-        });
       });
     });
   });

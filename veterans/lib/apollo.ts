@@ -74,7 +74,12 @@ const httpLink = createHttpLink({
   credentials: 'include',
 });
 
+// export const client = new ApolloClient({
+//   link: from([errorLink, timeoutLink, retryLink, httpLink]),
+//   cache: new InMemoryCache(),
+// });
+
 export const client = new ApolloClient({
-  link: from([errorLink, timeoutLink, retryLink, httpLink]),
+  uri: 'http://razom-app-keystone-1:3000/api/graphql', // Замість localhost
   cache: new InMemoryCache(),
 });
