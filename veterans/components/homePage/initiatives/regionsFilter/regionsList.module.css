@@ -33,8 +33,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffffff;
-  border: 1px solid #dee2e6;
+  background-color: var(--white);
+  border: 1px solid var(--gum-leaf);
   transition: all 0.3s ease-in-out;
 }
 
@@ -53,7 +53,7 @@
   content: '';
   height: 7px;
   width: 12px;
-  background-image: url('/icons/arrow-up-black.svg');
+  background-image: url('/icons/arrow-down-black.svg');
   background-size: contain;
   background-repeat: no-repeat;
   display: inline-block;
@@ -66,7 +66,7 @@
 
 .dropdown_arrow {
   font-size: 0.8em;
-  color: #0F172A;
+  color: var(--ebony);
   margin-left: 5px;
   transition: transform 0.2s ease-in-out;
   display: inline-block;
@@ -81,7 +81,7 @@
   left: 0;
   width: 100%;
   background-color: white;
-  border: 1px solid #ccc;
+  border: 1px solid var(--very-light-grey);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   max-height: 300px;
   overflow-y: auto;
@@ -103,12 +103,12 @@
   font-weight: 400;
   font-size: 14px;
   line-height: 26px;
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--pattens-blue);
 }
 
 .region_selector_item:hover,
 .region_selector_item:focus {
-  background-color: #B1B8B2;
+  background-color: var(--gum-leaf);
 }
 
 @media (max-width: 480px) {
