@@ -18,7 +18,7 @@
 
 .link {
   display: block;
-  color: #252138;
+  color: var(--haiti);
   font-size: 16px;
   font-weight: 500;
   line-height: 24px;
@@ -28,7 +28,7 @@
 }
 
 .link:hover {
-  color: #596b21;
+  color: var(--fiji-green);
 }
 
 .link::after {
@@ -39,7 +39,7 @@
   transform: scaleX(0);
   height: 2px;
   width: 100%;
-  background: #596b21;
+  background: var(--fiji-green);
   transition: transform 0.3s ease-in-out;
 }
 
@@ -48,7 +48,7 @@
 }
 
 .active {
-  color: #596b21;
+  color: var(--fiji-green);
 }
 
 .active::after {
@@ -103,7 +103,7 @@
     display: flex;
     flex-direction: column;
     text-align: center;
-    background-color: #f8fafb;
+    background-color: var(--alice-blue);
     width: 100vw;
     justify-content: center;
     gap: 80px;
@@ -135,7 +135,7 @@
     position: absolute;
     height: 2px;
     width: 22px;
-    background-color: #0f172a;
+    background-color: var(--ebony);
     border-radius: 1px;
     opacity: 1;
     left: 50%;
