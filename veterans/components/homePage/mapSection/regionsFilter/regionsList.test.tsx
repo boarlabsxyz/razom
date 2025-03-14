@@ -11,21 +11,21 @@ jest.mock('data/RegionsArray', () =>
 );
 
 describe('RegionsList Component', () => {
-  let mockSetSelectedRegion: jest.Mock;
+  let mockSetCurrentRegion: jest.Mock;
 
   beforeEach(() => {
-    mockSetSelectedRegion = jest.fn();
+    mockSetCurrentRegion = jest.fn();
   });
 
   test('correctly renders and shows default region', () => {
-    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
 
     expect(screen.getByTestId('btn-for-region-selection')).toBeInTheDocument();
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
 
   test('dropdown opens and closes when button is clicked', () => {
-    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
 
     const button = screen.getByTestId('btn-for-region-selection');
 
@@ -37,7 +37,7 @@ describe('RegionsList Component', () => {
   });
 
   test('contains exactly 26 regions', () => {
-    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
     const items = screen.getAllByRole('menuitemradio');
@@ -45,7 +45,7 @@ describe('RegionsList Component', () => {
   });
 
   test('keyboard navigation works (ArrowDown, ArrowUp, Enter, Space)', () => {
-    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     let list = screen.getByTestId('list-of-regions');
@@ -54,11 +54,9 @@ describe('RegionsList Component', () => {
     list.focus();
 
     fireEvent.keyDown(list, { key: 'ArrowDown' });
-    console.log('1:', document.activeElement?.textContent);
     expect(regions[1]).toHaveFocus();
 
     fireEvent.keyDown(list, { key: 'ArrowUp' });
-    console.log('2:', document.activeElement?.textContent);
     expect(regions[0]).toHaveFocus();
 
     fireEvent.keyDown(list, { key: 'Enter' });
@@ -70,9 +68,6 @@ describe('RegionsList Component', () => {
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     list = screen.getByTestId('list-of-regions');
 
-    fireEvent.keyDown(list, { key: 'ArrowUp' });
-    fireEvent.keyDown(list, { key: 'ArrowDown' });
-
     if (document.activeElement) {
       fireEvent.keyDown(document.activeElement, { key: ' ' });
     }
@@ -83,7 +78,7 @@ describe('RegionsList Component', () => {
   });
 
   test('closes dropdown on Escape key', () => {
-    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     const list = screen.getByTestId('list-of-regions');
@@ -93,7 +88,7 @@ describe('RegionsList Component', () => {
   });
 
   test('closes dropdown when clicking outside', () => {
-    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     expect(screen.getByTestId('list-of-regions')).toBeInTheDocument();

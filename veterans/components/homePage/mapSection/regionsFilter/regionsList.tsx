@@ -6,16 +6,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import st from './regionsList.module.css';
 
 interface RegionsListProps {
-  readonly setSelectedRegion: (region: string) => void;
+  readonly setCurrentRegion: (region: string) => void;
 }
 
-function RegionsList({ setSelectedRegion }: RegionsListProps) {
+function RegionsList({ setCurrentRegion }: RegionsListProps) {
   const defaultRegion = regionsArray.find(
     (region) => region.name === 'Всі',
   ) || { name: '', numOfInitiatives: 0 };
 
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedRegion, setSelectedRegionLocal] = useState<string | undefined>(
+  const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
     defaultRegion.name,
   );
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
@@ -31,12 +31,12 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
         const selectedIndex = regionsArray.findIndex(
           (region) => region.name === selectedRegion,
         );
-        const focusIndex =
-          selectedRegion === 'Всі'
-            ? 0
-            : selectedIndex !== -1
-              ? selectedIndex
-              : 0;
+
+        let focusIndex = 0;
+        if (selectedRegion !== 'Всі' && selectedIndex !== -1) {
+          focusIndex = selectedIndex;
+        }
+
         setFocusedIndex(focusIndex);
         setTimeout(() => {
           itemsRef.current[focusIndex]?.focus();
@@ -50,8 +50,8 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
     name: string;
     numOfInitiatives?: number;
   }) => {
-    setSelectedRegionLocal(region.name);
     setSelectedRegion(region.name);
+    setCurrentRegion(region.name);
     setIsOpen(false);
     setFocusedIndex(regionsArray.findIndex((reg) => reg.name === region.name));
     buttonRef.current?.focus();
@@ -133,6 +133,7 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
             id="region-list"
             data-testid="list-of-regions"
             ref={listRef}
+            tabIndex={0}
             className={`${st.region_selector_list} ${isOpen ? st.show : ''}`}
             role="menu"
             aria-activedescendant={
@@ -154,7 +155,7 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
                     handleRegionSelect(region);
                   }
                 }}
-                tabIndex={0}
+                tabIndex={-1}
                 className={`${st.region_selector_item} ${
                   focusedIndex === index ? st.focused : ''
                 }`}

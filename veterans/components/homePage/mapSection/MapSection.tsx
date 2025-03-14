@@ -5,14 +5,14 @@ import st from './MapSection.module.css';
 import RegionsList from './regionsFilter';
 
 export default function MapSection() {
-  const [selectedRegion, setSelectedRegion] = useState<string | undefined>();
+  const [currentRegion, setCurrentRegion] = useState<string | undefined>();
   return (
     <section className={st.container}>
       <div className={st.wrapperFilter}>
-        <RegionsList setSelectedRegion={setSelectedRegion} />
+        <RegionsList setCurrentRegion={setCurrentRegion} />
         <InitiativesFilter />
       </div>
-      <UkraineMap selectedRegion={selectedRegion} />
+      <UkraineMap currentRegion={currentRegion} />
     </section>
   );
 }
