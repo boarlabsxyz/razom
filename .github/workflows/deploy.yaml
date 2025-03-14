@@ -1,40 +1,45 @@
-name: Vercel Production Deployment
+name: Vercel Deployment
 
 on:
+  pull_request:
+      types:
+      - opened
+      - synchronize
+      - reopened
   workflow_dispatch:
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
-  PRODUCTION_DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-  NODE_ENV: 'production'
+  NODE_ENV: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
 
 jobs:
   docker-lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Lint Dockerfile.keystone
-        run: docker run --rm -i hadolint/hadolint < Dockerfile.keystone
-
-      - name: Lint Dockerfile.nextjs
-        run: docker run --rm -i hadolint/hadolint < Dockerfile.nextjs
+      - name: Lint Dockerfiles
+        run: |
+          docker run --rm -i hadolint/hadolint < Dockerfile.keystone
+          docker run --rm -i hadolint/hadolint < Dockerfile.nextjs
 
   unit-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Create .env file
         run: |
-          echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
-          echo "TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }}" >> veterans/.env
-          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> veterans/.env
+             echo "DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
+             echo "TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }}" >> veterans/.env
+             echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> veterans/.env
 
       - name: Build app image
         run: docker compose build
@@ -48,8 +53,25 @@ jobs:
           name: coverage-report
           path: veterans/coverage/lcov.info
 
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: echo "DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
+
+      - name: Build app image
+        run: docker compose build
+
+      - name: Run linters
+        run: docker compose run --rm app-nextjs npm run lint
+
   e2e-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -73,16 +95,15 @@ jobs:
               latest=$(echo "$response" | \
                 jq -r '[.artifacts[] | select(.name == "playwright-snapshots")] | sort_by(.created_at) | last')
 
-            if [ "$latest" != "null" ]; then
-              run_id=$(echo "$latest" | jq -r '.workflow_run.id')
-              echo "latest_run_id=$run_id" >> $GITHUB_ENV
-              echo "Found latest run ID: $run_id"
-              break
+              if [ "$latest" != "null" ]; then
+                run_id=$(echo "$latest" | jq -r '.workflow_run.id')
+                echo "latest_run_id=$run_id" >> $GITHUB_ENV
+                echo "Found latest run ID: $run_id"
+                break
+              fi
             fi
-          fi
-
             echo "Attempt $i failed, retrying..."
-              sleep 5
+            sleep 5
           done
 
       - name: Download Playwright snapshots artifact
@@ -124,8 +145,9 @@ jobs:
           timeout 600s docker compose exec app-nextjs sh -c "npm run test:e2e -- e2e/nextjs-test" || echo "TESTS_FAILED=true" >> $GITHUB_ENV
         continue-on-error: true
 
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+      - name: Upload snapshots as new artifact
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: playwright-report
           path: veterans/playwright-report/
@@ -135,23 +157,9 @@ jobs:
         if: ${{ env.TESTS_FAILED == 'true' }}
         run: exit 1
 
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Create .env file
-        run: echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
-
-      - name: Build app image
-        run: docker compose build
-
-      - name: Run linters
-        run: docker compose run --rm app-nextjs npm run lint
-
   sonarqube:
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
     needs: unit-tests
     steps:
       - name: Checkout repository
@@ -175,27 +183,25 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  production-deployment:
+  deployment:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
-      name: production
-      url: https://razom.vercel.app/
-
+      name: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
+      url: ${{ github.event_name == 'pull_request' && 'https://' || 'https://razom.vercel.app/' }}
     needs:
       - lint
       - unit-tests
       - e2e-tests
       - sonarqube
-
     steps:
-      - name: Check out repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Validate required secrets
         run: |
-          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "$VERCEL_CLI_TOKEN" ] || [ -z "$PRODUCTION_DATABASE_URL" ]; then
-            echo "::error::Required secrets VERCEL_ORG_ID, VERCEL_PROJECT_ID, VERCEL_CLI_TOKEN and PRODUCTION_DATABASE_URL must be set"
+          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "$VERCEL_CLI_TOKEN" ]; then
+            echo "::error::Missing required Vercel secrets"
             exit 1
           fi
 
@@ -210,52 +216,28 @@ jobs:
         run: npm ci
         working-directory: ./veterans
 
-      - name: Run Keystone build
-        run: npm run keystone:prod:build
-        working-directory: ./veterans
-
-      - name: Clean node_modules/.prisma
-        run: |
-          if [ -d "node_modules/.prisma" ]; then
-            rm -rf node_modules/.prisma
-            echo "Cleaned .prisma directory"
-          fi
-        working-directory: ./veterans
-
-      - name: Add binaryTargets to schema.prisma
-        run: |
-          if ! node scripts/add-binary-targets.js; then
-            echo "::error::Failed to add binary targets to schema.prisma"
-            exit 1
-          fi
-
-      - name: Generate Prisma Client
-        run: |
-          if ! npx prisma generate; then
-            echo "::error::Failed to generate Prisma Client"
-            exit 1
-          fi
-        working-directory: ./veterans
-
-      - name: Pull Vercel Environment
-        run: |
-          npx vercel pull --yes --environment=production --token="$VERCEL_CLI_TOKEN"
-          echo "Vercel Environment pulled successfully."
-
       - name: Build project
-        run: npx vercel build --yes --token="$VERCEL_CLI_TOKEN" --prod
-        timeout-minutes: 10
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            npx vercel build --yes --token="$VERCEL_CLI_TOKEN"
+          else
+            npx vercel build --yes --prod --token="$VERCEL_CLI_TOKEN"
+          fi
         working-directory: ./veterans
 
       - name: Deploy to Vercel
         id: deploy
         run: |
-          if ! DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN"); then
-            echo "::error::Deployment failed"
-            exit 1
+          # For Preview Deployment
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
+          else
+          # For Production Deployment
+            DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
           fi
-          echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
-        timeout-minutes: 10
+            echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
+            echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
+            echo "Preview URL: $DEPLOYMENT_URL"
         working-directory: ./veterans
 
       - name: Check if DEPLOYMENT_URL is set
