@@ -13,7 +13,7 @@ import { processInitiative } from 'utils/initiativeUtils';
 
 import st from './page.module.css';
 import Hero from '@comps/homePage/hero/Hero';
-import Initiatives from '@comps/homePage/initiatives/Initiatives';
+import MapSection from '@comps/homePage/mapSection';
 
 export default function HomePage() {
   const { loading, error, data } = useQuery<{ initiatives: Initiative[] }>(
@@ -49,6 +49,7 @@ export default function HomePage() {
   return (
     <Container>
       <Hero />
+      <MapSection />
       <section
         className={st.section}
         aria-label="Blog initiatives"
@@ -56,7 +57,6 @@ export default function HomePage() {
       >
         {content}
       </section>
-      <Initiatives />
     </Container>
   );
 }

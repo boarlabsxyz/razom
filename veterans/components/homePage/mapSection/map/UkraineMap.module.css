@@ -1,15 +1,21 @@
-.icon {
+.iconMap {
   max-width: 896px;
   max-height: 597px;
+  cursor: pointer;
 }
 
-.regionPath:hover {
+.regionGroup:hover .regionPath {
+  fill: var(--gum-leaf);
+  stroke: var(--dodger-blue);
+}
+
+.selectedRegion {
   fill: var(--gum-leaf);
   stroke: var(--dodger-blue);
 }
 
 @media (max-width: 480px) {
-  .icon {
+  .iconMap {
     display: none;
   }
 }

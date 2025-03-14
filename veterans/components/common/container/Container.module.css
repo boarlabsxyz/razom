@@ -18,3 +18,10 @@
     padding-right: 30px;
   }
 }
+
+@media (max-width: 480px) {
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
