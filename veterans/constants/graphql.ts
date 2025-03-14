@@ -48,6 +48,18 @@ export const REGISTER_MUTATION = gql`
   }
 `;
 
+export const GET_INITIATIVES = gql`
+  query GetInitiatives {
+    initiatives {
+      id
+      title
+      description {
+        document
+      }
+    }
+  }
+`;
+
 export const CHECK_USER_QUERY = gql`
   query CheckUser($email: String!) {
     user(where: { email: $email }) {
