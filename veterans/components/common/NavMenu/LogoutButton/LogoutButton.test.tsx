@@ -1,44 +1,89 @@
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
+import {
+  ApolloClient,
+  InMemoryCache,
+  NormalizedCacheObject,
+  gql,
+} from '@apollo/client';
 import LogoutButton from './LogoutButton';
-import { LOGOUT_MUTATION } from 'constants/graphql';
+import { signOut } from 'next-auth/react';
 
-const mockReload = jest.fn();
-Object.defineProperty(window, 'location', {
-  value: { reload: mockReload },
-  writable: true,
-});
+jest.mock('./LogoutButton.module.css', () => ({
+  wrapper: 'mocked-wrapper-class',
+}));
 
-const mocks = [
-  {
-    request: { query: LOGOUT_MUTATION },
-    result: { data: { endSession: true } },
-  },
-];
+jest.mock('next-auth/react', () => ({
+  signOut: jest.fn(),
+}));
+
+const LOGOUT_MUTATION = gql`
+  mutation Logout {
+    logout
+  }
+`;
 
 describe('LogoutButton', () => {
-  it('calls logout mutation and reloads the page', async () => {
-    render(
-      <MockedProvider mocks={mocks} addTypename={false}>
+  let mockApolloClient: ApolloClient<NormalizedCacheObject>;
+
+  beforeEach(() => {
+    mockApolloClient = new ApolloClient({
+      cache: new InMemoryCache(),
+    });
+
+    jest.spyOn(mockApolloClient, 'mutate').mockResolvedValue({
+      data: {
+        logout: true,
+      },
+    });
+    jest.spyOn(mockApolloClient, 'clearStore');
+
+    (signOut as jest.Mock).mockClear();
+
+    Object.defineProperty(window, 'location', {
+      value: { reload: jest.fn() },
+      writable: true,
+    });
+  });
+
+  it('renders the button with correct text', () => {
+    const { getByText } = render(
+      <MockedProvider mocks={[]}>
         <LogoutButton />
       </MockedProvider>,
     );
 
-    const button = screen.getByText('Вийти');
+    expect(getByText('Вийти')).toBeInTheDocument();
+  });
 
-    await act(async () => {
-      fireEvent.click(button);
-    });
+  it('logs an error if logout mutation fails', async () => {
+    const mockLogoutErrorResponse = {
+      request: {
+        query: LOGOUT_MUTATION,
+      },
+      error: new Error('Logout failed'),
+    };
+
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
+    const { getByText } = render(
+      <MockedProvider mocks={[mockLogoutErrorResponse]} addTypename={false}>
+        <LogoutButton />
+      </MockedProvider>,
+    );
+
+    fireEvent.click(getByText('Вийти'));
 
     await waitFor(() => {
-      expect(mockReload).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Помилка при виході:',
+        expect.any(Error),
+      );
     });
+
+    consoleErrorSpy.mockRestore();
   });
 });
