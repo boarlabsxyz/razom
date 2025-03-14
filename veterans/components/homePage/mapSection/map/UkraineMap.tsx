@@ -2,7 +2,7 @@ import { regions } from 'icons/regions';
 import st from './UkraineMap.module.css';
 
 interface UkraineMapProps {
-  selectedRegion?: string;
+  readonly selectedRegion?: string;
 }
 
 export default function UkraineMap({ selectedRegion }: UkraineMapProps) {

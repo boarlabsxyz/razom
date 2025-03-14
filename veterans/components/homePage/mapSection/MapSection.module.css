@@ -12,9 +12,9 @@
 }
 
 .wrapperFilter {
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--pattens-blue);
   border-radius: 6px;
-  background-color: #ffffff;
+  background-color: var(--white);
   min-width: 200px;
   padding: 20px;
 }

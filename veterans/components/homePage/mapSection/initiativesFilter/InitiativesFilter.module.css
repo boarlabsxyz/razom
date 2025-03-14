@@ -30,8 +30,8 @@
   min-width: 21px;
   min-height: 21px;
   appearance: none;
-  background-color: #ffffff;
-  border: 1px solid #dee2e6;
+  background-color: var(--white);
+  border: 1px solid var(--pattens-blue);
   border-radius: 2px;
   cursor: pointer;
 }
@@ -49,18 +49,35 @@
   display: none;
 }
 
+.wrapper button {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
 @media (max-width: 480px) {
   .wrapper {
     max-width: 100%;
   }
+
+  .wrapper button:focus {
+    outline: 2px solid var(--warning);
+  }
+
   .title::after {
     content: '';
     position: absolute;
     height: 7px;
     width: 12px;
     background-image: url('/icons/arrow-down-black.svg');
-    top: 10px;
-    right: 0px;
+    top: 9px;
+    left: 95%;
     transition: transform 0.3s ease;
   }
   .title.active::after {

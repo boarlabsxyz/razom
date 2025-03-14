@@ -37,21 +37,16 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, categories }) => {
 
   return (
     <div className={st.wrapper}>
-      <div
+      <button
+        type="button"
         aria-expanded={isOpen}
         aria-controls={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}`}
         className={`${st.title} ${isOpen ? st.active : ''}`}
         onClick={toggleList}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            toggleList();
-          }
-        }}
-        role="button"
         tabIndex={0}
       >
         {title}
-      </div>
+      </button>
       <div
         id={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}-content`}
         data-testid={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}-content`}

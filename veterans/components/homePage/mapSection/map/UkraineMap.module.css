@@ -5,13 +5,13 @@
 }
 
 .regionGroup:hover .regionPath {
-  fill: #b1b8b2;
-  stroke: #2196f3;
+  fill: var(--gum-leaf);
+  stroke: var(--dodger-blue);
 }
 
 .selectedRegion {
-  fill: #b1b8b2;
-  stroke: #2196f3;
+  fill: var(--gum-leaf);
+  stroke: var(--dodger-blue);
 }
 
 @media (max-width: 480px) {

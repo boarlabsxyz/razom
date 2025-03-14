@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  margin-bottom: 12px;
 }
 
 .region_list_title {
@@ -27,8 +28,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffffff;
-  border: 1px solid #dee2e6;
+  background-color: var(--white);
+  border: 1px solid var(--pattens-blue);
   transition: all 0.3s ease-in-out;
 }
 
@@ -60,7 +61,7 @@
 
 .dropdown_arrow {
   font-size: 0.8em;
-  color: #0f172a;
+  color: var(--ebony);
   margin-left: 5px;
   transition: transform 0.2s ease-in-out;
   display: inline-block;
@@ -74,8 +75,8 @@
   top: 100%;
   left: 0;
   width: 100%;
-  background-color: #ffffff;
-  border: 1px solid #ccc;
+  background-color: var(--white);
+  border: 1px solid var(--very-light-grey);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   max-height: 300px;
   overflow-y: auto;
@@ -97,12 +98,12 @@
   font-weight: 400;
   font-size: 14px;
   line-height: 26px;
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--pattens-blue);
 }
 
 .region_selector_item:hover,
 .region_selector_item:focus {
-  background-color: #b1b8b2;
+  background-color: var(--gum-leaf);
 }
 
 @media (max-width: 480px) {

@@ -6,7 +6,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import st from './regionsList.module.css';
 
 interface RegionsListProps {
-  setSelectedRegion: (region: string) => void;
+  readonly setSelectedRegion: (region: string) => void;
 }
 
 function RegionsList({ setSelectedRegion }: RegionsListProps) {
@@ -15,15 +15,15 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
   ) || { name: '', numOfInitiatives: 0 };
 
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedRegion, setLocalSelectedRegion] = useState<string | undefined>(
+  const [selectedRegion, setSelectedRegionLocal] = useState<string | undefined>(
     defaultRegion.name,
   );
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const listRef = useRef<HTMLUListElement>(null);
-  const itemsRef = useRef<(HTMLLIElement | null)[]>([]);
+  const listRef = useRef<HTMLDivElement>(null);
+  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
@@ -33,7 +33,7 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
     name: string;
     numOfInitiatives?: number;
   }) => {
-    setLocalSelectedRegion(region.name);
+    setSelectedRegionLocal(region.name);
     setSelectedRegion(region.name);
     setIsOpen(false);
     setFocusedIndex(null);
@@ -50,7 +50,7 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLUListElement>) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Escape') {
       setIsOpen(false);
       setFocusedIndex(null);
@@ -110,7 +110,7 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
           data-testid="btn-for-region-selection"
           className={`${st.region_selector_btn} ${isOpen ? st.open : ''}`}
           onClick={toggleDropdown}
-          aria-haspopup="listbox"
+          aria-haspopup="menu"
           aria-expanded={isOpen}
           aria-controls="region-list"
         >
@@ -118,21 +118,22 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
         </button>
 
         {isOpen && (
-          <ul
+          <div
             id="region-list"
             data-testid="list-of-regions"
             ref={listRef}
             className={`${st.region_selector_list} ${isOpen ? st.show : ''}`}
-            role="listbox"
+            role="menu"
             aria-activedescendant={
               focusedIndex !== null ? `region-${focusedIndex}` : undefined
             }
             onKeyDown={handleKeyDown}
           >
             {regionsArray.map((region, index) => (
-              <li
+              <div
                 key={region.name}
                 id={`region-${index}`}
+                role="menuitemradio"
                 ref={(el) => {
                   itemsRef.current[index] = el;
                 }}
@@ -146,17 +147,16 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
                 className={`${st.region_selector_item} ${
                   focusedIndex === index ? st.focused : ''
                 }`}
-                role="listitem"
-                aria-selected={selectedRegion === region.name}
+                aria-checked={selectedRegion === region.name}
                 aria-label={`Select ${region.name}`}
               >
                 <span className={st.region_name}>{region.name}</span>
                 <span className={st.num_of_initiatives}>
                   ({region.numOfInitiatives})
                 </span>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
     </div>
