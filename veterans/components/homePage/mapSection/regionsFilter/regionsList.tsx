@@ -26,7 +26,24 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
   const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   const toggleDropdown = () => {
-    setIsOpen((prev) => !prev);
+    setIsOpen((prev) => {
+      if (!prev) {
+        const selectedIndex = regionsArray.findIndex(
+          (region) => region.name === selectedRegion,
+        );
+        const focusIndex =
+          selectedRegion === 'Всі'
+            ? 0
+            : selectedIndex !== -1
+              ? selectedIndex
+              : 0;
+        setFocusedIndex(focusIndex);
+        setTimeout(() => {
+          itemsRef.current[focusIndex]?.focus();
+        }, 0);
+      }
+      return !prev;
+    });
   };
 
   const handleRegionSelect = (region: {
@@ -36,7 +53,7 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
     setSelectedRegionLocal(region.name);
     setSelectedRegion(region.name);
     setIsOpen(false);
-    setFocusedIndex(null);
+    setFocusedIndex(regionsArray.findIndex((reg) => reg.name === region.name));
     buttonRef.current?.focus();
   };
 
@@ -60,7 +77,7 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
         event.preventDefault();
         setFocusedIndex((prev) => {
           const nextIndex =
-            prev === null ? 0 : Math.min(prev + 1, regionsArray.length - 1);
+            prev === null || prev === regionsArray.length - 1 ? 0 : prev + 1;
           itemsRef.current[nextIndex]?.focus();
           return nextIndex;
         });
@@ -71,7 +88,7 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
         event.preventDefault();
         setFocusedIndex((prev) => {
           const nextIndex =
-            prev === null ? regionsArray.length - 1 : Math.max(prev - 1, 0);
+            prev === null || prev === 0 ? regionsArray.length - 1 : prev - 1;
           itemsRef.current[nextIndex]?.focus();
           return nextIndex;
         });
@@ -87,17 +104,11 @@ function RegionsList({ setSelectedRegion }: RegionsListProps) {
   useEffect(() => {
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
+      listRef.current?.focus();
     }
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (isOpen) {
-      listRef.current?.focus();
-    }
   }, [isOpen]);
 
   return (

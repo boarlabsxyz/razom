@@ -40,7 +40,7 @@ describe('RegionsList Component', () => {
     render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
-    const items = screen.getAllByRole('listitem');
+    const items = screen.getAllByRole('menuitemradio');
     expect(items.length).toBe(26);
   });
 
@@ -49,17 +49,16 @@ describe('RegionsList Component', () => {
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     let list = screen.getByTestId('list-of-regions');
-    const regions = screen.getAllByRole('listitem');
+    const regions = screen.getAllByRole('menuitemradio');
 
     list.focus();
 
     fireEvent.keyDown(list, { key: 'ArrowDown' });
-    expect(regions[0]).toHaveFocus();
-
-    fireEvent.keyDown(list, { key: 'ArrowDown' });
+    console.log('1:', document.activeElement?.textContent);
     expect(regions[1]).toHaveFocus();
 
     fireEvent.keyDown(list, { key: 'ArrowUp' });
+    console.log('2:', document.activeElement?.textContent);
     expect(regions[0]).toHaveFocus();
 
     fireEvent.keyDown(list, { key: 'Enter' });
@@ -71,7 +70,9 @@ describe('RegionsList Component', () => {
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     list = screen.getByTestId('list-of-regions');
 
+    fireEvent.keyDown(list, { key: 'ArrowUp' });
     fireEvent.keyDown(list, { key: 'ArrowDown' });
+
     if (document.activeElement) {
       fireEvent.keyDown(document.activeElement, { key: ' ' });
     }
