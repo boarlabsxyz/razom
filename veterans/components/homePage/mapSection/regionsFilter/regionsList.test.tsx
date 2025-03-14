@@ -48,7 +48,7 @@ describe('RegionsList Component', () => {
     render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
-    let list = screen.getByTestId('list-of-regions');
+    const list = screen.getByTestId('list-of-regions');
     const regions = screen.getAllByRole('menuitemradio');
 
     list.focus();
