@@ -66,7 +66,6 @@ describe('RegionsList Component', () => {
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
-    list = screen.getByTestId('list-of-regions');
 
     if (document.activeElement) {
       fireEvent.keyDown(document.activeElement, { key: ' ' });
