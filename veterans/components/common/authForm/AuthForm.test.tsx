@@ -16,7 +16,12 @@ import { useRouter } from 'next/navigation';
 
 import { SessionProvider } from 'next-auth/react';
 
-import { REGISTER_MUTATION } from 'constants/graphql';
+import {
+  CHECK_USER_QUERY,
+  LOGIN_MUTATION,
+  LOGOUT_MUTATION,
+  REGISTER_MUTATION,
+} from 'constants/graphql';
 
 const mocks: MockedResponse[] = [
   {
@@ -53,6 +58,70 @@ const errorMocks: MockedResponse[] = [
       },
     },
     error: new Error('Email is already taken'),
+  },
+];
+
+const loginMock: MockedResponse[] = [
+  {
+    request: {
+      query: LOGIN_MUTATION,
+      variables: {
+        email: 'test@example.com',
+        password: 'Password123',
+      },
+    },
+    result: {
+      data: {
+        authenticateUserWithPassword: {
+          item: {
+            id: '1',
+            email: 'test@example.com',
+            role: 'USER',
+            name: 'Test User',
+          },
+        },
+      },
+    },
+  },
+];
+
+const logoutMock: MockedResponse[] = [
+  {
+    request: {
+      query: LOGOUT_MUTATION,
+    },
+    result: { data: { endSession: true } },
+  },
+];
+
+const loginErrorMock: MockedResponse[] = [
+  {
+    request: {
+      query: LOGIN_MUTATION,
+      variables: { email: 'wrong@example.com', password: 'WrongPassword' },
+    },
+    error: new Error('Invalid credentials'),
+  },
+];
+
+const oauthMock: MockedResponse[] = [
+  {
+    request: {
+      query: CHECK_USER_QUERY,
+      variables: { email: 'oauth@example.com' },
+    },
+    result: { data: { user: null } },
+  },
+  {
+    request: {
+      query: REGISTER_MUTATION,
+      variables: {
+        name: 'OAuth User',
+        email: 'oauth@example.com',
+        password: 'withoutpassword',
+      },
+    },
+    result: { data: { createUser: { id: '456', email: 'oauth@example.com' } } },
   },
 ];
 
@@ -193,6 +262,21 @@ describe('Auth Forms', () => {
       ).toBeInTheDocument();
     });
 
+    it('should log in successfully with correct credentials', async () => {
+      customRender(<LoginForm />, [...loginMock, ...logoutMock]);
+      fireEvent.change(screen.getByPlaceholderText('Email'), {
+        target: { value: 'test@example.com' },
+      });
+      fireEvent.change(screen.getByPlaceholderText('Password'), {
+        target: { value: 'Password123' },
+      });
+      fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith('/');
+      });
+    });
+
     it('should clear error messages when correcting fields', async () => {
       customRender(<LoginForm />);
       fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
@@ -203,6 +287,29 @@ describe('Auth Forms', () => {
 
       await waitFor(() => {
         expect(screen.queryByText('Email is required')).not.toBeInTheDocument();
+      });
+    });
+
+    it('should show an error for incorrect credentials', async () => {
+      customRender(<LoginForm />, loginErrorMock);
+      fireEvent.change(screen.getByPlaceholderText('Email'), {
+        target: { value: 'wrong@example.com' },
+      });
+      fireEvent.change(screen.getByPlaceholderText('Password'), {
+        target: { value: 'WrongPassword' },
+      });
+      fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
+      await waitFor(() => {
+        expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
+      });
+    });
+
+    it('should handle OAuth authentication', async () => {
+      customRender(<LoginForm />, oauthMock);
+
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith('/');
       });
     });
   });
