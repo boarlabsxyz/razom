@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import RegionsList from './regionsList';
 
@@ -34,8 +34,24 @@ describe('RegionsList Component', () => {
     render(<RegionsList />);
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
-    const items = screen.getAllByRole('option');
+    const items = screen.getAllByRole('listitem');
     expect(items.length).toBe(26);
+  });
+
+  test('sets correct focus when reopening dropdown with selected region', async () => {
+    render(<RegionsList />);
+
+    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
+    fireEvent.click(screen.getAllByRole('listitem')[1]);
+
+    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
+
+    await waitFor(
+      () => {
+        expect(screen.getAllByRole('listitem')[1]).toHaveFocus();
+      },
+      { timeout: 1000 },
+    );
   });
 
   test('keyboard navigation works (ArrowDown, ArrowUp, Enter, Space)', () => {
@@ -43,22 +59,22 @@ describe('RegionsList Component', () => {
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     let list = screen.getByTestId('list-of-regions');
-    const regions = screen.getAllByRole('option');
+    const regions = screen.getAllByRole('listitem');
 
     list.focus();
 
     fireEvent.keyDown(list, { key: 'ArrowDown' });
-    expect(regions[0]).toHaveFocus();
-
-    fireEvent.keyDown(list, { key: 'ArrowDown' });
     expect(regions[1]).toHaveFocus();
 
+    fireEvent.keyDown(list, { key: 'ArrowDown' });
+    expect(regions[2]).toHaveFocus();
+
     fireEvent.keyDown(list, { key: 'ArrowUp' });
-    expect(regions[0]).toHaveFocus();
+    expect(regions[1]).toHaveFocus();
 
     fireEvent.keyDown(list, { key: 'Enter' });
     expect(screen.getByTestId('btn-for-region-selection')).toHaveTextContent(
-      /Region 1/i,
+      /Region 2/i,
     );
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
 
@@ -70,7 +86,7 @@ describe('RegionsList Component', () => {
       fireEvent.keyDown(document.activeElement, { key: ' ' });
     }
     expect(screen.getByTestId('btn-for-region-selection')).toHaveTextContent(
-      /Region 1/i,
+      /Region 3/i,
     );
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });

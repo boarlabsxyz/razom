@@ -22,7 +22,24 @@ function RegionsList() {
   const itemsRef = useRef<(HTMLLIElement | null)[]>([]);
 
   const toggleDropdown = () => {
-    setIsOpen((prev) => !prev);
+    setIsOpen((prev) => {
+      if (!prev) {
+        const selectedIndex = regionsArray.findIndex(
+          (region) => region.name === selectedRegion,
+        );
+        const focusIndex =
+          selectedRegion === 'Всі'
+            ? 0
+            : selectedIndex !== -1
+              ? selectedIndex
+              : 0;
+        setFocusedIndex(focusIndex);
+        setTimeout(() => {
+          itemsRef.current[focusIndex]?.focus();
+        }, 0);
+      }
+      return !prev;
+    });
   };
 
   const handleRegionSelect = (region: {
@@ -31,7 +48,7 @@ function RegionsList() {
   }) => {
     setSelectedRegion(region.name);
     setIsOpen(false);
-    setFocusedIndex(null);
+    setFocusedIndex(regionsArray.findIndex((reg) => reg.name === region.name));
     buttonRef.current?.focus();
   };
 
@@ -55,7 +72,7 @@ function RegionsList() {
         event.preventDefault();
         setFocusedIndex((prev) => {
           const nextIndex =
-            prev === null ? 0 : Math.min(prev + 1, regionsArray.length - 1);
+            prev === null || prev === regionsArray.length - 1 ? 0 : prev + 1;
           itemsRef.current[nextIndex]?.focus();
           return nextIndex;
         });
@@ -66,7 +83,7 @@ function RegionsList() {
         event.preventDefault();
         setFocusedIndex((prev) => {
           const nextIndex =
-            prev === null ? regionsArray.length - 1 : Math.max(prev - 1, 0);
+            prev === null || prev === 0 ? regionsArray.length - 1 : prev - 1;
           itemsRef.current[nextIndex]?.focus();
           return nextIndex;
         });
@@ -82,6 +99,7 @@ function RegionsList() {
   useEffect(() => {
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
+      listRef.current?.focus();
     }
 
     return () => {
@@ -89,16 +107,10 @@ function RegionsList() {
     };
   }, [isOpen]);
 
-  useEffect(() => {
-    if (isOpen) {
-      listRef.current?.focus();
-    }
-  }, [isOpen]);
-
   return (
     <div className={st.wrapper}>
       <div className={st.regions_wrapper}>
-        <label className={st.region_list_title}>Область</label>
+        <span className={st.region_list_title}>Область</span>
         <div className={st.region_selector} ref={dropdownRef}>
           <button
             id="region-selector"
@@ -140,7 +152,7 @@ function RegionsList() {
                   className={`${st.region_selector_item} ${
                     focusedIndex === index ? st.focused : ''
                   }`}
-                  role="option"
+                  role="listitem"
                   aria-selected={selectedRegion === region.name}
                   aria-label={`Select ${region.name}`}
                 >
