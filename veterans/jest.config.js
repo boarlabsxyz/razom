@@ -5,13 +5,15 @@ module.exports = {
   testEnvironment: 'jest-environment-jsdom',
   setupFiles: ['./jest.setup.ts'],
   transform: {
-    '^.+\\.tsx?$': [
+    '^.+\\.(ts|tsx)?$': [
       'ts-jest',
       {
         tsconfig: 'tsconfig.jest.json',
       },
     ],
+    '^.+\\.(js|jsx)$': 'babel-jest',
   },
+
   collectCoverage: true,
   collectCoverageFrom: [
     '**/*.{ts,tsx,js,jsx}',
@@ -47,4 +49,5 @@ module.exports = {
     '^utils/(.*)$': '<rootDir>/utils/$1',
   },
   testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
+  transformIgnorePatterns: ['/node_modules/(?!jose)/'],
 };
