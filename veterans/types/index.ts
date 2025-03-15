@@ -31,3 +31,10 @@ export type ProcessedInitiative = {
 };
 
 export type CorsCallback = (err: Error | null, allow?: boolean) => void;
+
+export type CustomBaseItem = {
+  [key: string]: unknown;
+  id: {
+    toString(): string;
+  };
+};

@@ -59,3 +59,23 @@ export const GET_INITIATIVES = gql`
     }
   }
 `;
+
+export const CHECK_USER_QUERY = gql`
+  query CheckUser($email: String!) {
+    user(where: { email: $email }) {
+      id
+      email
+      name
+    }
+  }
+`;
+
+export const CREATE_USER_MUTATION = gql`
+  mutation CreateUser($email: String!, $name: String!) {
+    createUser(data: { email: $email, name: $name }) {
+      id
+      email
+      name
+    }
+  }
+`;

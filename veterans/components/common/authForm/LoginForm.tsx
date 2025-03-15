@@ -1,12 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import styles from './AuthForm.module.css';
 import Link from 'next/link';
 import { LoginFormData } from 'types';
+import {
+  CHECK_USER_QUERY,
+  CURRENT_USER_QUERY,
+  LOGIN_MUTATION,
+  REGISTER_MUTATION,
+} from 'constants/graphql';
+import { useApolloClient, useMutation } from '@apollo/client';
+import { useRouter } from 'next/navigation';
+import LoginAuthButton from './LoginAuthButton';
+import { useSession } from 'next-auth/react';
 
 const loginSchema = yup.object().shape({
   email: yup
@@ -16,43 +26,124 @@ const loginSchema = yup.object().shape({
   password: yup.string().required('Password is required'),
 });
 
-type Props = {
-  onSubmit: (formData: LoginFormData) => Promise<void>;
-  error?: string;
-};
-
-export default function LoginForm({ onSubmit, error }: Props) {
+export default function LoginForm() {
   const {
     control,
     handleSubmit,
     formState: { errors },
-    getValues,
   } = useForm({
     resolver: yupResolver(loginSchema),
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const client = useApolloClient();
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  const [login] = useMutation(LOGIN_MUTATION, {
+    onCompleted(data) {
+      const authResult = data?.authenticateUserWithPassword;
+
+      if (authResult && 'item' in authResult) {
+        client.writeQuery({
+          query: CURRENT_USER_QUERY,
+          data: { authenticatedItem: authResult.item },
+        });
+        if (window.history.length > 1) {
+          router.back();
+        } else {
+          router.push('/');
+        }
+      } else {
+        setError(authResult?.message || 'Невідома помилка входу');
+      }
+    },
+    onError(err) {
+      setError(err.message);
+    },
+  });
+
+  const [register] = useMutation(REGISTER_MUTATION, {
+    onCompleted(data) {
+      const createdUser = data?.createUser;
+
+      if (createdUser) {
+        if (window.history.length > 1) {
+          router.back();
+        } else {
+          router.push('/');
+        }
+      }
+    },
+    onError(err) {
+      setSubmitError(err.message);
+    },
+  });
+
+  const hasAuthenticated = useRef(false);
+
+  useEffect(() => {
+    async function handleAuth() {
+      if (!session || hasAuthenticated.current) {
+        return;
+      }
+      hasAuthenticated.current = true;
+
+      try {
+        const { data } = await client.query({
+          query: CHECK_USER_QUERY,
+          variables: { email: session.user?.email },
+          fetchPolicy: 'network-only',
+        });
+
+        if (!data?.user) {
+          await register({
+            variables: {
+              name: session.user?.name,
+              email: session.user?.email,
+              password: 'withoutpassword',
+            },
+          });
+        }
+
+        await login({
+          variables: {
+            email: session.user?.email,
+            password: 'withoutpassword',
+          },
+        });
+
+        router.push('/');
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Authentication error:', error);
+        hasAuthenticated.current = false;
+      }
+    }
+
+    handleAuth();
+  }, [session, register, login, router]);
+
+  const onSubmit = async (formData: LoginFormData) => {
+    setError(null);
+    setSubmitError(null);
+    setIsSubmitting(true);
+    try {
+      await login({ variables: formData });
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : 'An error occurred',
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className={styles.container}>
-      <form
-        className={styles.form}
-        onSubmit={handleSubmit(async () => {
-          setIsSubmitting(true);
-          setSubmitError(null);
-          try {
-            const values = getValues();
-            await onSubmit(values);
-          } catch (error) {
-            setSubmitError(
-              error instanceof Error ? error.message : 'An error occurred',
-            );
-          } finally {
-            setIsSubmitting(false);
-          }
-        })}
-      >
+      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         {submitError && (
           <p className={styles.error} role="alert">
             {submitError}
@@ -120,6 +211,9 @@ export default function LoginForm({ onSubmit, error }: Props) {
           >
             {isSubmitting ? 'Signing in...' : 'Sign in'}
           </button>
+        </div>
+        <div className={styles.buttonContainer}>
+          <LoginAuthButton />
         </div>
 
         <div className={styles.textContainer}>
