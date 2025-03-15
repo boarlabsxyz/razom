@@ -5,10 +5,10 @@ import {
   ApolloClient,
   InMemoryCache,
   NormalizedCacheObject,
-  gql,
 } from '@apollo/client';
 import LogoutButton from './LogoutButton';
 import { signOut } from 'next-auth/react';
+import { LOGOUT_MUTATION } from 'constants/graphql';
 
 jest.mock('./LogoutButton.module.css', () => ({
   wrapper: 'mocked-wrapper-class',
@@ -18,11 +18,18 @@ jest.mock('next-auth/react', () => ({
   signOut: jest.fn(),
 }));
 
-const LOGOUT_MUTATION = gql`
-  mutation Logout {
-    logout
-  }
-`;
+const logoutMock = [
+  {
+    request: {
+      query: LOGOUT_MUTATION,
+    },
+    result: {
+      data: {
+        endSession: true,
+      },
+    },
+  },
+];
 
 describe('LogoutButton', () => {
   let mockApolloClient: ApolloClient<NormalizedCacheObject>;
@@ -34,10 +41,16 @@ describe('LogoutButton', () => {
 
     jest.spyOn(mockApolloClient, 'mutate').mockResolvedValue({
       data: {
+        endSession: true,
+      },
+    });
+
+    jest.spyOn(mockApolloClient, 'mutate').mockResolvedValue({
+      data: {
         logout: true,
       },
     });
-    jest.spyOn(mockApolloClient, 'clearStore');
+    jest.spyOn(mockApolloClient, 'clearStore').mockResolvedValue([]);
 
     (signOut as jest.Mock).mockClear();
 
@@ -55,6 +68,20 @@ describe('LogoutButton', () => {
     );
 
     expect(getByText('Вийти')).toBeInTheDocument();
+  });
+
+  it('calls logout mutation', async () => {
+    const { getByText } = render(
+      <MockedProvider mocks={logoutMock} addTypename={false}>
+        <LogoutButton />
+      </MockedProvider>,
+    );
+
+    fireEvent.click(getByText('Вийти'));
+
+    await waitFor(() => {
+      expect(signOut).toHaveBeenCalled();
+    });
   });
 
   it('logs an error if logout mutation fails', async () => {
