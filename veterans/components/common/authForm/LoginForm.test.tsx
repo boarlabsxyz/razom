@@ -131,11 +131,47 @@ describe('Auth Forms', () => {
     ).toBeInTheDocument();
   });
 
+  it('should display OAuth login button', async () => {
+    customRender(<LoginForm />);
+    expect(
+      screen.getByRole('button', { name: /Увійти через Google/i }),
+    ).toBeInTheDocument();
+  });
+
   it('should display validation errors for empty fields', async () => {
     customRender(<LoginForm />);
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
     expect(await screen.findByText('Email is required')).toBeInTheDocument();
     expect(await screen.findByText('Password is required')).toBeInTheDocument();
+  });
+
+  it('should display error if email field is empty', async () => {
+    customRender(<LoginForm />);
+    fireEvent.change(screen.getByPlaceholderText('Password'), {
+      target: { value: 'Password123' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    expect(await screen.findByText('Email is required')).toBeInTheDocument();
+  });
+
+  it('should display error if password field is empty', async () => {
+    customRender(<LoginForm />);
+    fireEvent.change(screen.getByPlaceholderText('Email'), {
+      target: { value: 'test@example.com' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    expect(await screen.findByText('Password is required')).toBeInTheDocument();
+  });
+
+  it('should clear error messages upon correcting input', async () => {
+    customRender(<LoginForm />);
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    fireEvent.change(screen.getByPlaceholderText('Email'), {
+      target: { value: 'john.doe@example.com' },
+    });
+    await waitFor(() => {
+      expect(screen.queryByText('Email is required')).not.toBeInTheDocument();
+    });
   });
 
   it('should log in successfully with valid credentials', async () => {
@@ -152,14 +188,67 @@ describe('Auth Forms', () => {
     });
   });
 
-  it('should clear error messages upon correcting input', async () => {
-    customRender(<LoginForm />);
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'john.doe@example.com' },
+  it('should redirect to the previous page after successful login if history length is greater than 1', async () => {
+    const mockBack = jest.fn();
+    const mockPush = jest.fn();
+
+    (useRouter as jest.Mock).mockReturnValue({
+      push: mockPush,
+      back: mockBack,
     });
+
+    Object.defineProperty(window, 'history', {
+      value: {
+        length: 2,
+      },
+      writable: true,
+    });
+
+    customRender(<LoginForm />, loginMock);
+
+    fireEvent.change(screen.getByPlaceholderText('Email'), {
+      target: { value: 'test@example.com' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('Password'), {
+      target: { value: 'Password123' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
     await waitFor(() => {
-      expect(screen.queryByText('Email is required')).not.toBeInTheDocument();
+      expect(mockBack).toHaveBeenCalled();
+    });
+  });
+
+  it('should redirect to the homepage after successful login if history length is 1', async () => {
+    const mockBack = jest.fn();
+    const mockPush = jest.fn();
+
+    (useRouter as jest.Mock).mockReturnValue({
+      push: mockPush,
+      back: mockBack,
+    });
+
+    Object.defineProperty(window, 'history', {
+      value: {
+        length: 1,
+      },
+      writable: true,
+    });
+
+    customRender(<LoginForm />, loginMock);
+
+    fireEvent.change(screen.getByPlaceholderText('Email'), {
+      target: { value: 'test@example.com' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('Password'), {
+      target: { value: 'Password123' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith('/');
     });
   });
 
@@ -181,6 +270,56 @@ describe('Auth Forms', () => {
     customRender(<LoginForm />, oauthMock);
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/');
+    });
+  });
+
+  it('should handle OAuth authentication for an existing user', async () => {
+    const existingUserMock: MockedResponse[] = [
+      {
+        request: {
+          query: CHECK_USER_QUERY,
+          variables: { email: 'existing@example.com' },
+        },
+        result: {
+          data: {
+            user: {
+              id: '123',
+              email: 'existing@example.com',
+              name: 'Existing User',
+            },
+          },
+        },
+      },
+    ];
+
+    customRender(<LoginForm />, existingUserMock);
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith('/');
+    });
+  });
+
+  it('should show an error message if the network is down during login', async () => {
+    const networkErrorMock: MockedResponse[] = [
+      {
+        request: {
+          query: LOGIN_MUTATION,
+          variables: { email: 'test@example.com', password: 'Password123' },
+        },
+        error: new Error('Network error'),
+      },
+    ];
+
+    customRender(<LoginForm />, networkErrorMock);
+    fireEvent.change(screen.getByPlaceholderText('Email'), {
+      target: { value: 'test@example.com' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('Password'), {
+      target: { value: 'Password123' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Network error')).toBeInTheDocument();
     });
   });
 });
