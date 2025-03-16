@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - registration functionality ([105](https://github.com/boarlabsxyz/razom/pull/105))
+- regionsList component ([117](https://github.com/boarlabsxyz/razom/pull/117))
 
 ### Fixed
 

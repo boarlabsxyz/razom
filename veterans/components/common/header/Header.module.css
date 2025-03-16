@@ -2,7 +2,7 @@
   position: sticky;
   top: 0;
   left: 0;
-  background-color: #f8fafb;
+  background-color: var(--alice-blue);
   z-index: 4;
 }
 
