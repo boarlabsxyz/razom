@@ -16,11 +16,6 @@ describe('getKeystoneContext', () => {
     const { getContext } = await import('@keystone-6/core/context');
     const context = await getKeystoneContext();
     const mockPrisma = { mockPrisma: true };
-    jest.mock('@prisma/client', () => {
-      return {
-        PrismaClient: jest.fn(() => mockPrisma),
-      };
-    });
 
     expect(getContext).toHaveBeenCalledWith(keystoneConfig, mockPrisma);
     expect(context).toEqual({ mockContext: true });

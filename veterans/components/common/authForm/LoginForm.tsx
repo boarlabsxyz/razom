@@ -111,7 +111,7 @@ export default function LoginForm() {
         await login({
           variables: {
             email: session.user?.email,
-            password: 'withoutpassword',
+            password: '',
           },
         });
 
