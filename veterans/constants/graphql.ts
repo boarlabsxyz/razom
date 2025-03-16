@@ -69,13 +69,3 @@ export const CHECK_USER_QUERY = gql`
     }
   }
 `;
-
-export const CREATE_USER_MUTATION = gql`
-  mutation CreateUser($email: String!, $name: String!) {
-    createUser(data: { email: $email, name: $name }) {
-      id
-      email
-      name
-    }
-  }
-`;

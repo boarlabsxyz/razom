@@ -43,7 +43,7 @@
     "@eslint/js": "^9.12.0",
     "@jest/globals": "^29.7.0",
     "@playwright/test": "^1.48.1",
-    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/jest-dom": "^6.6.2",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
     "@types/cors": "^2.8.17",
@@ -64,7 +64,7 @@
     "node-mocks-http": "^1.16.2",
     "prettier": "^3.3.3",
     "ts-jest": "^29.2.5",
-    "typescript": "^5.6.3",
+    "typescript": "^5.8.2",
     "typescript-eslint": "^8.8.1",
     "typescript-plugin-css-modules": "^5.1.0",
     "vercel": "^37.12.1"
