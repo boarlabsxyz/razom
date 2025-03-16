@@ -5,16 +5,13 @@ module.exports = {
   testEnvironment: 'jest-environment-jsdom',
   setupFiles: ['./jest.setup.ts'],
   transform: {
-    '^.+\\.(ts|tsx)?$': [
-      'ts-jest',
-      {
-        tsconfig: 'tsconfig.jest.json',
-      },
+    '^.+\\.(ts|tsx)?$': ['ts-jest', { tsconfig: 'tsconfig.jest.json' }],
+    '^.+\\.(js|jsx|ts|tsx)$': [
+      'babel-jest',
+      { configFile: './babel.jest.config.js' },
     ],
-    '^.+\\.(js|jsx)$': 'babel-jest',
   },
 
-  collectCoverage: true,
   collectCoverageFrom: [
     '**/*.{ts,tsx,js,jsx}',
     '!**/layout.tsx',
@@ -48,7 +45,8 @@ module.exports = {
     '^icons/(.*)$': '<rootDir>/icons/$1',
     '^utils/(.*)$': '<rootDir>/utils/$1',
     '^data/(.*)$': '<rootDir>/data/$1',
+    '^jose/(.*)$': '<rootDir>/node_modules/jose/dist/node/cjs/$1',
   },
   testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
-  transformIgnorePatterns: ['/node_modules/(?!jose)/'],
+  transformIgnorePatterns: ['/node_modules/(?!jose|next-auth)/'],
 };

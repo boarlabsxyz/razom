@@ -113,7 +113,7 @@ export const User: ListConfig<Lists.User.TypeInfo<Session>> = list({
           item: CustomBaseItem;
         }) => isSameUser({ session, item }),
       },
-      validation: { isRequired: false },
+      validation: { isRequired: true },
       ui: {
         itemView: {
           fieldMode: ({
