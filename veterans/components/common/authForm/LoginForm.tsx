@@ -103,7 +103,7 @@ export default function LoginForm() {
             variables: {
               name: session.user?.name,
               email: session.user?.email,
-              password: 'withoutpassword',
+              password: '',
             },
           });
         }
