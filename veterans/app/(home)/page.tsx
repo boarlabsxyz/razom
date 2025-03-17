@@ -13,6 +13,7 @@ import { processInitiative } from 'utils/initiativeUtils';
 
 import st from './page.module.css';
 import Hero from '@comps/homePage/hero/Hero';
+import Initiatives from '@comps/homePage/initiatives/Initiatives';
 
 export default function HomePage() {
   const { loading, error, data } = useQuery<{ initiatives: Initiative[] }>(
@@ -55,6 +56,7 @@ export default function HomePage() {
       >
         {content}
       </section>
+      <Initiatives />
     </Container>
   );
 }
