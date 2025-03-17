@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom';
 import NextAuth from 'next-auth';
+
 import { authOptions, GET, POST } from './route';
 
 describe('NextAuth Configuration', () => {

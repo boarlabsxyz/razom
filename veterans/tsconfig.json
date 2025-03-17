@@ -33,8 +33,7 @@
       {
         "name": "next"
       }
-    ],
-    "types": ["node", "jest"]
+    ]
   },
   "include": [
     "next-env.d.ts",

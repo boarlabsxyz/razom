@@ -50,5 +50,5 @@ module.exports = {
     '^jose/(.*)$': '<rootDir>/node_modules/jose/dist/node/cjs/$1',
   },
   testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
-  transformIgnorePatterns: ['/node_modules/(?!jose|next-auth)/'],
+  transformIgnorePatterns: ['node_modules/(?!uuid|next-auth)/'],
 };

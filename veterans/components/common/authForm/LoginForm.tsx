@@ -103,7 +103,7 @@ export default function LoginForm() {
             variables: {
               name: session.user?.name,
               email: session.user?.email,
-              password: '',
+              password: 'withoutpassword',
             },
           });
         }
@@ -111,7 +111,7 @@ export default function LoginForm() {
         await login({
           variables: {
             email: session.user?.email,
-            password: '',
+            password: 'withoutpassword',
           },
         });
 
