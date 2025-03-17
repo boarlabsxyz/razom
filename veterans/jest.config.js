@@ -11,11 +11,12 @@ module.exports = {
       { configFile: './babel.jest.config.js' },
     ],
   },
-
+  collectCoverage: true,
   collectCoverageFrom: [
     '**/*.{ts,tsx,js,jsx}',
     '!**/layout.tsx',
     '!node_modules/**',
+    '!icons/**',
     '!.next/**',
     '!.keystone/**',
     '!keystone.ts',
@@ -25,6 +26,7 @@ module.exports = {
     '!schema.ts',
     '!jest.config.js',
     '!playwright.config.ts',
+    '!babel.jest.config.js',
     '!**/*.d.ts',
     '!**/index.ts',
   ],
