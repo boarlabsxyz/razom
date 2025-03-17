@@ -4,26 +4,26 @@
   padding: 16px;
 }
 
-.regions_wrapper {
+.regionsWrapper {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-.region_list_title {
+.regionListTitle {
   height: 20px;
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
 }
 
-.region_selector {
+.regionSelector {
   position: relative;
   width: 240px;
   width: 100%;
 }
 
-.region_selector_btn {
+.regionSelectorBtn {
   position: relative;
   height: 50px;
   margin-top: 12px;
@@ -38,18 +38,18 @@
   transition: all 0.3s ease-in-out;
 }
 
-.region_name {
+.regionName {
   flex-grow: 1;
   text-align: left;
 }
 
-.num_of_initiatives {
+.numOfInitiatives {
   flex-shrink: 0;
   text-align: right;
   padding-right: 10px;
 }
 
-.region_selector_btn:after {
+.regionSelectorBtn:after {
   content: '';
   height: 7px;
   width: 12px;
@@ -60,11 +60,11 @@
   transition: transform 0.3s ease-in-out;
 }
 
-.region_selector_btn.open:after {
+.regionSelectorBtn.open:after {
   transform: rotate(180deg);
 }
 
-.dropdown_arrow {
+.dropdownArrow {
   font-size: 0.8em;
   color: var(--ebony);
   margin-left: 5px;
@@ -72,7 +72,7 @@
   display: inline-block;
 }
 
-.region_selector_list {
+.regionSelectorList {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -89,15 +89,15 @@
   display: none;
 }
 
-.region_selector_list.show {
+.regionSelectorList.show {
   display: block;
 }
 
-.region_selector_item {
+.regionSelectorItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 50px;
+  max-height: 50px;
   padding: 12px 12px;
   cursor: pointer;
   font-weight: 400;
@@ -106,8 +106,8 @@
   border: 1px solid var(--pattens-blue);
 }
 
-.region_selector_item:hover,
-.region_selector_item:focus {
+.regionSelectorItem:hover,
+.regionSelectorItem:focus {
   background-color: var(--gum-leaf);
 }
 
@@ -117,7 +117,7 @@
     max-width: 100%;
   }
 
-  .region_selector {
+  .regionSelector {
     width: 100%;
   }
 }
