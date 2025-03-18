@@ -21,7 +21,7 @@ type Props = {
   error?: string;
 };
 
-export default function LoginForm({ onSubmit, error }: Props) {
+export default function LoginForm({ onSubmit, error }: Readonly<Props>) {
   const {
     control,
     handleSubmit,
