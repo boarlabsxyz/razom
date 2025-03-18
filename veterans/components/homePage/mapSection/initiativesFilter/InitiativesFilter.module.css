@@ -1,0 +1,95 @@
+.wrapper {
+  max-width: 200px;
+}
+
+.title {
+  font-weight: 500;
+  margin: 15px 0 10px;
+  position: relative;
+  cursor: pointer;
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-weight: 300;
+  font-size: 0.875rem;
+  line-height: 1.125rem;
+  cursor: pointer;
+}
+
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0 3px;
+}
+
+.customCheckbox {
+  min-width: 21px;
+  min-height: 21px;
+  appearance: none;
+  background-color: var(--white);
+  border: 1px solid var(--pattens-blue);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.customCheckbox:checked {
+  background-color: var(--forest-jade);
+  border-color: var(--forest-jade);
+  background-image: url('/icons/checkedMark.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 10px;
+}
+
+.numberInfo {
+  display: none;
+}
+
+.wrapper button {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+@media (max-width: 480px) {
+  .wrapper {
+    max-width: 100%;
+  }
+
+  .wrapper button:focus {
+    outline: 2px solid var(--warning);
+  }
+
+  .title::after {
+    content: '';
+    position: absolute;
+    height: 7px;
+    width: 12px;
+    background-image: url('/icons/arrow-down-black.svg');
+    top: 9px;
+    left: 95%;
+    transition: transform 0.3s ease;
+  }
+  .title.active::after {
+    transform: rotate(180deg);
+  }
+  .categoryList {
+    display: none;
+  }
+  .categoryList.show {
+    display: block;
+  }
+  .numberInfo {
+    display: block;
+  }
+}
