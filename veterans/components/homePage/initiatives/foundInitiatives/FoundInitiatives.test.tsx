@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import InitiativesSection from './initiativesSection';
+import InitiativesSection from './FoundInitiatives';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { SessionProvider } from 'next-auth/react';
 import { gql } from '@apollo/client';

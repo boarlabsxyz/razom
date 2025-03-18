@@ -8,8 +8,8 @@ jest.mock('@comComps/container', () =>
 jest.mock('@comps/homePage/hero/Hero', () =>
   jest.fn(() => <div data-testid="hero" />),
 );
-jest.mock('@comps/homePage/initiativesSection', () =>
-  jest.fn(() => <div data-testid="initiatives-section" />),
+jest.mock('@comps/homePage/initiatives/Initiatives', () =>
+  jest.fn(() => <div data-testid="initiatives" />),
 );
 
 describe('HomePage', () => {
@@ -18,6 +18,6 @@ describe('HomePage', () => {
 
     expect(screen.getByTestId('container')).toBeInTheDocument();
     expect(screen.getByTestId('hero')).toBeInTheDocument();
-    expect(screen.getByTestId('initiatives-section')).toBeInTheDocument();
+    expect(screen.getByTestId('initiatives')).toBeInTheDocument();
   });
 });
