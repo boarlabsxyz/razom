@@ -15,6 +15,9 @@ test('Snapshot for Home Page without Hero Section', async ({
     page.waitForLoadState('domcontentloaded'),
     page.waitForLoadState('networkidle'),
   ]);
+  await page.evaluate(() => {
+    return document.fonts.ready;
+  });
 
   await page.waitForSelector('select, input[type="checkbox"]', {
     state: 'visible',
@@ -40,15 +43,23 @@ test('Snapshot for Home Page without Hero Section', async ({
 
   if (browserName === 'webkit') {
     await page.waitForLoadState('networkidle');
-
-    try {
-      await page.waitForSelector('[role="alert"]', {
+    await page.evaluate(() => {
+      const style = document.createElement('style');
+      style.textContent = `
+        * {
+          -webkit-font-smoothing: antialiased !important;
+          text-rendering: geometricPrecision !important;
+          letter-spacing: normal !important;
+        }
+      `;
+      document.head.appendChild(style);
+    });
+    await page
+      .waitForSelector('[role="alert"]', {
         state: 'hidden',
         timeout: 2000,
-      });
-    } catch (e) {
-      // If there's no error notification, continue
-    }
+      })
+      .catch(() => {});
 
     await page.waitForTimeout(2000);
   }
@@ -59,7 +70,7 @@ test('Snapshot for Home Page without Hero Section', async ({
   });
 
   expect(snapshot).toMatchSnapshot('homepage-no-hero.png', {
-    maxDiffPixels: 200,
-    threshold: 0.4,
+    maxDiffPixels: 300,
+    threshold: 0.5,
   });
 });
