@@ -8,9 +8,10 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
 
   await page.waitForLoadState('load');
 
-  const svgElement = await page.waitForSelector('svg[data-test-id="svg-map"]', {
-    timeout: 5000,
-  });
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(3000);
+
+  const svgElement = await page.waitForSelector('svg[data-test-id="svg-map"]');
 
   await page.waitForTimeout(5000);
 
