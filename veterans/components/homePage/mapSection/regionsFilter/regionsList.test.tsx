@@ -11,33 +11,46 @@ jest.mock('data/RegionsArray', () =>
 );
 
 describe('RegionsList Component', () => {
-  let mockSetCurrentRegion: jest.Mock;
+  let mockSetSelectedRegion: jest.Mock;
 
   beforeEach(() => {
-    mockSetCurrentRegion = jest.fn();
+    mockSetSelectedRegion = jest.fn();
   });
 
   test('correctly renders and shows default region', () => {
-    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
+    render(
+      <RegionsList
+        selectedRegion="Region 5"
+        setSelectedRegion={mockSetSelectedRegion}
+      />,
+    );
 
     expect(screen.getByTestId('btn-for-region-selection')).toBeInTheDocument();
+    expect(screen.getByTestId('btn-for-region-selection')).toHaveTextContent(
+      /Region 5/i,
+    );
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
 
-  test('dropdown opens and closes when button is clicked', () => {
-    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
+  test('dropdown opens and highlights the selected region', () => {
+    render(
+      <RegionsList
+        selectedRegion="Region 10"
+        setSelectedRegion={mockSetSelectedRegion}
+      />,
+    );
 
-    const button = screen.getByTestId('btn-for-region-selection');
-
-    fireEvent.click(button);
+    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     expect(screen.getByTestId('list-of-regions')).toBeInTheDocument();
 
-    fireEvent.click(button);
-    expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
+    const selectedRegionElement = screen.getByRole('menuitemradio', {
+      name: /Region 10/i,
+    });
+    expect(selectedRegionElement).toHaveClass('focused');
   });
 
   test('contains exactly 26 regions', () => {
-    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
+    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
     const items = screen.getAllByRole('menuitemradio');
@@ -45,7 +58,13 @@ describe('RegionsList Component', () => {
   });
 
   test('keyboard navigation works (ArrowDown, ArrowUp, Enter, Space)', () => {
-    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
+    const mockSetSelectedRegion = jest.fn();
+    render(
+      <RegionsList
+        selectedRegion="Region 1"
+        setSelectedRegion={mockSetSelectedRegion}
+      />,
+    );
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     const list = screen.getByTestId('list-of-regions');
@@ -77,7 +96,7 @@ describe('RegionsList Component', () => {
   });
 
   test('closes dropdown on Escape key', () => {
-    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
+    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     const list = screen.getByTestId('list-of-regions');
@@ -87,7 +106,7 @@ describe('RegionsList Component', () => {
   });
 
   test('closes dropdown when clicking outside', () => {
-    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
+    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     expect(screen.getByTestId('list-of-regions')).toBeInTheDocument();

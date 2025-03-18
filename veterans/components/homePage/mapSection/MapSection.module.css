@@ -12,6 +12,7 @@
 }
 
 .wrapperFilter {
+  position: relative;
   border: 1px solid var(--pattens-blue);
   border-radius: 6px;
   background-color: var(--white);
@@ -19,9 +20,34 @@
   padding: 20px;
 }
 
+.map_button_reset {
+  position: static;
+  background-color: var(--white);
+  padding: 4px 12px 4px;
+  margin-top: 10px;
+  border-radius: 2px;
+  border: 1px solid var(--haiti);
+  cursor: pointer;
+}
+
 @media (max-width: 480px) {
   .wrapperFilter {
     max-width: 100%;
     padding: 15px;
+  }
+  .map_button_reset {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    border: none;
+  }
+  .map_button_reset::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    bottom: 4px;
+    width: 112px;
+    height: 1px;
+    background-color: var(--haiti);
   }
 }

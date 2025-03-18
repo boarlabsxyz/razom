@@ -8,13 +8,37 @@ const categoriesList = [
 ];
 
 describe('CheckboxGroup Component', () => {
+  let selectedCheckboxes: Record<string, boolean>;
+  let setSelectedCheckboxes: jest.Mock;
+
+  beforeEach(() => {
+    selectedCheckboxes = {};
+    setSelectedCheckboxes = jest.fn((updateFn) => {
+      selectedCheckboxes = updateFn(selectedCheckboxes);
+    });
+  });
+
   test('renders title correctly', () => {
-    render(<CheckboxGroup title="Test Title" categories={categoriesList} />);
+    render(
+      <CheckboxGroup
+        title="Test Title"
+        categories={categoriesList}
+        selectedCheckboxes={selectedCheckboxes}
+        setSelectedCheckboxes={setSelectedCheckboxes}
+      />,
+    );
     expect(screen.getByText('Test Title')).toBeInTheDocument();
   });
 
   test('toggles category list when clicked', () => {
-    render(<CheckboxGroup title="Test Title" categories={categoriesList} />);
+    render(
+      <CheckboxGroup
+        title="Test Title"
+        categories={categoriesList}
+        selectedCheckboxes={selectedCheckboxes}
+        setSelectedCheckboxes={setSelectedCheckboxes}
+      />,
+    );
     const titleElement = screen.getByText('Test Title');
 
     fireEvent.click(titleElement);
@@ -27,7 +51,14 @@ describe('CheckboxGroup Component', () => {
   });
 
   test('renders checkboxes correctly', () => {
-    render(<CheckboxGroup title="Test Title" categories={categoriesList} />);
+    render(
+      <CheckboxGroup
+        title="Test Title"
+        categories={categoriesList}
+        selectedCheckboxes={selectedCheckboxes}
+        setSelectedCheckboxes={setSelectedCheckboxes}
+      />,
+    );
 
     categoriesList.forEach((category) => {
       const checkbox = screen.getByLabelText(category.name);
