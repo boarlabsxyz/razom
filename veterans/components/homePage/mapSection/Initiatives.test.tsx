@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
-import Initiatives from './Initiatives';
+import Initiatives from './';
 
 jest.mock('@comps/homePage/initiatives/map/UkraineMap', () =>
   jest.fn(() => <div data-testid="UkraineMap" />),

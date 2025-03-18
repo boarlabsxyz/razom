@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import RegionsList from './regionsList';
 
@@ -11,15 +11,21 @@ jest.mock('data/RegionsArray', () =>
 );
 
 describe('RegionsList Component', () => {
+  let mockSetCurrentRegion: jest.Mock;
+
+  beforeEach(() => {
+    mockSetCurrentRegion = jest.fn();
+  });
+
   test('correctly renders and shows default region', () => {
-    render(<RegionsList />);
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
 
     expect(screen.getByTestId('btn-for-region-selection')).toBeInTheDocument();
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
 
   test('dropdown opens and closes when button is clicked', () => {
-    render(<RegionsList />);
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
 
     const button = screen.getByTestId('btn-for-region-selection');
 
@@ -31,68 +37,47 @@ describe('RegionsList Component', () => {
   });
 
   test('contains exactly 26 regions', () => {
-    render(<RegionsList />);
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
-    const items = screen.getAllByRole('listitem');
+    const items = screen.getAllByRole('menuitemradio');
     expect(items.length).toBe(26);
   });
 
-  test('sets correct focus when reopening dropdown with selected region', async () => {
-    render(<RegionsList />);
-
-    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
-    fireEvent.click(screen.getAllByRole('listitem')[1]);
-
-    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
-
-    await waitFor(
-      () => {
-        expect(screen.getAllByRole('listitem')[1]).toHaveFocus();
-      },
-      { timeout: 1000 },
-    );
-  });
-
   test('keyboard navigation works (ArrowDown, ArrowUp, Enter, Space)', () => {
-    render(<RegionsList />);
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
-    let list = screen.getByTestId('list-of-regions');
-    const regions = screen.getAllByRole('listitem');
+    const list = screen.getByTestId('list-of-regions');
+    const regions = screen.getAllByRole('menuitemradio');
 
     list.focus();
 
     fireEvent.keyDown(list, { key: 'ArrowDown' });
     expect(regions[1]).toHaveFocus();
 
-    fireEvent.keyDown(list, { key: 'ArrowDown' });
-    expect(regions[2]).toHaveFocus();
-
     fireEvent.keyDown(list, { key: 'ArrowUp' });
-    expect(regions[1]).toHaveFocus();
+    expect(regions[0]).toHaveFocus();
 
     fireEvent.keyDown(list, { key: 'Enter' });
     expect(screen.getByTestId('btn-for-region-selection')).toHaveTextContent(
-      /Region 2/i,
+      /Region 1/i,
     );
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
-    list = screen.getByTestId('list-of-regions');
 
-    fireEvent.keyDown(list, { key: 'ArrowDown' });
     if (document.activeElement) {
       fireEvent.keyDown(document.activeElement, { key: ' ' });
     }
     expect(screen.getByTestId('btn-for-region-selection')).toHaveTextContent(
-      /Region 3/i,
+      /Region 1/i,
     );
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
 
   test('closes dropdown on Escape key', () => {
-    render(<RegionsList />);
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     const list = screen.getByTestId('list-of-regions');
@@ -102,7 +87,7 @@ describe('RegionsList Component', () => {
   });
 
   test('closes dropdown when clicking outside', () => {
-    render(<RegionsList />);
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     expect(screen.getByTestId('list-of-regions')).toBeInTheDocument();

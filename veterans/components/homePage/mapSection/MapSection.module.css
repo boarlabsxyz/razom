@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  gap: 60px;
+  margin-bottom: 80px;
+}
+
+@media (max-width: 480px) {
+  .container {
+    display: block;
+    margin-bottom: 60px;
+  }
+}
+
+.wrapperFilter {
+  border: 1px solid var(--pattens-blue);
+  border-radius: 6px;
+  background-color: var(--white);
+  min-width: 200px;
+  padding: 20px;
+}
+
+@media (max-width: 480px) {
+  .wrapperFilter {
+    max-width: 100%;
+    padding: 15px;
+  }
+}
