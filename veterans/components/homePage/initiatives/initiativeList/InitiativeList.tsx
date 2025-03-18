@@ -9,49 +9,66 @@ import { Initiative, ProcessedInitiative, Paragraph, Child } from 'types';
 
 import st from './InitiativeList.module.css';
 
-export default function InitiativesList() {
-  const { loading, error, data } = useQuery<{ initiatives: Initiative[] }>(gql`
-    query GetInitiatives {
-      initiatives {
-        id
-        title
-        description {
-          document
-        }
+const GET_INITIATIVES = gql`
+  query GetInitiatives {
+    initiatives {
+      id
+      title
+      description {
+        document
       }
     }
-  `);
+  }
+`;
 
-  const processedInitiatives: ProcessedInitiative[] = useMemo(() => {
-    if (!data?.initiatives) {
-      return [];
-    }
+function processInitiatives(data?: {
+  initiatives: Initiative[];
+}): ProcessedInitiative[] {
+  if (!data?.initiatives) {
+    return [];
+  }
 
-    return data.initiatives.map((initiative) => ({
-      id: initiative.id,
-      title: initiative.title,
-      description:
-        initiative.description?.document?.reduce(
-          (acc: string, paragraph: Paragraph) => {
-            const text = paragraph.children
-              .map((child: Child) => child.text)
-              .join(' ');
-            return acc ? `${acc}\n${text}` : text;
-          },
-          '',
-        ) ?? null,
-    }));
-  }, [data]);
+  return data.initiatives.map(({ id, title, description }) => ({
+    id,
+    title,
+    description: extractTextFromDocument(description?.document) ?? null,
+  }));
+}
 
-  let content: JSX.Element;
+function extractTextFromDocument(document?: Paragraph[]): string | null {
+  if (!document) {
+    return null;
+  }
+
+  return document
+    .map((paragraph) =>
+      paragraph.children.map((child: Child) => child.text).join(' '),
+    )
+    .join('\n');
+}
+
+export default function InitiativesList() {
+  const { loading, error, data } = useQuery<{ initiatives: Initiative[] }>(
+    GET_INITIATIVES,
+  );
+  const processedInitiatives = useMemo(() => processInitiatives(data), [data]);
+
   if (loading) {
-    content = <Spinner />;
-  } else if (error) {
-    content = <p data-test-id="error-message">{error.message}</p>;
-  } else if (processedInitiatives.length === 0) {
-    content = <p>No initiatives available at the moment.</p>;
-  } else {
-    content = (
+    return <Spinner />;
+  }
+  if (error) {
+    return <p data-test-id="error-message">{error.message}</p>;
+  }
+  if (processedInitiatives.length === 0) {
+    return <p>No initiatives available at the moment.</p>;
+  }
+
+  return (
+    <section
+      className={st.section}
+      aria-label="Blog initiatives"
+      data-test-id="blog-initiatives"
+    >
       <ul>
         {processedInitiatives.map(({ id, title, description }) => (
           <li key={id}>
@@ -62,16 +79,6 @@ export default function InitiativesList() {
           </li>
         ))}
       </ul>
-    );
-  }
-
-  return (
-    <section
-      className={st.section}
-      aria-label="Blog initiatives"
-      data-test-id="blog-initiatives"
-    >
-      {content}
     </section>
   );
 }
