@@ -1,7 +1,11 @@
 import { regions } from 'icons/regions';
 import st from './UkraineMap.module.css';
 
-export default function UkraineMap() {
+interface UkraineMapProps {
+  readonly currentRegion?: string;
+}
+
+export default function UkraineMap({ currentRegion }: UkraineMapProps) {
   return (
     <svg
       viewBox="0 0 896 597"
@@ -9,7 +13,7 @@ export default function UkraineMap() {
       xmlns="http://www.w3.org/2000/svg"
       data-test-id="svg-map"
       aria-labelledby="map-title map-desc"
-      className={st.icon}
+      className={st['icon-map']}
     >
       <title id="map-title">Карта регіонів України</title>
       <desc id="map-desc">
@@ -20,14 +24,32 @@ export default function UkraineMap() {
           { id, pathRegion, pathName, pathCircle, regionName, cx, cy },
           index,
         ) => (
-          <g key={id} aria-labelledby={`region-title-${id}`}>
+          <g
+            key={id}
+            className={st.regionGroup}
+            aria-labelledby={`region-title-${id}`}
+          >
             <title id={`region-title-${id}`}>{regionName}</title>
-            <path d={pathRegion} fill="#DEDEDE" className={st['region-path']} />
+            <path
+              d={pathRegion}
+              fill="#DEDEDE"
+              className={`${st['region-path']} ${
+                currentRegion === regionName ? st['selected-region'] : ''
+              }`}
+            />
             <path d={pathCircle} fill="white" />
             <path d={pathName} fill="#252138" />
-            <text x={cx} y={cy} fontSize="10" fill="black" textAnchor="middle">
-              {index + 1}
-            </text>
+            {index !== 16 && index !== 17 && (
+              <text
+                x={cx}
+                y={cy}
+                fontSize="10"
+                fill="black"
+                textAnchor="middle"
+              >
+                {index + 1}
+              </text>
+            )}
           </g>
         ),
       )}
