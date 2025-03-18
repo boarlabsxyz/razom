@@ -115,17 +115,10 @@ export default function LoginForm() {
             password,
           },
         });
-
-        // router.push('/');
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Authentication error:', error);
         hasAuthenticated.current = false;
-        setError(
-          error instanceof Error
-            ? error.message
-            : 'Authentication failed. Please try again.',
-        );
       }
     }
 
