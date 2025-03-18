@@ -6,28 +6,28 @@
   margin-top: 92px;
 }
 
-.textWrapper {
+.text-wrapper {
   padding-bottom: 20px;
   text-align: center;
 }
 
-.mainTextWrapper {
+.main-text-wrapper {
   max-width: 720px;
 }
 
-.secondaryTextWrapper {
+.secondary-text-wrapper {
   max-width: 420px;
 }
 
-.mainText {
+.main-text {
   font-weight: 500;
 }
 
-.greenText {
+.green-text {
   color: var(--forest-jade);
 }
 
-.buttonContent {
+.button-content {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,24 +43,24 @@
     align-items: start;
   }
 
-  .textWrapper {
+  .text-wrapper {
     text-align: start;
   }
 
-  .mainTextWrapper {
+  .main-text-wrapper {
     max-width: 250px;
   }
 
-  .secondaryTextWrapper {
+  .secondary-text-wrapper {
     max-width: 300px;
   }
 
-  .mainText {
+  .main-text {
     font-size: 1.375rem;
     line-height: 1.625rem;
   }
 
-  .secondaryText {
+  .secondary-text {
     font-size: 1rem;
     line-height: 1.5rem;
   }

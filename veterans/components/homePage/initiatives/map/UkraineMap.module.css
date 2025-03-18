@@ -3,7 +3,7 @@
   max-height: 597px;
 }
 
-.regionPath:hover {
+.region-path:hover {
   fill: var(--gum-leaf);
   stroke: var(--dodger-blue);
 }

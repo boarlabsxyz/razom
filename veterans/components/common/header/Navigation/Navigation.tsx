@@ -53,11 +53,11 @@ export default function Navigation({
   return (
     <div
       ref={menuRef}
-      className={`${st.wrapper} ${isMenuOpen ? st.mobileMenuIsOpen : ''}`}
+      className={`${st.wrapper} ${isMenuOpen ? st['[mobile-menu-is-open'] : ''}`}
     >
       <button
         ref={buttonRef}
-        className={st.mobileMenuButton}
+        className={st['mobile-menu-button']}
         aria-label="mobile-menu-button"
       >
         <span></span>
@@ -67,11 +67,11 @@ export default function Navigation({
       </button>
       <div className={st.content}>
         <NavMain />
-        <div className={st.imgWrapper}>
+        <div className={st['img-wrapper']}>
           {images.map((_, index) => (
             <CustomImage
               key={index}
-              className={st.modalImg}
+              className={st['modal-img']}
               src={`/img/logo/${name}.svg`}
               alt={name}
               width={492}

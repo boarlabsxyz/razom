@@ -22,7 +22,7 @@ export default function UkraineMap() {
         ) => (
           <g key={id} aria-labelledby={`region-title-${id}`}>
             <title id={`region-title-${id}`}>{regionName}</title>
-            <path d={pathRegion} fill="#DEDEDE" className={st.regionPath} />
+            <path d={pathRegion} fill="#DEDEDE" className={st['region-path']} />
             <path d={pathCircle} fill="white" />
             <path d={pathName} fill="#252138" />
             <text x={cx} y={cy} fontSize="10" fill="black" textAnchor="middle">

@@ -19,13 +19,13 @@ function FooterContent({ children }: FooterContentProps) {
   const pathname = usePathname();
 
   return (
-    <div className={st.footerWrapper} data-testid="footer">
-      <div className={st.footerContainer} data-testid="footerContainer">
+    <div className={st['footer-wrapper']} data-testid="footer">
+      <div className={st['footer-container']} data-testid="footerContainer">
         {children}
         <NavMenu pages={pages} pathname={pathname} st={st} />
       </div>
-      <div className={st.footerBottom} data-testid="footer-devs">
-        <p className={st.footerDevs}> Developed by BoarLabs</p>
+      <div className={st['footer-bottom']} data-testid="footer-devs">
+        <p className={st['footer-devs']}> Developed by BoarLabs</p>
       </div>
     </div>
   );

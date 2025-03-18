@@ -4,26 +4,37 @@
   padding: 16px;
 }
 
-.regionsWrapper {
+.regions-wrapper {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-.regionListTitle {
+.region-list-title {
   height: 20px;
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
 }
 
-.regionSelector {
+.region-selector {
   position: relative;
   width: 240px;
   width: 100%;
 }
 
-.regionSelectorBtn {
+.region-name {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.num-of-initiatives {
+  flex-shrink: 0;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.region-selector-btn {
   position: relative;
   height: 50px;
   margin-top: 12px;
@@ -38,18 +49,7 @@
   transition: all 0.3s ease-in-out;
 }
 
-.regionName {
-  flex-grow: 1;
-  text-align: left;
-}
-
-.numOfInitiatives {
-  flex-shrink: 0;
-  text-align: right;
-  padding-right: 10px;
-}
-
-.regionSelectorBtn:after {
+.region-selector-btn:after {
   content: '';
   height: 7px;
   width: 12px;
@@ -60,11 +60,11 @@
   transition: transform 0.3s ease-in-out;
 }
 
-.regionSelectorBtn.open:after {
+.region-selector-btn.open:after {
   transform: rotate(180deg);
 }
 
-.dropdownArrow {
+.dropdown-arrow {
   font-size: 0.8em;
   color: var(--ebony);
   margin-left: 5px;
@@ -72,7 +72,7 @@
   display: inline-block;
 }
 
-.regionSelectorList {
+.region-selector-list {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -89,11 +89,11 @@
   display: none;
 }
 
-.regionSelectorList.show {
+.region-selector-list.show {
   display: block;
 }
 
-.regionSelectorItem {
+.region-selector-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -106,8 +106,8 @@
   border: 1px solid var(--pattens-blue);
 }
 
-.regionSelectorItem:hover,
-.regionSelectorItem:focus {
+.region-selector-item:hover,
+.region-selector-item:focus {
   background-color: var(--gum-leaf);
 }
 
@@ -117,7 +117,7 @@
     max-width: 100%;
   }
 
-  .regionSelector {
+  .region-selector {
     width: 100%;
   }
 }

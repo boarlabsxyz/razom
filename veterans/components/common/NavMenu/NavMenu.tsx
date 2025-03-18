@@ -14,8 +14,8 @@ export default function NavMenu({ pages, pathname, st }: NavigationMenuProps) {
   const { user } = useUser();
 
   return (
-    <nav className={st.navContainer} aria-label="Menu navigation">
-      <ul className={st.navList}>
+    <nav className={st['nav-container']} aria-label="Menu navigation">
+      <ul className={st['nav-list']}>
         {Object.entries(pages).map(([key, value]) => {
           const isActive = pathname === `/${key}`;
           if (key === 'login' && user) {

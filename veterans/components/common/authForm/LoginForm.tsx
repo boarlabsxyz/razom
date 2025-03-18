@@ -62,7 +62,7 @@ export default function LoginForm({ onSubmit, error }: Props) {
           {isSubmitting ? <h1>Signing in...</h1> : <h1>Sign in</h1>}
         </div>
 
-        <div className={st.inputGroup}>
+        <div className={st['input-group']}>
           <label htmlFor="email" className={st.label}>
             Email
           </label>
@@ -74,7 +74,7 @@ export default function LoginForm({ onSubmit, error }: Props) {
                 type="email"
                 id="email"
                 placeholder="Email"
-                className={`${st.input} ${errors.email ? st.inputError : ''}`}
+                className={`${st.input} ${errors.email ? st['input-error'] : ''}`}
                 value={field.value || ''}
                 onChange={(e) => field.onChange(e.target.value)}
               />
@@ -87,7 +87,7 @@ export default function LoginForm({ onSubmit, error }: Props) {
           )}
         </div>
 
-        <div className={st.inputGroup}>
+        <div className={st['input-group']}>
           <label htmlFor="password" className={st.label}>
             Password
           </label>
@@ -99,20 +99,20 @@ export default function LoginForm({ onSubmit, error }: Props) {
                 type="password"
                 id="password"
                 placeholder="Password"
-                className={`${st.input} ${errors.password ? st.inputError : ''}`}
+                className={`${st.input} ${errors.password ? st['input-error'] : ''}`}
                 value={field.value || ''}
                 onChange={(e) => field.onChange(e.target.value)}
               />
             )}
           />
           {errors.password && (
-            <p className={st.error}>{errors.password.message}</p>
+            <p className={st['input-error']}>{errors.password.message}</p>
           )}
         </div>
 
-        {error && <p className={st.error}>{error}</p>}
+        {error && <p className={st['input-error']}>{error}</p>}
 
-        <div className={st.buttonContainer}>
+        <div className={st['button-container']}>
           <button
             type="submit"
             className={st.button}
@@ -122,7 +122,7 @@ export default function LoginForm({ onSubmit, error }: Props) {
           </button>
         </div>
 
-        <div className={st.textContainer}>
+        <div className={st['text-container']}>
           <p>
             If you don't have an account, please{' '}
             <Link href="/register">register here</Link>.

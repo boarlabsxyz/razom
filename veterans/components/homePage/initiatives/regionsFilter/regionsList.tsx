@@ -109,20 +109,20 @@ function RegionsList() {
 
   return (
     <div className={st.wrapper}>
-      <div className={st.regionsWrapper}>
-        <span className={st.regionListTitle}>Область</span>
-        <div className={st.regionSelector} ref={dropdownRef}>
+      <div className={st['regions-wrapper']}>
+        <span className={st['region-list-title']}>Область</span>
+        <div className={st['region-selector']} ref={dropdownRef}>
           <button
             id="region-selector"
             ref={buttonRef}
             data-testid="btn-for-region-selection"
-            className={`${st.regionSelectorBtn} ${isOpen ? st.open : ''}`}
+            className={`${st['region-selector-btn']} ${isOpen ? st.open : ''}`}
             onClick={toggleDropdown}
             aria-haspopup="listbox"
             aria-expanded={isOpen}
             aria-controls="region-list"
           >
-            <span className={st.regionName}>{selectedRegion}</span>
+            <span className={st['region-name']}>{selectedRegion}</span>
           </button>
 
           {isOpen && (
@@ -130,7 +130,7 @@ function RegionsList() {
               id="region-list"
               data-testid="list-of-regions"
               ref={listRef}
-              className={`${st.regionSelectorList} ${isOpen ? st.show : ''}`}
+              className={`${st['region-selector-list']} ${isOpen ? st.show : ''}`}
               role="listbox"
               tabIndex={-1}
               onKeyDown={handleKeyDown}
@@ -149,15 +149,15 @@ function RegionsList() {
                     }
                   }}
                   tabIndex={0}
-                  className={`${st.regionSelectorItem} ${
+                  className={`${st['region-selector-item']} ${
                     focusedIndex === index ? st.focused : ''
                   }`}
                   role="listitem"
                   aria-selected={selectedRegion === region.name}
                   aria-label={`Select ${region.name}`}
                 >
-                  <span className={st.regionName}>{region.name}</span>
-                  <span className={st.numOfInitiatives}>
+                  <span className={st['region-name']}>{region.name}</span>
+                  <span className={st['num-of-initiatives']}>
                     ({region.numOfInitiatives})
                   </span>
                 </li>

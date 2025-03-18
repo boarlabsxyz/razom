@@ -89,7 +89,7 @@ export default function RegisterForm() {
           <h1>Sign Up</h1>
         </div>
 
-        <div className={st.inputGroup}>
+        <div className={st['input-group']}>
           <label htmlFor="name" className={st.label}>
             Name
           </label>
@@ -101,7 +101,7 @@ export default function RegisterForm() {
                 type="text"
                 id="name"
                 placeholder="Name"
-                className={`${st.input} ${errors.name ? st.inputError : ''}`}
+                className={`${st.input} ${errors.name ? st['input-error'] : ''}`}
                 {...field}
               />
             )}
@@ -109,7 +109,7 @@ export default function RegisterForm() {
           {errors.name && <p className={st.error}>{errors.name.message}</p>}
         </div>
 
-        <div className={st.inputGroup}>
+        <div className={st['input-group']}>
           <label htmlFor="email" className={st.label}>
             Email
           </label>
@@ -121,7 +121,7 @@ export default function RegisterForm() {
                 type="email"
                 id="email"
                 placeholder="Email"
-                className={`${st.input} ${errors.email ? st.inputError : ''}`}
+                className={`${st.input} ${errors.email ? st['input-error'] : ''}`}
                 {...field}
               />
             )}
@@ -129,10 +129,10 @@ export default function RegisterForm() {
           {errors.email && <p className={st.error}>{errors.email.message}</p>}
         </div>
 
-        <div className={st.inputGroup}>
+        <div className={st['input-group']}>
           <fieldset className={st.fieldset}>
             <legend className={st.label}>Password</legend>
-            <div className={st.passwordGroup}>
+            <div className={st['password-group']}>
               <Controller
                 control={control}
                 name="password"
@@ -141,7 +141,7 @@ export default function RegisterForm() {
                     type={passwordVisible ? 'text' : 'password'}
                     id="password"
                     placeholder="New Password"
-                    className={`${st.input} ${errors.password ? st.inputError : ''}`}
+                    className={`${st.input} ${errors.password ? st['input-error'] : ''}`}
                     {...field}
                   />
                 )}
@@ -158,7 +158,7 @@ export default function RegisterForm() {
                     type={passwordVisible ? 'text' : 'password'}
                     id="confirmPassword"
                     placeholder="Confirm Password"
-                    className={`${st.input} ${errors.confirmPassword ? st.inputError : ''}`}
+                    className={`${st.input} ${errors.confirmPassword ? st['input-error'] : ''}`}
                     {...field}
                   />
                 )}
@@ -169,7 +169,7 @@ export default function RegisterForm() {
 
               <button
                 type="button"
-                className={st.toggleButton}
+                className={st['toggle-button']}
                 onClick={togglePasswordVisibility}
               >
                 {passwordVisible ? 'Hide' : 'Show'} Password
@@ -180,13 +180,13 @@ export default function RegisterForm() {
 
         {submitError && <p className={st.error}>{submitError}</p>}
 
-        <div className={st.buttonContainer}>
+        <div className={st['button-container']}>
           <button type="submit" className={st.button}>
             Get started
           </button>
         </div>
 
-        <div className={st.textContainer}>
+        <div className={st['text-container']}>
           <p>
             Already have an account? <Link href="/login">Sign in here</Link>.
           </p>
