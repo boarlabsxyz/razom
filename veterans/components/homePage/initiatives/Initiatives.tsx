@@ -4,7 +4,7 @@ import InitiativesList from './initiativeList';
 
 export default function Initiatives() {
   return (
-    <section>
+    <section data-test-id="initiatives-section">
       <RegionsList />
       <UkraineMap />
       <InitiativesList />

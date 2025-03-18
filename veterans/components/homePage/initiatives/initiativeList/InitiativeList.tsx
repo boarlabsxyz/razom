@@ -39,11 +39,7 @@ export default function InitiativesList() {
   }
 
   return (
-    <section
-      className={st.section}
-      aria-label="Blog initiatives"
-      data-test-id="blog-initiatives"
-    >
+    <div className={st.wrapper} aria-label="Blog initiatives">
       <ul>
         {processedInitiatives.map(({ id, title, description }) => (
           <li key={id}>
@@ -54,6 +50,6 @@ export default function InitiativesList() {
           </li>
         ))}
       </ul>
-    </section>
+    </div>
   );
 }

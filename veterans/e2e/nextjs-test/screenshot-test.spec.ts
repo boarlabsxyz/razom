@@ -8,15 +8,15 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
 
   await page.waitForLoadState('load');
 
-  const heroSection = await page.waitForSelector(
-    'section[data-test-id="blog-initiatives"]',
+  const initiativesSection = await page.waitForSelector(
+    'section[data-test-id="initiatives-section"]',
   );
 
   const svgElement = await page.waitForSelector('svg[data-test-id="svg-map"]');
 
   await page.waitForTimeout(5000);
 
-  if (heroSection) {
+  if (initiativesSection) {
     await page.evaluate(() => {
       document
         .querySelector('section[data-test-id="blog-initiatives"]')
