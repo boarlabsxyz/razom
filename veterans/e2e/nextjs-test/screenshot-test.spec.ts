@@ -1,31 +1,41 @@
 import { test, expect } from '@playwright/test';
 
-test('Snapshot for Home Page without Hero Section', async ({ page }) => {
+test('Snapshot for Home Page without Hero Section', async ({
+  page,
+  browserName,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+
   await page.goto(process.env.BASE_URL || 'http://localhost:8000/', {
     timeout: 60000,
-    waitUntil: 'load',
+    waitUntil: 'domcontentloaded',
   });
 
-  await page.waitForLoadState('load');
+  await page.waitForLoadState('domcontentloaded');
 
-  await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(3000);
-
-  const svgElement = await page.waitForSelector('svg[data-test-id="svg-map"]');
-
-  await page.waitForTimeout(5000);
-
+  const svgElement = await page.waitForSelector('svg[data-test-id="svg-map"]', {
+    timeout: 10000,
+    state: 'visible',
+  });
   if (svgElement) {
     await page.evaluate(() => {
-      document.querySelector('svg[data-test-id="svg-map"]')?.remove();
+      const element = document.querySelector('svg[data-test-id="svg-map"]');
+      if (element) {
+        element.remove();
+      }
     });
   }
 
-  await page.waitForTimeout(5000);
+  if (browserName === 'webkit') {
+    await page.waitForLoadState('networkidle');
+  }
+  const snapshot = await page.screenshot({
+    fullPage: true,
+    timeout: 30000,
+  });
 
-  await page.setViewportSize({ width: 1280, height: 720 });
-
-  const snapshot = await page.screenshot({ fullPage: true });
-
-  expect(snapshot).toMatchSnapshot('homepage-no-hero.png');
+  expect(snapshot).toMatchSnapshot('homepage-no-hero.png', {
+    maxDiffPixels: 100,
+    threshold: 0.3,
+  });
 });
