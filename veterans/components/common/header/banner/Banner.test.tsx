@@ -77,6 +77,6 @@ describe('Banner Component', () => {
     render(<Banner {...mockProps} />);
 
     const bannerContainer = screen.getByTestId('next-link');
-    expect(bannerContainer).toHaveClass('bannerLink');
+    expect(bannerContainer).toHaveClass('banner-link');
   });
 });
