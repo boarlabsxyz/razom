@@ -7,9 +7,9 @@ import Spinner from '@comComps/spinner';
 
 import { Initiative, ProcessedInitiative, Paragraph, Child } from 'types';
 
-import st from './FoundInitiatives.module.css';
+import st from './InitiativesList.module.css';
 
-export default function foundInitiatives() {
+export default function InitiativesList() {
   const { loading, error, data } = useQuery<{ initiatives: Initiative[] }>(gql`
     query GetInitiatives {
       initiatives {

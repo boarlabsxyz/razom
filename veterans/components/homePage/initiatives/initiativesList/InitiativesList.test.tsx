@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import InitiativesSection from './FoundInitiatives';
+import InitiativesList from './InitiativesLIst';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { SessionProvider } from 'next-auth/react';
 import { gql } from '@apollo/client';
@@ -79,7 +79,7 @@ beforeEach(() => {
 
 describe('HomePage', () => {
   it('renders loading spinner while fetching data', async () => {
-    customRender(<InitiativesSection />, [GET_INITIATIVES_MOCK]);
+    customRender(<InitiativesList />, [GET_INITIATIVES_MOCK]);
 
     await waitFor(() =>
       expect(screen.getByTestId('loader')).toBeInTheDocument(),
@@ -128,7 +128,7 @@ describe('HomePage', () => {
       },
     };
 
-    customRender(<InitiativesSection />, [GET_INITIATIVES_MOCK]);
+    customRender(<InitiativesList />, [GET_INITIATIVES_MOCK]);
 
     await waitFor(() =>
       expect(screen.getByTestId('loader')).toBeInTheDocument(),
@@ -163,7 +163,7 @@ describe('HomePage', () => {
       },
     };
 
-    customRender(<InitiativesSection />, [GET_INITIATIVES_MOCK]);
+    customRender(<InitiativesList />, [GET_INITIATIVES_MOCK]);
 
     await waitFor(() =>
       expect(screen.queryByTestId('loader')).not.toBeInTheDocument(),
@@ -195,7 +195,7 @@ describe('HomePage', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => {});
 
-    customRender(<InitiativesSection />, [GET_INITIATIVES_MOCK]);
+    customRender(<InitiativesList />, [GET_INITIATIVES_MOCK]);
 
     expect(screen.getByTestId('loader')).toBeInTheDocument();
 

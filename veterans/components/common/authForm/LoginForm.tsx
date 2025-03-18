@@ -83,6 +83,7 @@ export default function LoginForm() {
   });
 
   const hasAuthenticated = useRef(false);
+  const password = process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD;
 
   useEffect(() => {
     async function handleAuth() {
@@ -103,7 +104,7 @@ export default function LoginForm() {
             variables: {
               name: session.user?.name,
               email: session.user?.email,
-              password: 'withoutpassword',
+              password,
             },
           });
         }
@@ -111,15 +112,20 @@ export default function LoginForm() {
         await login({
           variables: {
             email: session.user?.email,
-            password: 'withoutpassword',
+            password,
           },
         });
 
-        router.push('/');
+        // router.push('/');
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Authentication error:', error);
         hasAuthenticated.current = false;
+        setError(
+          error instanceof Error
+            ? error.message
+            : 'Authentication failed. Please try again.',
+        );
       }
     }
 

@@ -10,8 +10,8 @@ jest.mock('@comps/homePage/initiatives/regionsFilter/regionsList', () =>
   jest.fn(() => <div data-testid="regionList" />),
 );
 
-jest.mock('@comps/homePage/initiatives/foundInitiatives', () =>
-  jest.fn(() => <div data-testid="foundInitiatives" />),
+jest.mock('@comps/homePage/initiatives/initiativesList', () =>
+  jest.fn(() => <div data-testid="initiatevesList" />),
 );
 
 describe('HomePage', () => {
@@ -20,6 +20,6 @@ describe('HomePage', () => {
 
     expect(screen.getByTestId('UkraineMap')).toBeInTheDocument();
     expect(screen.getByTestId('regionList')).toBeInTheDocument();
-    expect(screen.getByTestId('foundInitiatives')).toBeInTheDocument();
+    expect(screen.getByTestId('initiatevesList')).toBeInTheDocument();
   });
 });

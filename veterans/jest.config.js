@@ -5,11 +5,8 @@ module.exports = {
   testEnvironment: 'jest-environment-jsdom',
   setupFiles: ['./jest.setup.ts'],
   transform: {
-    '^.+\\.(ts|tsx)?$': ['ts-jest', { tsconfig: 'tsconfig.jest.json' }],
-    '^.+\\.(js|jsx|ts|tsx)$': [
-      'babel-jest',
-      { configFile: './babel.jest.config.js' },
-    ],
+    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.jest.json' }],
+    '^.+\\.(js|jsx)$': ['babel-jest', { configFile: './babel.jest.config.js' }],
   },
   collectCoverage: true,
   collectCoverageFrom: [
