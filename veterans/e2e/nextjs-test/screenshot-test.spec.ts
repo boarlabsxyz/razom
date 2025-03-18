@@ -8,21 +8,9 @@ test('Snapshot for Home Page without Hero Section', async ({ page }) => {
 
   await page.waitForLoadState('load');
 
-  const initiativesSection = await page.waitForSelector(
-    'section[data-test-id="initiatives-section"]',
-  );
-
   const svgElement = await page.waitForSelector('svg[data-test-id="svg-map"]');
 
   await page.waitForTimeout(5000);
-
-  if (initiativesSection) {
-    await page.evaluate(() => {
-      document
-        .querySelector('section[data-test-id="blog-initiatives"]')
-        ?.remove();
-    });
-  }
 
   if (svgElement) {
     await page.evaluate(() => {
