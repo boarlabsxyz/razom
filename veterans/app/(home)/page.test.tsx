@@ -6,10 +6,10 @@ jest.mock('@comComps/container', () =>
   jest.fn(({ children }) => <div data-testid="container">{children}</div>),
 );
 jest.mock('@comps/homePage/hero/Hero', () =>
-  jest.fn(() => <div data-testid="hero" />),
+  jest.fn(() => <div data-testid="hero-section" />),
 );
-jest.mock('@comps/homePage/initiatives/Initiatives', () =>
-  jest.fn(() => <div data-testid="initiatives" />),
+jest.mock('@comps/homePage/mapSection', () =>
+  jest.fn(() => <div data-testid="map-section" />),
 );
 
 describe('HomePage', () => {
@@ -17,7 +17,7 @@ describe('HomePage', () => {
     render(<HomePage />);
 
     expect(screen.getByTestId('container')).toBeInTheDocument();
-    expect(screen.getByTestId('hero')).toBeInTheDocument();
-    expect(screen.getByTestId('initiatives')).toBeInTheDocument();
+    expect(screen.getByTestId('hero-section')).toBeInTheDocument();
+    expect(screen.getByTestId('map-section')).toBeInTheDocument();
   });
 });

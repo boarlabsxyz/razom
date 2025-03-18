@@ -7,13 +7,6 @@ export default function HomePage() {
     <Container>
       <Hero />
       <MapSection />
-      <section
-        className={st.section}
-        aria-label="Blog initiatives"
-        data-test-id="blog-initiatives"
-      >
-        {content}
-      </section>
     </Container>
   );
 }
