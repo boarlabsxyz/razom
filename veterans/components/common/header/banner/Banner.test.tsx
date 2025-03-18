@@ -23,8 +23,8 @@ jest.mock('next/link', () => {
 });
 
 jest.mock('@comComps/header/Header.module.css', () => ({
-  bannerContainer: 'bannerContainer',
-  bannerLink: 'bannerLink',
+  'banner-container': 'banner-container',
+  'banner-link': 'banner-link',
 }));
 
 describe('Banner Component', () => {
