@@ -5,32 +5,32 @@ import RegionsList from './regionsList';
 
 jest.mock('data/RegionsArray', () => {
   return [
-    { name: 'Вінницька', numOfInitiatives: 4 },
-    { name: 'Волинська', numOfInitiatives: 24 },
-    { name: 'Дніпропетровська', numOfInitiatives: 12 },
-    { name: 'Донецька', numOfInitiatives: 14 },
-    { name: 'Житомирська', numOfInitiatives: 19 },
-    { name: 'Закарпатська', numOfInitiatives: 28 },
-    { name: 'Запорізька', numOfInitiatives: 8 },
-    { name: 'Івано-Франківська', numOfInitiatives: 17 },
-    { name: 'Київська', numOfInitiatives: 5 },
-    { name: 'Кіровоградська', numOfInitiatives: 21 },
-    { name: 'Луганська', numOfInitiatives: 3 },
-    { name: 'Львівська', numOfInitiatives: 11 },
-    { name: 'Миколаївська', numOfInitiatives: 25 },
-    { name: 'Одеська', numOfInitiatives: 9 },
-    { name: 'Полтавська', numOfInitiatives: 16 },
-    { name: 'Рівненська', numOfInitiatives: 7 },
-    { name: 'Сумська', numOfInitiatives: 22 },
-    { name: 'Тернопільська', numOfInitiatives: 6 },
-    { name: 'Харківська', numOfInitiatives: 15 },
-    { name: 'Херсонська', numOfInitiatives: 2 },
-    { name: 'Хмельницька', numOfInitiatives: 20 },
-    { name: 'Черкаська', numOfInitiatives: 10 },
-    { name: 'Чернівецька', numOfInitiatives: 23 },
-    { name: 'Чернігівська', numOfInitiatives: 18 },
-    { name: 'АР Крим', numOfInitiatives: 1 },
-    { name: 'Всі', numOfInitiatives: 185 },
+    { name: 'Вінниця' },
+    { name: 'Луцьк' },
+    { name: 'Дніпро' },
+    { name: 'Донецьк' },
+    { name: 'Житомир' },
+    { name: 'Ужгород' },
+    { name: 'Запоріжжя' },
+    { name: 'Івано-Франківськ' },
+    { name: 'Київ' },
+    { name: 'Кропивницький' },
+    { name: 'Луганськ' },
+    { name: 'Львів' },
+    { name: 'Миколаїв' },
+    { name: 'Одеса' },
+    { name: 'Полтава' },
+    { name: 'Рівне' },
+    { name: 'Суми' },
+    { name: 'Тернопіль' },
+    { name: 'Харків' },
+    { name: 'Херсон' },
+    { name: 'Хмельницький' },
+    { name: 'Черкаси' },
+    { name: 'Чернівці' },
+    { name: 'Чернігів' },
+    { name: 'Сімферополь' },
+    { name: 'Всі' },
   ];
 });
 
@@ -42,20 +42,6 @@ const openDropdown = () => fireEvent.click(getDropdownButton());
 const pressKey = (element: HTMLElement, key: string) =>
   fireEvent.keyDown(element, { key });
 const selectRegion = (index: number) => fireEvent.click(getAllRegions()[index]);
-const typeAndClearSearchTerm = async (searchKey: string) => {
-  const list = getRegionsList();
-  pressKey(list!, searchKey);
-
-  await waitFor(() => {
-    expect(getAllRegions().length).toBeLessThan(26);
-  });
-
-  pressKey(list!, 'Backspace');
-
-  await waitFor(() => {
-    expect(getAllRegions().length).toBe(26);
-  });
-};
 
 const setupDropdown = () => {
   setupRegionsList();
@@ -104,20 +90,30 @@ describe('RegionsList Component', () => {
     pressKey(regions[1], 'ArrowUp');
     expect(regions[0]).toHaveFocus();
     pressKey(regions[0], 'Enter');
-    expect(getDropdownButton()).toHaveTextContent(/Вінницька/i);
+    expect(getDropdownButton()).toHaveTextContent(/Вінниця/i);
     expect(getRegionsList()).not.toBeInTheDocument();
   });
 
   test('clears search term with backspace', async () => {
     setupDropdown();
-    await typeAndClearSearchTerm('в');
+    const list = getRegionsList();
+    pressKey(list!, 'в');
+
+    await waitFor(() => {
+      expect(getAllRegions().length).toBeLessThan(26);
+    });
+
+    pressKey(list!, 'Backspace');
+
+    await waitFor(() => {
+      expect(getAllRegions().length).toBe(26);
+    });
   });
 
   test('closes dropdown on Escape key', () => {
     setupDropdown();
-    const list = getRegionsList();
-    pressKey(list!, 'Escape');
-    expect(list).not.toBeInTheDocument();
+    pressKey(getRegionsList()!, 'Escape');
+    expect(getRegionsList()).not.toBeInTheDocument();
   });
 
   test('closes dropdown when clicking outside', () => {
