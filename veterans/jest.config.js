@@ -15,6 +15,7 @@ module.exports = {
     '!node_modules/**',
     '!icons/**',
     '!.next/**',
+    '!.vercel/**',
     '!.keystone/**',
     '!keystone.ts',
     '!auth.ts',

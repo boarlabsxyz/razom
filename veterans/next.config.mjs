@@ -2,11 +2,40 @@ import withPreconstruct from '@preconstruct/next';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  reactStrictMode: true,
+  swcMinify: true,
+  images: {
+    domains: ['images.unsplash.com'],
+  },
   experimental: {
-    serverActions: {
-      allowedOrigins: ['localhost:3000', 'razom.vercel.app'],
-    },
+    serverActions: true,
+  },
+  // Disable static generation for auth-related pages
+  output: 'standalone',
+  // Add rewrites for auth routes
+  async rewrites() {
+    return [
+      {
+        source: '/login',
+        destination: '/login',
+      },
+      {
+        source: '/register',
+        destination: '/register',
+      },
+      {
+        source: '/',
+        destination: '/',
+      },
+      {
+        source: '/GoogleOauth/Code',
+        destination: '/api/auth/callback/google',
+      },
+      {
+        source: '/api/auth/callback/google',
+        destination: '/api/auth/callback/google',
+      },
+    ];
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
