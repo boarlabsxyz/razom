@@ -4,26 +4,38 @@
   padding: 16px;
 }
 
-.regions_wrapper {
+.regions-wrapper {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  margin-bottom: 12px;
 }
 
-.region_list_title {
+.region-list-title {
   height: 20px;
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
 }
 
-.region_selector {
+.region-selector {
   position: relative;
   width: 240px;
   width: 100%;
 }
 
-.region_selector_btn {
+.region-name {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.num-of-initiatives {
+  flex-shrink: 0;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.region-selector-btn {
   position: relative;
   height: 50px;
   margin-top: 12px;
@@ -34,22 +46,11 @@
   justify-content: space-between;
   align-items: center;
   background-color: var(--white);
-  border: 1px solid var(--gum-leaf);
+  border: 1px solid var(--pattens-blue);
   transition: all 0.3s ease-in-out;
 }
 
-.region_name {
-  flex-grow: 1;
-  text-align: left;
-}
-
-.num_of_initiatives {
-  flex-shrink: 0;
-  text-align: right;
-  padding-right: 10px;
-}
-
-.region_selector_btn:after {
+.region-selector-btn:after {
   content: '';
   height: 7px;
   width: 12px;
@@ -60,11 +61,11 @@
   transition: transform 0.3s ease-in-out;
 }
 
-.region_selector_btn.open:after {
+.region-selector-btn.open:after {
   transform: rotate(180deg);
 }
 
-.dropdown_arrow {
+.dropdown-arrow {
   font-size: 0.8em;
   color: var(--ebony);
   margin-left: 5px;
@@ -72,7 +73,7 @@
   display: inline-block;
 }
 
-.region_selector_list {
+.region-selector-list {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -80,7 +81,7 @@
   top: 100%;
   left: 0;
   width: 100%;
-  background-color: white;
+  background-color: var(--white);
   border: 1px solid var(--very-light-grey);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   max-height: 300px;
@@ -89,15 +90,15 @@
   display: none;
 }
 
-.region_selector_list.show {
+.region-selector-list.show {
   display: block;
 }
 
-.region_selector_item {
+.region-selector-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 50px;
+  max-height: 50px;
   padding: 12px 12px;
   cursor: pointer;
   font-weight: 400;
@@ -106,8 +107,8 @@
   border: 1px solid var(--pattens-blue);
 }
 
-.region_selector_item:hover,
-.region_selector_item:focus {
+.region-selector-item:hover,
+.region-selector-item:focus {
   background-color: var(--gum-leaf);
 }
 
@@ -117,7 +118,7 @@
     max-width: 100%;
   }
 
-  .region_selector {
+  .region-selector {
     width: 100%;
   }
 }
