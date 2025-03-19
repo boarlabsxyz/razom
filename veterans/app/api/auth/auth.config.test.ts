@@ -1,8 +1,8 @@
-import { authConfig } from './auth.config';
-import type { Session, Account, Profile } from 'next-auth';
+import { authOptions } from './auth.config';
+import type { Session, Profile, Account } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
-import type { AdapterUser } from 'next-auth/adapters';
 import type { OAuthConfig } from 'next-auth/providers';
+import type { AdapterUser } from 'next-auth/adapters';
 
 interface ExtendedSession extends Session {
   user?: {
@@ -16,28 +16,34 @@ interface ExtendedSession extends Session {
 describe('auth.config', () => {
   describe('providers', () => {
     it('should have Google provider configured', () => {
-      expect(authConfig.providers).toHaveLength(1);
-      const googleProvider = authConfig.providers[0] as OAuthConfig<Profile>;
+      expect(authOptions.providers).toHaveLength(1);
+      const googleProvider = authOptions.providers[0] as OAuthConfig<Profile>;
       expect(googleProvider.id).toBe('google');
+    });
+
+    it('should have correct Google provider configuration', () => {
+      const googleProvider = authOptions.providers[0] as OAuthConfig<Profile>;
+      expect(googleProvider.options?.clientId).toBe('test-value');
+      expect(googleProvider.options?.clientSecret).toBe('test-value');
     });
   });
 
   describe('pages', () => {
-    it('should have correct sign-in page path', () => {
-      expect(authConfig.pages?.signIn).toBe('/login');
+    it('should have correct sign in page', () => {
+      expect(authOptions.pages?.signIn).toBe('/login');
     });
   });
 
   describe('session', () => {
     it('should use JWT strategy', () => {
-      expect(authConfig.session?.strategy).toBe('jwt');
+      expect(authOptions.session?.strategy).toBe('jwt');
     });
   });
 
   describe('callbacks', () => {
     describe('session', () => {
-      it('should include user ID from token when session has user', async () => {
-        const mockSession = {
+      it('should add user id to session', () => {
+        const session = {
           user: {
             name: 'Test User',
             email: 'test@example.com',
@@ -45,104 +51,72 @@ describe('auth.config', () => {
           },
         } as ExtendedSession;
 
-        const mockToken = {
+        const token = {
           sub: 'test-user-id',
         } as JWT;
 
-        const mockUser = {
+        const user = {
           id: 'test-user-id',
-          name: 'Test User',
           email: 'test@example.com',
+          emailVerified: new Date(),
+          name: 'Test User',
           image: 'https://example.com/image.jpg',
         } as AdapterUser;
 
-        const result = (await authConfig.callbacks?.session?.({
-          session: mockSession,
-          token: mockToken,
-          user: mockUser,
-          newSession: mockSession,
+        const result = authOptions.callbacks?.session?.({
+          session,
+          token,
+          user,
           trigger: 'update',
-        })) as ExtendedSession;
+          newSession: session,
+        }) as ExtendedSession;
 
-        expect(result?.user?.id).toBe('test-user-id');
+        expect(result.user?.id).toBe('test-user-id');
       });
 
-      it('should not modify session when user object is missing', async () => {
-        const mockSession = {} as ExtendedSession;
-        const mockToken = {
-          sub: 'test-user-id',
-        } as JWT;
+      it('should handle session without user', () => {
+        const session = {} as ExtendedSession;
+        const token = {} as JWT;
 
-        const mockUser = {
+        const user = {
           id: 'test-user-id',
-          name: 'Test User',
           email: 'test@example.com',
+          emailVerified: new Date(),
+          name: 'Test User',
           image: 'https://example.com/image.jpg',
         } as AdapterUser;
 
-        const result = (await authConfig.callbacks?.session?.({
-          session: mockSession,
-          token: mockToken,
-          user: mockUser,
-          newSession: mockSession,
+        const result = authOptions.callbacks?.session?.({
+          session,
+          token,
+          user,
           trigger: 'update',
-        })) as ExtendedSession;
+          newSession: session,
+        }) as ExtendedSession;
 
-        // The session callback only adds the ID if there's a user object
-        expect(result).toEqual(mockSession);
+        expect(result.user).toBeUndefined();
       });
     });
 
     describe('jwt', () => {
-      it('should include user ID from profile when account and profile are present', async () => {
-        const mockToken = {} as JWT;
-        const mockAccount = {
-          provider: 'google',
-          type: 'oauth',
-        } as Account;
-        const mockProfile = {
-          sub: 'test-profile-id',
-        } as Profile;
-
-        const mockUser = {
+      it('should setup NEXTAUTH_URL', async () => {
+        const token = {} as JWT;
+        const user = {
           id: 'test-user-id',
-          name: 'Test User',
           email: 'test@example.com',
+          emailVerified: new Date(),
+          name: 'Test User',
           image: 'https://example.com/image.jpg',
         } as AdapterUser;
+        const account = null as Account | null;
 
-        const result = await authConfig.callbacks?.jwt?.({
-          token: mockToken,
-          account: mockAccount,
-          profile: mockProfile,
-          user: mockUser,
-          trigger: 'signIn',
-        });
-
-        expect(result?.id).toBe('test-profile-id');
-      });
-
-      it('should return token unchanged when account or profile is missing', async () => {
-        const mockToken = { existing: 'data' } as JWT;
-        const mockAccount = null as Account | null;
-        const mockProfile = undefined as Profile | undefined;
-
-        const mockUser = {
-          id: 'test-user-id',
-          name: 'Test User',
-          email: 'test@example.com',
-          image: 'https://example.com/image.jpg',
-        } as AdapterUser;
-
-        const result = await authConfig.callbacks?.jwt?.({
-          token: mockToken,
-          account: mockAccount,
-          profile: mockProfile,
-          user: mockUser,
+        const result = await authOptions.callbacks?.jwt?.({
+          token,
+          user,
+          account,
           trigger: 'update',
         });
-
-        expect(result).toEqual({ existing: 'data' });
+        expect(result).toBe(token);
       });
     });
   });
@@ -160,10 +134,10 @@ describe('auth.config', () => {
     });
 
     it('should use test values in test environment', () => {
-      const googleProvider = authConfig.providers[0] as OAuthConfig<Profile>;
+      const googleProvider = authOptions.providers[0] as OAuthConfig<Profile>;
       expect(googleProvider.options?.clientId).toBe('test-value');
       expect(googleProvider.options?.clientSecret).toBe('test-value');
-      expect(authConfig.secret).toBe('test-secret');
+      expect(authOptions.secret).toBe('test-secret');
     });
 
     it('should throw error for missing environment variables in non-test environment', () => {

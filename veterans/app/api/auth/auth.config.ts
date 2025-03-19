@@ -1,5 +1,6 @@
 import GoogleProvider from 'next-auth/providers/google';
 import type { DefaultSession, NextAuthOptions } from 'next-auth';
+import { setupNextAuthUrl } from '../../../utils/auth';
 
 declare module 'next-auth' {
   interface Session extends DefaultSession {
@@ -24,20 +25,17 @@ const getEnvVar = (key: string, testValue = 'test-value') => {
   return value;
 };
 
-export const authConfig: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: getEnvVar('GOOGLE_CLIENT_ID'),
       clientSecret: getEnvVar('GOOGLE_CLIENT_SECRET'),
     }),
   ],
-  pages: {
-    signIn: '/login',
-  },
-  secret: getEnvVar('NEXTAUTH_SECRET', 'test-secret'),
   session: {
     strategy: 'jwt',
   },
+  secret: getEnvVar('NEXTAUTH_SECRET', 'test-secret'),
   callbacks: {
     session({ session, token }) {
       if (session.user) {
@@ -45,12 +43,12 @@ export const authConfig: NextAuthOptions = {
       }
       return session;
     },
-    async jwt({ token, account, profile }) {
-      if (account && profile) {
-        token.id = profile.sub;
-      }
+    async jwt({ token }) {
+      setupNextAuthUrl();
       return token;
     },
   },
-  debug: process.env.NODE_ENV === 'development',
+  pages: {
+    signIn: '/login',
+  },
 };
