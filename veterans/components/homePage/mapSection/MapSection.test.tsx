@@ -68,11 +68,10 @@ describe('MapSection Component', () => {
     fireEvent.click(selectRegionButton);
     const selectFilterButton = screen.getByText('Select Filter');
     fireEvent.click(selectFilterButton);
-
     const resetButton = screen.getByText('Очистити фільтри');
     fireEvent.click(resetButton);
     expect(screen.getByTestId('ukraine-map')).toHaveTextContent(
-      regionsArray.find((r) => r.name === 'Всі')?.name || '',
+      regionsArray.find((r) => r.name === 'Всі')?.name ?? '',
     );
   });
 });

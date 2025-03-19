@@ -115,7 +115,7 @@ describe('RegionsList Component', () => {
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
 
-  test('focus moves to selected region when dropdown opens', () => {
+  test('focus moves to selected region when dropdown opens', async () => {
     render(
       <RegionsList
         selectedRegion="Region 5"
@@ -125,7 +125,7 @@ describe('RegionsList Component', () => {
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
-    waitFor(() =>
+    await waitFor(() =>
       expect(
         screen.getByRole('menuitemradio', { name: /Region 5/i }),
       ).toHaveFocus(),

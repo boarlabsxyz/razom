@@ -97,12 +97,12 @@ export { CheckboxGroup };
 export default function InitiativesFilter({
   selectedCheckboxes,
   setSelectedCheckboxes,
-}: {
+}: Readonly<{
   selectedCheckboxes: Record<string, boolean>;
   setSelectedCheckboxes: React.Dispatch<
     React.SetStateAction<Record<string, boolean>>
   >;
-}) {
+}>) {
   return (
     <div>
       <CheckboxGroup

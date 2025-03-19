@@ -1,7 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { CheckboxGroup } from './InitiativesFilter';
-import InitiativesFilter from './InitiativesFilter';
+import InitiativesFilter, { CheckboxGroup } from './InitiativesFilter';
 import { useState } from 'react';
 
 const categoriesList = [
