@@ -41,7 +41,7 @@ export default function MapSection() {
         {(selectedRegion !== defaultRegion.name || hasSelectedCheckboxes) && (
           <button
             type="button"
-            className={st.map_button_reset}
+            className={st['map-button-reset']}
             onClick={handleReset}
           >
             Очистити фільтри
