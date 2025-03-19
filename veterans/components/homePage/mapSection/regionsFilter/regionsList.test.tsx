@@ -54,6 +54,13 @@ const setupDropdownWithSelection = (index: number) => {
   openDropdown();
 };
 
+const typeText = (text: string) => {
+  const list = getRegionsList();
+  if (list) {
+    text.split('').forEach((char) => pressKey(list, char));
+  }
+};
+
 describe('RegionsList Component', () => {
   test('correctly renders and shows default region', () => {
     setupRegionsList();
@@ -107,6 +114,38 @@ describe('RegionsList Component', () => {
 
     await waitFor(() => {
       expect(getAllRegions().length).toBe(26);
+    });
+  });
+
+  test('hides all options when no region matches input', async () => {
+    setupDropdown();
+    typeText('zzz');
+
+    await waitFor(() => {
+      expect(getAllRegions().length).toBe(26);
+    });
+  });
+
+  test('filters regions case-insensitively', async () => {
+    setupDropdown();
+    typeText('киЇВ');
+
+    await waitFor(() => {
+      const filteredItems = getAllRegions();
+      expect(filteredItems.length).toBe(1);
+      expect(filteredItems[0]).toHaveTextContent('Київ');
+    });
+  });
+
+  test('filters correctly with multiple characters', async () => {
+    setupDropdown();
+    typeText('лу');
+
+    await waitFor(() => {
+      const filteredItems = getAllRegions();
+      expect(filteredItems.length).toBe(2);
+      expect(filteredItems[0]).toHaveTextContent('Луцьк');
+      expect(filteredItems[1]).toHaveTextContent('Луганськ');
     });
   });
 

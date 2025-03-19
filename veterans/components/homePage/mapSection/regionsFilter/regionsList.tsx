@@ -9,7 +9,7 @@ interface RegionsListProps {
   setCurrentRegion?: (region: string) => void;
 }
 
-function RegionsList({ setCurrentRegion }: RegionsListProps) {
+function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
   const defaultRegion = regionsArray.find(
     (region) => region.name === 'Всі',
   ) || {
