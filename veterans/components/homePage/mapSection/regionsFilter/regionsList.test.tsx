@@ -84,7 +84,6 @@ describe('RegionsList Component', () => {
     setupRegionsList();
 
     openDropdown();
-    // fireEvent.click(getAllRegions()[1]);
     selectRegion(1);
 
     openDropdown();
@@ -103,19 +102,15 @@ describe('RegionsList Component', () => {
     openDropdown();
     const regions = getAllRegions();
 
-    // fireEvent.keyDown(regions[0], { key: 'ArrowDown' });
     pressKey(regions[0], 'ArrowDown');
     expect(regions[0]).toHaveFocus();
 
-    // fireEvent.keyDown(regions[0], { key: 'ArrowDown' });
     pressKey(regions[0], 'ArrowDown');
     expect(regions[1]).toHaveFocus();
 
-    // fireEvent.keyDown(regions[1], { key: 'ArrowUp' });
-    pressKey(regions[0], 'ArrowUp');
+    pressKey(regions[1], 'ArrowUp');
     expect(regions[0]).toHaveFocus();
 
-    // fireEvent.keyDown(regions[0], { key: 'Enter' });
     pressKey(regions[0], 'Enter');
     expect(getDropdownButton()).toHaveTextContent(/Вінницька/i);
     expect(getRegionsList()).not.toBeInTheDocument();
@@ -153,7 +148,6 @@ describe('RegionsList Component', () => {
     openDropdown();
     const list = getRegionsList();
     if (list) {
-      // fireEvent.keyDown(list, { key: 'Escape' });
       pressKey(list, 'Escape');
     }
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
