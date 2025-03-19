@@ -12,6 +12,28 @@ import {
 import { headers } from 'next/headers';
 import { GET, POST, dynamic } from './route';
 
+const setEnvVar = (key: string, value: string | undefined) => {
+  Object.defineProperty(process.env, key, {
+    value,
+    writable: true,
+    configurable: true,
+  });
+};
+
+const setupHeaders = (host: string | null) => {
+  (headers as jest.Mock).mockReturnValue({
+    get: () => host,
+  });
+};
+
+const setupDefaultEnv = () => {
+  setEnvVar('NEXTAUTH_URL', undefined);
+  setEnvVar('NODE_ENV', 'development');
+  setEnvVar('VERCEL_URL', undefined);
+  setEnvVar('GOOGLE_CLIENT_ID', 'test-client-id');
+  setEnvVar('GOOGLE_CLIENT_SECRET', 'test-client-secret');
+};
+
 jest.mock('next-auth', () => ({
   __esModule: true,
   default: jest.fn(() => mockHandler),
@@ -34,34 +56,8 @@ describe('NextAuth Route Handler', () => {
 
   beforeEach(() => {
     process.env = { ...originalEnv };
-    Object.defineProperty(process.env, 'NEXTAUTH_URL', {
-      value: undefined,
-      writable: true,
-      configurable: true,
-    });
-    Object.defineProperty(process.env, 'NODE_ENV', {
-      value: 'development',
-      writable: true,
-      configurable: true,
-    });
-    Object.defineProperty(process.env, 'VERCEL_URL', {
-      value: undefined,
-      writable: true,
-      configurable: true,
-    });
-    Object.defineProperty(process.env, 'GOOGLE_CLIENT_ID', {
-      value: 'test-client-id',
-      writable: true,
-      configurable: true,
-    });
-    Object.defineProperty(process.env, 'GOOGLE_CLIENT_SECRET', {
-      value: 'test-client-secret',
-      writable: true,
-      configurable: true,
-    });
-
+    setupDefaultEnv();
     global.window = undefined as unknown as Window & typeof globalThis;
-
     (headers as jest.Mock).mockReset();
     mockHandler.mockReset();
     mockHandler.mockReturnValue(new Response());
@@ -69,43 +65,25 @@ describe('NextAuth Route Handler', () => {
 
   afterEach(() => {
     process.env = originalEnv;
-
     global.window = originalWindow;
   });
 
   describe('getBaseUrl', () => {
     it('returns NEXTAUTH_URL when set', () => {
-      Object.defineProperty(process.env, 'NEXTAUTH_URL', {
-        value: 'https://example.com',
-        writable: true,
-        configurable: true,
-      });
-
+      setEnvVar('NEXTAUTH_URL', 'https://example.com');
       const result = GET();
       expect(result).toBeDefined();
     });
 
     it('returns correct URL in development with host header', () => {
-      (headers as jest.Mock).mockReturnValue({
-        get: () => 'localhost:8000',
-      });
-
+      setupHeaders('localhost:8000');
       const result = GET();
       expect(result).toBeDefined();
     });
 
     it('returns correct URL in production with VERCEL_URL', () => {
-      Object.defineProperty(process.env, 'NODE_ENV', {
-        value: 'production',
-        writable: true,
-        configurable: true,
-      });
-      Object.defineProperty(process.env, 'VERCEL_URL', {
-        value: 'example.vercel.app',
-        writable: true,
-        configurable: true,
-      });
-
+      setEnvVar('NODE_ENV', 'production');
+      setEnvVar('VERCEL_URL', 'example.vercel.app');
       const result = GET();
       expect(result).toBeDefined();
     });
@@ -163,17 +141,8 @@ describe('NextAuth Route Handler', () => {
     });
 
     it('handles missing environment variables gracefully', () => {
-      Object.defineProperty(process.env, 'GOOGLE_CLIENT_ID', {
-        value: undefined,
-        writable: true,
-        configurable: true,
-      });
-      Object.defineProperty(process.env, 'GOOGLE_CLIENT_SECRET', {
-        value: undefined,
-        writable: true,
-        configurable: true,
-      });
-
+      setEnvVar('GOOGLE_CLIENT_ID', undefined);
+      setEnvVar('GOOGLE_CLIENT_SECRET', undefined);
       const result = GET();
       expect(result).toBeDefined();
     });
