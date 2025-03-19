@@ -174,7 +174,7 @@ describe('Auth Forms', () => {
     });
   });
 
-  it('should log in successfully with valid credentials', async () => {
+  it('should log in successfully with valid credentials and redirect to homepage', async () => {
     customRender(<LoginForm />, [...loginMock, ...logoutMock]);
     fireEvent.change(screen.getByPlaceholderText('Email'), {
       target: { value: 'test@example.com' },
@@ -188,71 +188,7 @@ describe('Auth Forms', () => {
     });
   });
 
-  it('should redirect to the previous page after successful login if history length is greater than 1', async () => {
-    const mockBack = jest.fn();
-    const mockPush = jest.fn();
-
-    (useRouter as jest.Mock).mockReturnValue({
-      push: mockPush,
-      back: mockBack,
-    });
-
-    Object.defineProperty(window, 'history', {
-      value: {
-        length: 2,
-      },
-      writable: true,
-    });
-
-    customRender(<LoginForm />, loginMock);
-
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: 'Password123' },
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-
-    await waitFor(() => {
-      expect(mockBack).toHaveBeenCalled();
-    });
-  });
-
-  it('should redirect to the homepage after successful login if history length is 1', async () => {
-    const mockBack = jest.fn();
-    const mockPush = jest.fn();
-
-    (useRouter as jest.Mock).mockReturnValue({
-      push: mockPush,
-      back: mockBack,
-    });
-
-    Object.defineProperty(window, 'history', {
-      value: {
-        length: 1,
-      },
-      writable: true,
-    });
-
-    customRender(<LoginForm />, loginMock);
-
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: 'Password123' },
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-
-    await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/');
-    });
-  });
-
-  it('should show an error for incorrect credentials', async () => {
+  it('should handle login errors correctly', async () => {
     customRender(<LoginForm />, loginErrorMock);
     fireEvent.change(screen.getByPlaceholderText('Email'), {
       target: { value: 'wrong@example.com' },

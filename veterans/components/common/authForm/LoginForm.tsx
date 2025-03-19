@@ -51,11 +51,7 @@ export default function LoginForm() {
           query: CURRENT_USER_QUERY,
           data: { authenticatedItem: authResult.item },
         });
-        if (window.history.length > 1) {
-          router.back();
-        } else {
-          router.push('/');
-        }
+        router.push('/');
       } else {
         setError(authResult?.message || 'Невідома помилка входу');
       }
@@ -70,11 +66,7 @@ export default function LoginForm() {
       const createdUser = data?.createUser;
 
       if (createdUser) {
-        if (window.history.length > 1) {
-          router.back();
-        } else {
-          router.push('/');
-        }
+        router.push('/');
       }
     },
     onError(err) {
