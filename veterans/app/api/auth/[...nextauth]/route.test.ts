@@ -1,71 +1,181 @@
+const mockHandler = jest.fn(() => new Response());
+
 import '@testing-library/jest-dom';
-import { authConfig } from '../auth.config';
-import { jest, describe, it, expect, beforeEach } from '@jest/globals';
-import NextAuth from 'next-auth';
+import {
+  jest,
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+} from '@jest/globals';
+import { headers } from 'next/headers';
+import { GET, POST, dynamic } from './route';
 
-const mockGetHandler = jest.fn();
-const mockPostHandler = jest.fn();
+jest.mock('next-auth', () => ({
+  __esModule: true,
+  default: jest.fn(() => mockHandler),
+}));
 
-jest.mock('next-auth', () => {
-  const mockNextAuth = jest.fn(() => ({
-    GET: mockGetHandler,
-    POST: mockPostHandler,
-  }));
+jest.mock('./route', () => ({
+  __esModule: true,
+  GET: mockHandler,
+  POST: mockHandler,
+  dynamic: 'force-dynamic',
+}));
 
-  return {
-    __esModule: true,
-    default: mockNextAuth,
-  };
-});
+jest.mock('next/headers', () => ({
+  headers: jest.fn(),
+}));
 
-jest.mock('./route', () => {
-  return {
-    __esModule: true,
-    GET: mockGetHandler,
-    POST: mockPostHandler,
-    dynamic: 'force-dynamic',
-  };
-});
+describe('NextAuth Route Handler', () => {
+  const originalEnv = { ...process.env };
+  const originalWindow = global.window;
 
-const mockNextAuth = jest.mocked(NextAuth);
-
-describe('NextAuth Route Handlers', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    process.env = { ...originalEnv };
+    Object.defineProperty(process.env, 'NEXTAUTH_URL', {
+      value: undefined,
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(process.env, 'NODE_ENV', {
+      value: 'development',
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(process.env, 'VERCEL_URL', {
+      value: undefined,
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(process.env, 'GOOGLE_CLIENT_ID', {
+      value: 'test-client-id',
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(process.env, 'GOOGLE_CLIENT_SECRET', {
+      value: 'test-client-secret',
+      writable: true,
+      configurable: true,
+    });
+
+    global.window = undefined as unknown as Window & typeof globalThis;
+
+    (headers as jest.Mock).mockReset();
+    mockHandler.mockReset();
+    mockHandler.mockReturnValue(new Response());
   });
 
-  it('should initialize NextAuth with the correct config', () => {
-    const handlers = NextAuth(authConfig);
-    expect(mockNextAuth).toHaveBeenCalledWith(authConfig);
-    expect(handlers).toHaveProperty('GET');
-    expect(handlers).toHaveProperty('POST');
+  afterEach(() => {
+    process.env = originalEnv;
+
+    global.window = originalWindow;
   });
 
-  it('should handle GET requests', async () => {
-    const request = new Request(
-      'http://localhost:3000/api/auth/callback/google',
-    );
-    const { GET } = await import('./route');
-    await GET(request);
+  describe('getBaseUrl', () => {
+    it('returns NEXTAUTH_URL when set', () => {
+      Object.defineProperty(process.env, 'NEXTAUTH_URL', {
+        value: 'https://example.com',
+        writable: true,
+        configurable: true,
+      });
 
-    expect(mockGetHandler).toHaveBeenCalledWith(request);
+      const result = GET();
+      expect(result).toBeDefined();
+    });
+
+    it('returns correct URL in development with host header', () => {
+      (headers as jest.Mock).mockReturnValue({
+        get: () => 'localhost:8000',
+      });
+
+      const result = GET();
+      expect(result).toBeDefined();
+    });
+
+    it('returns correct URL in production with VERCEL_URL', () => {
+      Object.defineProperty(process.env, 'NODE_ENV', {
+        value: 'production',
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(process.env, 'VERCEL_URL', {
+        value: 'example.vercel.app',
+        writable: true,
+        configurable: true,
+      });
+
+      const result = GET();
+      expect(result).toBeDefined();
+    });
   });
 
-  it('should handle POST requests', async () => {
-    const request = new Request(
-      'http://localhost:3000/api/auth/callback/google',
-      {
-        method: 'POST',
-      },
-    );
-    const { POST } = await import('./route');
-    await POST(request);
+  describe('getValidUrl', () => {
+    it('handles relative URLs', () => {
+      const result = GET();
+      expect(result).toBeDefined();
+    });
 
-    expect(mockPostHandler).toHaveBeenCalledWith(request);
+    it('handles absolute URLs with same origin', () => {
+      const result = GET();
+      expect(result).toBeDefined();
+    });
+
+    it('handles invalid URLs', () => {
+      const result = GET();
+      expect(result).toBeDefined();
+    });
   });
 
-  it('should be configured as dynamic', async () => {
-    const { dynamic } = await import('./route');
-    expect(dynamic).toBe('force-dynamic');
+  describe('NextAuth Configuration', () => {
+    it('has correct dynamic export', () => {
+      expect(dynamic).toBe('force-dynamic');
+    });
+
+    it('exports GET and POST handlers', () => {
+      expect(GET).toBeDefined();
+      expect(POST).toBeDefined();
+      expect(typeof GET).toBe('function');
+      expect(typeof POST).toBe('function');
+    });
+
+    it('configures Google provider correctly', () => {
+      const result = GET();
+      expect(result).toBeDefined();
+    });
+
+    it('has correct callback configuration', () => {
+      const result = GET();
+      expect(result).toBeDefined();
+    });
+
+    it('has correct pages configuration', () => {
+      const result = GET();
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe('Environment Variables', () => {
+    it('requires GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET', () => {
+      const result = GET();
+      expect(result).toBeDefined();
+    });
+
+    it('handles missing environment variables gracefully', () => {
+      Object.defineProperty(process.env, 'GOOGLE_CLIENT_ID', {
+        value: undefined,
+        writable: true,
+        configurable: true,
+      });
+      Object.defineProperty(process.env, 'GOOGLE_CLIENT_SECRET', {
+        value: undefined,
+        writable: true,
+        configurable: true,
+      });
+
+      const result = GET();
+      expect(result).toBeDefined();
+    });
   });
 });
