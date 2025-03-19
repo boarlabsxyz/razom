@@ -42,6 +42,20 @@ const openDropdown = () => fireEvent.click(getDropdownButton());
 const pressKey = (element: HTMLElement, key: string) =>
   fireEvent.keyDown(element, { key });
 const selectRegion = (index: number) => fireEvent.click(getAllRegions()[index]);
+const typeAndClearSearchTerm = async (searchKey: string) => {
+  const list = getRegionsList();
+  pressKey(list!, searchKey);
+
+  await waitFor(() => {
+    expect(getAllRegions().length).toBeLessThan(26);
+  });
+
+  pressKey(list!, 'Backspace');
+
+  await waitFor(() => {
+    expect(getAllRegions().length).toBe(26);
+  });
+};
 
 const setupDropdown = () => {
   setupRegionsList();
@@ -96,24 +110,14 @@ describe('RegionsList Component', () => {
 
   test('clears search term with backspace', async () => {
     setupDropdown();
-    const list = getRegionsList();
-    pressKey(list!, 'в');
-
-    await waitFor(() => {
-      expect(getAllRegions().length).toBeLessThan(26);
-    });
-
-    pressKey(list!, 'Backspace');
-
-    await waitFor(() => {
-      expect(getAllRegions().length).toBe(26);
-    });
+    await typeAndClearSearchTerm('в');
   });
 
   test('closes dropdown on Escape key', () => {
     setupDropdown();
-    pressKey(getRegionsList()!, 'Escape');
-    expect(getRegionsList()).not.toBeInTheDocument();
+    const list = getRegionsList();
+    pressKey(list!, 'Escape');
+    expect(list).not.toBeInTheDocument();
   });
 
   test('closes dropdown when clicking outside', () => {
