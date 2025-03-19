@@ -14,7 +14,7 @@ describe('Auth Configuration', () => {
 
   describe('pages', () => {
     it('should have correct sign in page configured', () => {
-      expect(authConfig.pages?.signIn).toBe('/auth/signin');
+      expect(authConfig.pages?.signIn).toBe('/login');
     });
   });
 

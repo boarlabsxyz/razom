@@ -12,15 +12,31 @@ declare module 'next-auth' {
   }
 }
 
+const getEnvVar = (key: string, testValue = 'test-value') => {
+  const isTest = typeof jest !== 'undefined';
+  if (isTest) {
+    return testValue;
+  }
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Missing environment variable: ${key}`);
+  }
+  return value;
+};
+
 export const authConfig: NextAuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: getEnvVar('GOOGLE_CLIENT_ID'),
+      clientSecret: getEnvVar('GOOGLE_CLIENT_SECRET'),
     }),
   ],
   pages: {
-    signIn: '/auth/signin',
+    signIn: '/login',
+  },
+  secret: getEnvVar('NEXTAUTH_SECRET', 'test-secret'),
+  session: {
+    strategy: 'jwt',
   },
   callbacks: {
     session({ session, token }) {
