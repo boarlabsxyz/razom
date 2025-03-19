@@ -23,13 +23,25 @@ const handler = NextAuth({
     },
     async redirect({ url }) {
       const nextAuthUrl =
-        process.env.NEXTAUTH_URL || `https://${process.env.VERCEL_URL}`;
-      if (url.startsWith('/')) {
-        return `${nextAuthUrl}${url}`;
-      } else if (new URL(url).origin === nextAuthUrl) {
-        return url;
+        process.env.NEXTAUTH_URL ||
+        (process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : 'http://localhost:8000');
+
+      try {
+        if (url.startsWith('/')) {
+          return `${nextAuthUrl}${url}`;
+        }
+        const urlObj = new URL(url);
+        const baseUrlObj = new URL(nextAuthUrl);
+
+        if (urlObj.origin === baseUrlObj.origin) {
+          return url;
+        }
+        return nextAuthUrl;
+      } catch {
+        return nextAuthUrl;
       }
-      return nextAuthUrl;
     },
   },
   pages: {

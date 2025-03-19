@@ -7,12 +7,8 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com'],
   },
-  experimental: {
-    serverActions: true,
-  },
-  // Disable static generation for auth-related pages
   output: 'standalone',
-  // Add rewrites for auth routes
+
   async rewrites() {
     return [
       {
