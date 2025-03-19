@@ -8,6 +8,14 @@ const nextConfig = {
     domains: ['images.unsplash.com'],
   },
   output: 'standalone',
+  experimental: {
+    workerThreads: false,
+    cpus: 1,
+  },
+
+  generateBuildId: async () => {
+    return 'build-' + Date.now();
+  },
 
   async rewrites() {
     return [
