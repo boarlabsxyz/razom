@@ -14,10 +14,10 @@ function Banner({ name, height }: BannerProps) {
   const shouldPrefetch = false;
 
   return (
-    <div className={st.bannerContainer}>
+    <div className={st['banner-container']}>
       <Link
         href="/"
-        className={st.bannerLink}
+        className={st['banner-link']}
         {...(shouldPrefetch ? { prefetch: false } : {})}
       >
         <CustomImage

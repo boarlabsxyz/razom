@@ -1,15 +1,15 @@
-.iconMap {
+.icon-map {
   max-width: 896px;
   max-height: 597px;
   cursor: pointer;
 }
 
-.regionGroup:hover .regionPath {
+.region-group:hover .region-path {
   fill: var(--gum-leaf);
   stroke: var(--dodger-blue);
 }
 
-.selectedRegion {
+.selected-region {
   fill: var(--gum-leaf);
   stroke: var(--dodger-blue);
 }
