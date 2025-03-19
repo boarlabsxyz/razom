@@ -72,7 +72,7 @@ function RegionsList({ setCurrentRegion }: RegionsListProps) {
     }
     buttonRef.current?.focus();
     if (setCurrentRegion) {
-      setCurrentRegion(region.name); // Call the function if it exists
+      setCurrentRegion(region.name);
     }
   };
 

@@ -34,115 +34,138 @@ jest.mock('data/RegionsArray', () => {
   ];
 });
 
+const setupRegionsList = () => {
+  render(<RegionsList />);
+};
+
+const getRegionsList = () => screen.queryByTestId('list-of-regions');
+
+const getAllRegions = () => screen.queryAllByRole('menuitemradio');
+
+const getDropdownButton = () => screen.getByTestId('btn-for-region-selection');
+
+const openDropdown = () => fireEvent.click(getDropdownButton());
+
+const pressKey = (element: HTMLElement, key: string) =>
+  fireEvent.keyDown(element, { key });
+
+const selectRegion = (index: number) => {
+  fireEvent.click(getAllRegions()[index]);
+};
+
 describe('RegionsList Component', () => {
-  let mockSetCurrentRegion: jest.Mock;
-
-  beforeEach(() => {
-    mockSetCurrentRegion = jest.fn();
-  });
-
   test('correctly renders and shows default region', () => {
-    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
+    setupRegionsList();
 
-    expect(screen.getByTestId('btn-for-region-selection')).toBeInTheDocument();
-    expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
+    expect(getDropdownButton()).toBeInTheDocument();
+    expect(getRegionsList()).not.toBeInTheDocument();
   });
 
   test('dropdown opens and closes when button is clicked', () => {
-    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
+    setupRegionsList();
 
-    const button = screen.getByTestId('btn-for-region-selection');
-
-    fireEvent.click(button);
-    expect(screen.getByTestId('list-of-regions')).toBeInTheDocument();
+    const button = getDropdownButton();
 
     fireEvent.click(button);
-    expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
+    expect(getRegionsList()).toBeInTheDocument();
+
+    fireEvent.click(button);
+    expect(getRegionsList()).not.toBeInTheDocument();
   });
 
   test('contains exactly 26 regions', () => {
-    render(<RegionsList />);
+    setupRegionsList();
 
-    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
-    expect(screen.getAllByRole('menuitemradio').length).toBe(26);
+    openDropdown();
+    expect(getAllRegions().length).toBe(26);
   });
 
   test('sets correct focus when reopening dropdown with selected region', async () => {
-    render(<RegionsList />);
+    setupRegionsList();
 
-    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
-    fireEvent.click(screen.getAllByRole('menuitemradio')[1]);
+    openDropdown();
+    // fireEvent.click(getAllRegions()[1]);
+    selectRegion(1);
 
-    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
+    openDropdown();
 
     await waitFor(
       () => {
-        expect(screen.getAllByRole('menuitemradio')[1]).toHaveFocus();
+        expect(getAllRegions()[1]).toHaveFocus();
       },
       { timeout: 1000 },
     );
   });
 
   test('keyboard navigation works (ArrowDown, ArrowUp, Enter, Space)', () => {
-    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
+    setupRegionsList();
 
-    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
-    const regions = screen.getAllByRole('menuitemradio');
+    openDropdown();
+    const regions = getAllRegions();
 
-    fireEvent.keyDown(regions[0], { key: 'ArrowDown' });
+    // fireEvent.keyDown(regions[0], { key: 'ArrowDown' });
+    pressKey(regions[0], 'ArrowDown');
     expect(regions[0]).toHaveFocus();
 
-    fireEvent.keyDown(regions[0], { key: 'ArrowDown' });
+    // fireEvent.keyDown(regions[0], { key: 'ArrowDown' });
+    pressKey(regions[0], 'ArrowDown');
     expect(regions[1]).toHaveFocus();
 
-    fireEvent.keyDown(regions[1], { key: 'ArrowUp' });
+    // fireEvent.keyDown(regions[1], { key: 'ArrowUp' });
+    pressKey(regions[0], 'ArrowUp');
     expect(regions[0]).toHaveFocus();
 
-    fireEvent.keyDown(regions[0], { key: 'Enter' });
-    expect(screen.getByTestId('btn-for-region-selection')).toHaveTextContent(
-      /Вінницька/i,
-    );
-    expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
+    // fireEvent.keyDown(regions[0], { key: 'Enter' });
+    pressKey(regions[0], 'Enter');
+    expect(getDropdownButton()).toHaveTextContent(/Вінницька/i);
+    expect(getRegionsList()).not.toBeInTheDocument();
   });
 
   test('clears search term with backspace', async () => {
-    render(<RegionsList />);
-    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
+    setupRegionsList();
+    openDropdown();
 
-    const list = screen.getByTestId('list-of-regions');
-
-    fireEvent.keyDown(list, { key: 'в' });
+    const list = getRegionsList();
+    if (list) {
+      fireEvent.keyDown(list, { key: 'в' });
+      pressKey(list, 'в');
+    }
 
     await waitFor(() => {
-      const filteredItems = screen.getAllByRole('menuitemradio');
+      const filteredItems = getAllRegions();
       expect(filteredItems.length).toBeLessThan(26);
     });
 
-    fireEvent.keyDown(list, { key: 'Backspace' });
+    if (list) {
+      fireEvent.keyDown(list, { key: 'Backspace' });
+      pressKey(list, 'Backspace');
+    }
 
     await waitFor(() => {
-      const allItems = screen.getAllByRole('menuitemradio');
+      const allItems = getAllRegions();
       expect(allItems.length).toBe(26);
     });
   });
 
   test('closes dropdown on Escape key', () => {
-    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
+    setupRegionsList();
 
-    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
-    const list = screen.getByTestId('list-of-regions');
-
-    fireEvent.keyDown(list, { key: 'Escape' });
+    openDropdown();
+    const list = getRegionsList();
+    if (list) {
+      // fireEvent.keyDown(list, { key: 'Escape' });
+      pressKey(list, 'Escape');
+    }
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
 
   test('closes dropdown when clicking outside', () => {
-    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
+    setupRegionsList();
 
-    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
-    expect(screen.getByTestId('list-of-regions')).toBeInTheDocument();
+    openDropdown();
+    expect(getRegionsList()).toBeInTheDocument();
 
     fireEvent.mouseDown(document.body);
-    expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
+    expect(getRegionsList()).not.toBeInTheDocument();
   });
 });
