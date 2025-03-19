@@ -14,6 +14,12 @@ jest.mock('./mapSection/MapSection', () => {
   };
 });
 
+jest.mock('@comComps/container', () => {
+  return function MockContainer({ children }: { children: React.ReactNode }) {
+    return <div data-testid="mock-container">{children}</div>;
+  };
+});
+
 describe('HomePage', () => {
   it('renders without crashing', () => {
     render(<HomePage />);
@@ -32,8 +38,8 @@ describe('HomePage', () => {
 
   it('renders components in correct order', () => {
     render(<HomePage />);
-    const main = screen.getByRole('main');
-    const children = Array.from(main.children);
+    const container = screen.getByTestId('mock-container');
+    const children = Array.from(container.children);
 
     expect(children[0]).toHaveAttribute('data-testid', 'mock-hero');
     expect(children[1]).toHaveAttribute('data-testid', 'mock-map-section');
