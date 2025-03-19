@@ -1,6 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { CheckboxGroup } from './InitiativesFilter';
+import InitiativesFilter from './InitiativesFilter';
+import { useState } from 'react';
 
 const categoriesList = [
   { id: 'cat-1', name: 'Test Category 1' },
@@ -65,5 +67,79 @@ describe('CheckboxGroup Component', () => {
       expect(checkbox).toBeInTheDocument();
       expect(checkbox).toHaveAttribute('type', 'checkbox');
     });
+  });
+
+  test('selects and unselects a checkbox', () => {
+    render(
+      <CheckboxGroup
+        title="Test Title"
+        categories={categoriesList}
+        selectedCheckboxes={selectedCheckboxes}
+        setSelectedCheckboxes={setSelectedCheckboxes}
+      />,
+    );
+
+    const checkbox = screen.getByLabelText(
+      'Test Category 1',
+    ) as HTMLInputElement;
+
+    expect(checkbox.checked).toBe(false);
+
+    fireEvent.click(checkbox);
+    expect(setSelectedCheckboxes).toHaveBeenCalled();
+  });
+});
+
+describe('InitiativesFilter Component', () => {
+  const Wrapper = () => {
+    const [selectedCheckboxes, setSelectedCheckboxes] = useState<
+      Record<string, boolean>
+    >({});
+    return (
+      <InitiativesFilter
+        selectedCheckboxes={selectedCheckboxes}
+        setSelectedCheckboxes={setSelectedCheckboxes}
+      />
+    );
+  };
+
+  test('renders the component with correct sections', () => {
+    render(<Wrapper />);
+
+    expect(screen.getByText('Вид ініціативи')).toBeInTheDocument();
+    expect(screen.getByText('Походження ініціативи')).toBeInTheDocument();
+  });
+
+  test('toggles category list visibility when clicking the button', () => {
+    render(<Wrapper />);
+
+    const categoryButton = screen.getByText('Вид ініціативи');
+    const categoryList = screen.getByTestId(
+      'category-list-вид-ініціативи-content',
+    );
+
+    expect(categoryList).not.toHaveClass('show');
+
+    fireEvent.click(categoryButton);
+    expect(categoryList).toHaveClass('show');
+
+    fireEvent.click(categoryButton);
+    expect(categoryList).not.toHaveClass('show');
+  });
+
+  test('selects and unselects a checkbox', () => {
+    render(<Wrapper />);
+
+    const checkbox = screen.getByLabelText(
+      'Управління, відділи з ветеранської політики',
+    ) as HTMLInputElement;
+
+    expect(checkbox.checked).toBe(false);
+
+    fireEvent.click(checkbox);
+    expect(checkbox.checked).toBe(true);
+
+    fireEvent.click(checkbox);
+    expect(checkbox.checked).toBe(false);
   });
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import RegionsList from './regionsList';
 
@@ -112,6 +112,63 @@ describe('RegionsList Component', () => {
     expect(screen.getByTestId('list-of-regions')).toBeInTheDocument();
 
     fireEvent.mouseDown(document.body);
+    expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
+  });
+
+  test('focus moves to selected region when dropdown opens', () => {
+    render(
+      <RegionsList
+        selectedRegion="Region 5"
+        setSelectedRegion={mockSetSelectedRegion}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
+
+    waitFor(() =>
+      expect(
+        screen.getByRole('menuitemradio', { name: /Region 5/i }),
+      ).toHaveFocus(),
+    );
+  });
+
+  test('clicking a region updates the selectedRegion and closes dropdown', () => {
+    render(
+      <RegionsList
+        selectedRegion="Region 10"
+        setSelectedRegion={mockSetSelectedRegion}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
+
+    const region10 = screen.getByRole('menuitemradio', { name: /Region 10/i });
+    fireEvent.click(region10);
+
+    expect(mockSetSelectedRegion).toHaveBeenCalledWith('Region 10');
+    expect(screen.getByTestId('btn-for-region-selection')).toHaveTextContent(
+      /Region 10/i,
+    );
+    expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
+  });
+
+  test('pressing Enter or Space selects a region', () => {
+    render(
+      <RegionsList
+        selectedRegion="Region 5"
+        setSelectedRegion={mockSetSelectedRegion}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
+
+    const region5 = screen.getByRole('menuitemradio', { name: /Region 5/i });
+    fireEvent.keyDown(region5, { key: 'Enter' });
+
+    expect(mockSetSelectedRegion).toHaveBeenCalledWith('Region 5');
+    expect(screen.getByTestId('btn-for-region-selection')).toHaveTextContent(
+      /Region 5/i,
+    );
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
 });
