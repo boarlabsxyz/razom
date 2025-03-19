@@ -12,8 +12,8 @@ jest.mock('next/navigation', () => ({
 
 jest.mock('@comComps/NavMenu', () => {
   return jest.fn(({ pages, pathname, st }: NavigationMenuProps) => (
-    <nav className={st.navContainer} aria-label="Main navigation">
-      <ul className={st.navList}>
+    <nav className={st['nav-container']} aria-label="Main navigation">
+      <ul className={st['nav-list']}>
         {Object.entries(pages).map(([key, value]) => {
           const isActive = pathname === `/${key}`;
           return (

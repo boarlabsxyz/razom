@@ -23,8 +23,8 @@ jest.mock('next/link', () => {
 });
 
 jest.mock('@comComps/header/Header.module.css', () => ({
-  bannerContainer: 'bannerContainer',
-  bannerLink: 'bannerLink',
+  'banner-container': 'banner-container',
+  'banner-link': 'banner-link',
 }));
 
 describe('Banner Component', () => {
@@ -77,6 +77,6 @@ describe('Banner Component', () => {
     render(<Banner {...mockProps} />);
 
     const bannerContainer = screen.getByTestId('next-link');
-    expect(bannerContainer).toHaveClass('bannerLink');
+    expect(bannerContainer).toHaveClass('banner-link');
   });
 });

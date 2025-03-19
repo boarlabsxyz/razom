@@ -1,6 +1,6 @@
 import { FC, ReactElement } from 'react';
 
-import styles from './Container.module.css';
+import st from './Container.module.css';
 import concatClassNames from '@helpers/concatClassNames';
 
 interface IProps {
@@ -9,9 +9,7 @@ interface IProps {
 }
 
 const Container: FC<IProps> = ({ children, className }) => (
-  <div className={concatClassNames(styles.container, className)}>
-    {children}
-  </div>
+  <div className={concatClassNames(st.container, className)}>{children}</div>
 );
 
 export default Container;

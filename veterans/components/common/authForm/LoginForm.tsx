@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import styles from './AuthForm.module.css';
+import st from './AuthForm.module.css';
 import Link from 'next/link';
 import { LoginFormData } from 'types';
 import {
@@ -133,19 +133,19 @@ export default function LoginForm() {
   };
 
   return (
-    <div className={styles.container}>
-      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+    <div className={st.container}>
+      <form className={st.form} onSubmit={handleSubmit(onSubmit)}>
         {submitError && (
-          <p className={styles.error} role="alert">
+          <p className={st.error} role="alert">
             {submitError}
           </p>
         )}
-        <div className={styles.header}>
+        <div className={st.header}>
           {isSubmitting ? <h1>Signing in...</h1> : <h1>Sign in</h1>}
         </div>
 
-        <div className={styles.inputGroup}>
-          <label htmlFor="email" className={styles.label}>
+        <div className={st['input-group']}>
+          <label htmlFor="email" className={st.label}>
             Email
           </label>
           <Controller
@@ -156,21 +156,21 @@ export default function LoginForm() {
                 type="email"
                 id="email"
                 placeholder="Email"
-                className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
+                className={`${st.input} ${errors.email ? st['input-error'] : ''}`}
                 value={field.value || ''}
                 onChange={(e) => field.onChange(e.target.value)}
               />
             )}
           />
           {errors.email && (
-            <p className={styles.error} data-testid="email-error">
+            <p className={st.error} data-testid="email-error">
               {errors.email.message}
             </p>
           )}
         </div>
 
-        <div className={styles.inputGroup}>
-          <label htmlFor="password" className={styles.label}>
+        <div className={st['input-group']}>
+          <label htmlFor="password" className={st.label}>
             Password
           </label>
           <Controller
@@ -181,33 +181,33 @@ export default function LoginForm() {
                 type="password"
                 id="password"
                 placeholder="Password"
-                className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
+                className={`${st.input} ${errors.password ? st['input-error'] : ''}`}
                 value={field.value || ''}
                 onChange={(e) => field.onChange(e.target.value)}
               />
             )}
           />
           {errors.password && (
-            <p className={styles.error}>{errors.password.message}</p>
+            <p className={st['input-error']}>{errors.password.message}</p>
           )}
         </div>
 
-        {error && <p className={styles.error}>{error}</p>}
+        {error && <p className={st['input-error']}>{error}</p>}
 
-        <div className={styles.buttonContainer}>
+        <div className={st['button-container']}>
           <button
             type="submit"
-            className={styles.button}
+            className={st.button}
             aria-live={isSubmitting ? 'assertive' : 'polite'}
           >
             {isSubmitting ? 'Signing in...' : 'Sign in'}
           </button>
         </div>
-        <div className={styles.buttonContainer}>
+        <div className={st.buttonContainer}>
           <LoginAuthButton />
         </div>
 
-        <div className={styles.textContainer}>
+        <div className={st['text-container']}>
           <p>
             If you don't have an account, please{' '}
             <Link href="/register">register here</Link>.

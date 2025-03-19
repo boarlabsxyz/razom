@@ -21,19 +21,19 @@
   }
 }
 
-.bannerContainer {
+.banner-container {
   width: 146px;
   height: 34px;
 }
 
-.bannerLink {
+.banner-link {
   display: block;
   width: 100%;
   height: 100%;
 }
 
 @media (max-width: 640px) {
-  .bannerLink img {
+  .banner-link img {
     width: 100%;
     height: auto;
   }
