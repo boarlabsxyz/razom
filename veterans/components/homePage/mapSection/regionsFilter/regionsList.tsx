@@ -112,20 +112,20 @@ function RegionsList({ setCurrentRegion }: RegionsListProps) {
   }, [isOpen]);
 
   return (
-    <div className={st.regions_wrapper}>
-      <h3 className={st.region_list_title}>Область</h3>
-      <div className={st.region_selector} ref={dropdownRef}>
+    <div className={st['regions-wrapper']}>
+      <h3 className={st['region-list-title']}>Область</h3>
+      <div className={st['region-selector']} ref={dropdownRef}>
         <button
           id="region-selector"
           ref={buttonRef}
           data-testid="btn-for-region-selection"
-          className={`${st.region_selector_btn} ${isOpen ? st.open : ''}`}
+          className={`${st['region-selector-btn']} ${isOpen ? st.open : ''}`}
           onClick={toggleDropdown}
           aria-haspopup="menu"
           aria-expanded={isOpen}
           aria-controls="region-list"
         >
-          <span className={st.region_name}>{selectedRegion}</span>
+          <span className={st['region-name']}>{selectedRegion}</span>
         </button>
 
         {isOpen && (
@@ -134,7 +134,7 @@ function RegionsList({ setCurrentRegion }: RegionsListProps) {
             data-testid="list-of-regions"
             ref={listRef}
             tabIndex={0}
-            className={`${st.region_selector_list} ${isOpen ? st.show : ''}`}
+            className={`${st['region-selector-list']} ${isOpen ? st.show : ''}`}
             role="menu"
             aria-activedescendant={
               focusedIndex !== null ? `region-${focusedIndex}` : undefined
@@ -156,14 +156,14 @@ function RegionsList({ setCurrentRegion }: RegionsListProps) {
                   }
                 }}
                 tabIndex={-1}
-                className={`${st.region_selector_item} ${
+                className={`${st['region-selector-item']} ${
                   focusedIndex === index ? st.focused : ''
                 }`}
                 aria-checked={selectedRegion === region.name}
                 aria-label={`Select ${region.name}`}
               >
-                <span className={st.region_name}>{region.name}</span>
-                <span className={st.num_of_initiatives}>
+                <span className={st['region-name']}>{region.name}</span>
+                <span className={st['num-of-initiatives']}>
                   ({region.numOfInitiatives})
                 </span>
               </div>

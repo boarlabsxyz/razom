@@ -11,7 +11,7 @@ import { useMutation } from '@apollo/client';
 
 import { RegisterFormData } from 'types';
 import { REGISTER_MUTATION } from 'constants/graphql';
-import styles from '@comComps/authForm/AuthForm.module.css';
+import st from '@comComps/authForm/AuthForm.module.css';
 
 const registerSchema = yup.object().shape({
   name: yup.string().required('Name is required'),
@@ -83,14 +83,14 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className={styles.container}>
-      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-        <div className={styles.header}>
+    <div className={st.container}>
+      <form className={st.form} onSubmit={handleSubmit(onSubmit)}>
+        <div className={st.header}>
           <h1>Sign Up</h1>
         </div>
 
-        <div className={styles.inputGroup}>
-          <label htmlFor="name" className={styles.label}>
+        <div className={st['input-group']}>
+          <label htmlFor="name" className={st.label}>
             Name
           </label>
           <Controller
@@ -101,16 +101,16 @@ export default function RegisterForm() {
                 type="text"
                 id="name"
                 placeholder="Name"
-                className={`${styles.input} ${errors.name ? styles.inputError : ''}`}
+                className={`${st.input} ${errors.name ? st['input-error'] : ''}`}
                 {...field}
               />
             )}
           />
-          {errors.name && <p className={styles.error}>{errors.name.message}</p>}
+          {errors.name && <p className={st.error}>{errors.name.message}</p>}
         </div>
 
-        <div className={styles.inputGroup}>
-          <label htmlFor="email" className={styles.label}>
+        <div className={st['input-group']}>
+          <label htmlFor="email" className={st.label}>
             Email
           </label>
           <Controller
@@ -121,20 +121,18 @@ export default function RegisterForm() {
                 type="email"
                 id="email"
                 placeholder="Email"
-                className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
+                className={`${st.input} ${errors.email ? st['input-error'] : ''}`}
                 {...field}
               />
             )}
           />
-          {errors.email && (
-            <p className={styles.error}>{errors.email.message}</p>
-          )}
+          {errors.email && <p className={st.error}>{errors.email.message}</p>}
         </div>
 
-        <div className={styles.inputGroup}>
-          <fieldset className={styles.fieldset}>
-            <legend className={styles.label}>Password</legend>
-            <div className={styles.passwordGroup}>
+        <div className={st['input-group']}>
+          <fieldset className={st.fieldset}>
+            <legend className={st.label}>Password</legend>
+            <div className={st['password-group']}>
               <Controller
                 control={control}
                 name="password"
@@ -143,13 +141,13 @@ export default function RegisterForm() {
                     type={passwordVisible ? 'text' : 'password'}
                     id="password"
                     placeholder="New Password"
-                    className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
+                    className={`${st.input} ${errors.password ? st['input-error'] : ''}`}
                     {...field}
                   />
                 )}
               />
               {errors.password && (
-                <p className={styles.error}>{errors.password.message}</p>
+                <p className={st.error}>{errors.password.message}</p>
               )}
 
               <Controller
@@ -160,18 +158,18 @@ export default function RegisterForm() {
                     type={passwordVisible ? 'text' : 'password'}
                     id="confirmPassword"
                     placeholder="Confirm Password"
-                    className={`${styles.input} ${errors.confirmPassword ? styles.inputError : ''}`}
+                    className={`${st.input} ${errors.confirmPassword ? st['input-error'] : ''}`}
                     {...field}
                   />
                 )}
               />
               {errors.confirmPassword && (
-                <p className={styles.error}>{errors.confirmPassword.message}</p>
+                <p className={st.error}>{errors.confirmPassword.message}</p>
               )}
 
               <button
                 type="button"
-                className={styles.toggleButton}
+                className={st['toggle-button']}
                 onClick={togglePasswordVisibility}
               >
                 {passwordVisible ? 'Hide' : 'Show'} Password
@@ -180,15 +178,15 @@ export default function RegisterForm() {
           </fieldset>
         </div>
 
-        {submitError && <p className={styles.error}>{submitError}</p>}
+        {submitError && <p className={st.error}>{submitError}</p>}
 
-        <div className={styles.buttonContainer}>
-          <button type="submit" className={styles.button}>
+        <div className={st['button-container']}>
+          <button type="submit" className={st.button}>
             Get started
           </button>
         </div>
 
-        <div className={styles.textContainer}>
+        <div className={st['text-container']}>
           <p>
             Already have an account? <Link href="/login">Sign in here</Link>.
           </p>
