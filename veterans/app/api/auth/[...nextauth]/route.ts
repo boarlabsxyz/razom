@@ -1,11 +1,30 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
+import { headers } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
 
-// Helper function to validate and construct URLs
-const getValidUrl = (url: string, baseUrl: string): string => {
-  // If it's a relative URL, join it with the base URL
+const getBaseUrl = () => {
+  if (process.env.NEXTAUTH_URL) {
+    return process.env.NEXTAUTH_URL;
+  }
+
+  if (typeof window === 'undefined') {
+    const headersList = headers();
+    const host =
+      headersList.get('host') || process.env.VERCEL_URL || 'localhost:8000';
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    return `${protocol}://${host}`;
+  }
+
+  return process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'http://localhost:8000';
+};
+
+const getValidUrl = (url: string): string => {
+  const baseUrl = getBaseUrl();
+
   if (url.startsWith('/')) {
     return baseUrl + url;
   }
@@ -14,12 +33,11 @@ const getValidUrl = (url: string, baseUrl: string): string => {
     const urlObj = new URL(url);
     const baseUrlObj = new URL(baseUrl);
 
-    // Check if the URL is for our domain
     if (urlObj.origin === baseUrlObj.origin) {
       return url;
     }
   } catch {
-    // If URL parsing fails, ignore and return base URL
+    void 0;
   }
 
   return baseUrl;
@@ -44,13 +62,7 @@ const handler = NextAuth({
       return true;
     },
     async redirect({ url }) {
-      const baseUrl =
-        process.env.NEXTAUTH_URL ||
-        (process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : 'http://localhost:8000');
-
-      return getValidUrl(url, baseUrl);
+      return getValidUrl(url);
     },
   },
   pages: {

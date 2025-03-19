@@ -17,6 +17,24 @@ const nextConfig = {
     return 'build-' + Date.now();
   },
 
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, must-revalidate',
+          },
+        ],
+      },
+    ];
+  },
+
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+
   async rewrites() {
     return [
       {
@@ -41,6 +59,7 @@ const nextConfig = {
       },
     ];
   },
+
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
