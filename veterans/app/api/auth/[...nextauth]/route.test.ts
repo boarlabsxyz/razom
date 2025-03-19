@@ -3,11 +3,9 @@ import { authConfig } from '../auth.config';
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import NextAuth from 'next-auth';
 
-// Mock NextAuth handlers
 const mockGetHandler = jest.fn();
 const mockPostHandler = jest.fn();
 
-// Mock next-auth
 jest.mock('next-auth', () => {
   const mockNextAuth = jest.fn(() => ({
     GET: mockGetHandler,
@@ -20,7 +18,6 @@ jest.mock('next-auth', () => {
   };
 });
 
-// Mock route module
 jest.mock('./route', () => {
   return {
     __esModule: true,
@@ -57,7 +54,9 @@ describe('NextAuth Route Handlers', () => {
   it('should handle POST requests', async () => {
     const request = new Request(
       'http://localhost:3000/api/auth/callback/google',
-      { method: 'POST' },
+      {
+        method: 'POST',
+      },
     );
     const { POST } = await import('./route');
     await POST(request);

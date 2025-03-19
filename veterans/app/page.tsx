@@ -1,5 +1,5 @@
 import React from 'react';
-import HomePage from 'components/homePage/HomePage';
+import HomePage from '@comps/homePage/HomePage';
 import { headers } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
