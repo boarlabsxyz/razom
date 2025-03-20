@@ -13,7 +13,7 @@ export default function UkraineMap({ selectedRegion }: UkraineMapProps) {
       xmlns="http://www.w3.org/2000/svg"
       data-test-id="svg-map"
       aria-labelledby="map-title map-desc"
-      className={st.iconMap}
+      className={st['icon-map']}
     >
       <title id="map-title">Карта регіонів України</title>
       <desc id="map-desc">

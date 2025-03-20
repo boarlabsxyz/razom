@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - regionsList component ([117](https://github.com/boarlabsxyz/razom/pull/117))
 - reset filter button to the map section ([128](https://github.com/boarlabsxyz/razom/pull/128))
 
+### Changed
+
+- ProductionVercelDeploy.yaml and PreviewVercelDeploy.yaml into one file deploy.yaml([#114](https://github.com/boarlabsxyz/razom/pull/114))
+
 ### Fixed
 
 - CORS rules to proper work with initiatives ([113](https://github.com/boarlabsxyz/razom/pull/113))
