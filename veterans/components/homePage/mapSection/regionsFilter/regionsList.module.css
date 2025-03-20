@@ -25,7 +25,7 @@
 .region-selector-btn {
   position: relative;
   height: 50px;
-  margin-top: 12px;
+  margin: 12px 0 0 0;
   padding: 12px;
   width: 100%;
   cursor: pointer;
@@ -37,12 +37,11 @@
   transition: all 0.3s ease-in-out;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  margin: 0;
 }
 
 .region-name {
   flex-grow: 1;
-  text-align: left; 
+  text-align: left;
   font-weight: 400;
   font-size: 14px;
   line-height: 26px;
