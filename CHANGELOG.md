@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - Unreleased
+
+### Added
+
+- possibility to filter regionsList with a keyboard([130](https://github.com/boarlabsxyz/razom/pull/130))
+
+### Changed
+
+- all className attr to cebab case format ([126](https://github.com/boarlabsxyz/razom/pull/126))
+
 ## [1.5.0] - Unreleased
 
 ### Added
