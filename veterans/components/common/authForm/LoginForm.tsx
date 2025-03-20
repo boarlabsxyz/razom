@@ -197,13 +197,13 @@ export default function LoginForm() {
         <div className={st['button-container']}>
           <button
             type="submit"
-            className={st.button}
+            className={st['button']}
             aria-live={isSubmitting ? 'assertive' : 'polite'}
           >
             {isSubmitting ? 'Signing in...' : 'Sign in'}
           </button>
         </div>
-        <div className={st.buttonContainer}>
+        <div className={st['button-container']}>
           <LoginAuthButton />
         </div>
 

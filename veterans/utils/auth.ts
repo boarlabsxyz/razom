@@ -8,8 +8,11 @@ export function setupNextAuthUrl() {
   }
   if (process.env.VERCEL === '1' || process.env.VERCEL_ENV) {
     const vercelUrl = process.env.VERCEL_URL;
-    if (vercelUrl && vercelUrl.trim()) {
-      if (/^[a-zA-Z0-9][a-zA-Z0-9-_.]*\.[a-zA-Z]{2,}$/.test(vercelUrl)) {
+    if (vercelUrl?.trim()) {
+      const isValidHostname = /^[a-zA-Z0-9][a-zA-Z0-9-_.]*\.[a-zA-Z]{2,}$/.test(
+        vercelUrl,
+      );
+      if (isValidHostname) {
         process.env.NEXTAUTH_URL = `https://${vercelUrl}`;
         return;
       }
