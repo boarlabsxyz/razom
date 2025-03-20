@@ -22,8 +22,13 @@
 
 .map-button-reset {
   position: static;
+  font-weight: 400;
+  font-size: 0.875rem;
+  line-height: 1.625rem;
+  color: var(--haiti);
   background-color: var(--white);
-  padding: 4px 12px 4px;
+  width: 142px;
+  height: 34px;
   margin-top: 10px;
   border-radius: 2px;
   border: 1px solid var(--haiti);
@@ -38,15 +43,15 @@
   .map-button-reset {
     position: absolute;
     right: 5px;
-    top: 5px;
+    top: 0;
     border: none;
   }
   .map-button-reset::after {
     content: '';
     position: absolute;
     left: 12px;
-    bottom: 4px;
-    width: 112px;
+    bottom: 8px;
+    width: calc(100% - 24px);
     height: 1px;
     background-color: var(--haiti);
   }
