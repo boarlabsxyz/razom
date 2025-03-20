@@ -227,60 +227,42 @@ describe('RegionsList Component', () => {
     expect(getRegionsList()).not.toBeInTheDocument();
   });
 
-  test('focus moves to selected region when dropdown opens', async () => {
-    render(
-      <RegionsList
-        selectedRegion="Region 5"
-        setSelectedRegion={mockSetSelectedRegion}
-      />,
-    );
+  test('focus moves to search input when dropdown opens', async () => {
+    const mockSetCurrentRegion = jest.fn();
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
     await waitFor(() =>
-      expect(
-        screen.getByRole('menuitemradio', { name: /Region 5/i }),
-      ).toHaveFocus(),
+      expect(screen.getByTestId('region-search-input')).toHaveFocus(),
     );
   });
 
   test('clicking a region updates the selectedRegion and closes dropdown', () => {
-    render(
-      <RegionsList
-        selectedRegion="Region 10"
-        setSelectedRegion={mockSetSelectedRegion}
-      />,
-    );
+    const mockSetCurrentRegion = jest.fn();
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
-    const region10 = screen.getByRole('menuitemradio', { name: /Region 10/i });
-    fireEvent.click(region10);
+    const region = screen.getByRole('menuitemradio', { name: /Select Луцьк/i });
+    fireEvent.click(region);
 
-    expect(mockSetSelectedRegion).toHaveBeenCalledWith('Region 10');
-    expect(screen.getByTestId('btn-for-region-selection')).toHaveTextContent(
-      /Region 10/i,
-    );
+    expect(mockSetCurrentRegion).toHaveBeenCalledWith('Луцьк');
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
 
   test('pressing Enter or Space selects a region', () => {
-    render(
-      <RegionsList
-        selectedRegion="Region 5"
-        setSelectedRegion={mockSetSelectedRegion}
-      />,
-    );
+    const mockSetCurrentRegion = jest.fn();
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
-    const region5 = screen.getByRole('menuitemradio', { name: /Region 5/i });
-    fireEvent.keyDown(region5, { key: 'Enter' });
+    const region = screen.getByRole('menuitemradio', {
+      name: /Select Ужгород/i,
+    });
+    fireEvent.keyDown(region, { key: 'Enter' });
 
-    expect(mockSetSelectedRegion).toHaveBeenCalledWith('Region 5');
-    expect(screen.getByTestId('btn-for-region-selection')).toHaveTextContent(
-      /Region 5/i,
-    );
+    expect(mockSetCurrentRegion).toHaveBeenCalledWith('Ужгород');
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
 });
