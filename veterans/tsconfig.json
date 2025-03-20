@@ -10,7 +10,7 @@
       "hooks/*": ["hooks/*"],
       "constants/*": ["constants/*"],
       "utils/*": ["utils/*"],
-      "data": ["data/*"],
+      "data": ["data/*"]
     },
     "jsx": "preserve",
     "target": "esnext",

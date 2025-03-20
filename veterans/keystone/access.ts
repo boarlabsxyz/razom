@@ -1,4 +1,4 @@
-import { BaseItem } from '@keystone-6/core/types';
+import { CustomBaseItem } from 'types';
 
 export type Session = {
   itemId: string;
@@ -6,8 +6,6 @@ export type Session = {
     role: 'Administrator' | 'Moderator' | 'Initiative Manager' | 'User';
   };
 };
-
-export type Item = { id?: string; createdById?: string | null };
 
 export function hasSession({ session }: { session?: Session }) {
   return Boolean(session);
@@ -30,7 +28,7 @@ export function isSameUser({
   item,
 }: {
   session?: Session;
-  item: BaseItem;
+  item: CustomBaseItem;
 }) {
   if (!session) {
     return false;
@@ -55,7 +53,7 @@ export function isAdminOrSameUser({
   item,
 }: {
   session?: Session;
-  item: BaseItem;
+  item: CustomBaseItem;
 }) {
   return isAdminOr({ session }, isSameUser({ session, item }));
 }

@@ -24,6 +24,63 @@ describe('Apollo Client', () => {
     }
   `;
 
+  it('should create Apollo Client with correct links', () => {
+    const client = new ApolloClient({
+      // link: from([errorLink, timeoutLink, retryLink, httpLink]),
+      link: from([errorLink, retryLink]),
+      cache: new InMemoryCache(),
+    });
+
+    expect(client.link).toBeDefined();
+    expect(client.cache).toBeInstanceOf(InMemoryCache);
+  });
+
+  it('should call the correct endpoint', async () => {
+    const mockHttpLink = new ApolloLink(() => {
+      return new Observable((observer) => {
+        observer.next({ data: { testField: 'test' } });
+        observer.complete();
+      });
+    });
+
+    const client = new ApolloClient({
+      link: from([mockHttpLink]),
+      cache: new InMemoryCache(),
+    });
+
+    const { data } = await client.query({ query: TEST_QUERY });
+
+    expect(data).toEqual({ testField: 'test' });
+  });
+
+  it('should retry the request when retryIf condition is met', async () => {
+    let callCount = 0;
+    const mockRetryLink = new RetryLink({
+      attempts: {
+        max: 3,
+        retryIf: (error) => error.message === 'Network failure',
+      },
+    });
+
+    const mockErrorLink = new ApolloLink(() => {
+      callCount++;
+      return new Observable((observer) => {
+        observer.error(new Error('Network failure'));
+      });
+    });
+
+    const client = new ApolloClient({
+      link: from([mockRetryLink, mockErrorLink]),
+      cache: new InMemoryCache(),
+    });
+
+    await expect(client.query({ query: TEST_QUERY })).rejects.toThrow(
+      'Network failure',
+    );
+
+    expect(callCount).toBe(3);
+  });
+
   it('logs GraphQL errors correctly', async () => {
     const errorLink = onError(({ graphQLErrors, networkError }) => {
       if (graphQLErrors) {

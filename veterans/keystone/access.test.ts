@@ -9,13 +9,27 @@ import {
   isAdminOrModerator,
   isAdminOrSameUserFilter,
 } from './access';
-import { BaseItem } from '@keystone-6/core/types';
+
+const mockUser = {
+  id: 'testId',
+  name: 'testName',
+  email: 'testEmail',
+  password: 'testPassword',
+  role: 'testRole',
+  blocked: false,
+  createdAt: new Date(),
+};
+
+const mockInitiative = {
+  id: '123',
+  createdById: 'testId',
+};
 
 describe('Session-based functions', () => {
   const mockSession = (
     role: 'Administrator' | 'Moderator' | 'Initiative Manager' | 'User',
   ) => ({
-    itemId: '123',
+    itemId: 'testId',
     data: { role },
   });
 
@@ -62,23 +76,27 @@ describe('Session-based functions', () => {
   });
 
   describe('isSameUser', () => {
-    const mockItem: BaseItem = { id: '123', createdById: '123' };
-
     it('should return true if session user is the same as the item creator', () => {
       expect(
-        isSameUser({ session: mockSession('Administrator'), item: mockItem }),
+        isSameUser({
+          session: mockSession('Administrator'),
+          item: mockInitiative,
+        }),
       ).toBe(true);
     });
 
     it('should return false if session user is different from the item creator', () => {
-      mockItem.createdById = '456';
+      mockInitiative.createdById = '456';
       expect(
-        isSameUser({ session: mockSession('Administrator'), item: mockItem }),
+        isSameUser({
+          session: mockSession('Administrator'),
+          item: mockInitiative,
+        }),
       ).toBe(false);
     });
 
     it('should return false if session is undefined', () => {
-      expect(isSameUser({ session: undefined, item: mockItem })).toBe(false);
+      expect(isSameUser({ session: undefined, item: mockUser })).toBe(false);
     });
   });
 
@@ -99,27 +117,30 @@ describe('Session-based functions', () => {
   });
 
   describe('isAdminOrSameUser', () => {
-    const mockItem: BaseItem = { id: '123', createdById: '123' };
+    const mockItem = { id: '123', createdById: '123' };
 
     it('should return true if user is admin', () => {
       expect(
         isAdminOrSameUser({
           session: mockSession('Administrator'),
-          item: mockItem,
+          item: mockUser,
         }),
       ).toBe(true);
     });
 
     it('should return true if user is same as the item creator', () => {
       expect(
-        isAdminOrSameUser({ session: mockSession('User'), item: mockItem }),
+        isAdminOrSameUser({ session: mockSession('User'), item: mockUser }),
       ).toBe(true);
     });
 
     it('should return false if user is not admin and not the same as the item creator', () => {
       mockItem.createdById = '456';
       expect(
-        isAdminOrSameUser({ session: mockSession('User'), item: mockItem }),
+        isAdminOrSameUser({
+          session: mockSession('User'),
+          item: mockInitiative,
+        }),
       ).toBe(false);
     });
   });
@@ -152,7 +173,7 @@ describe('Session-based functions', () => {
     it('should return filter object if user is not admin', () => {
       expect(isAdminOrSameUserFilter({ session: mockSession('User') })).toEqual(
         {
-          id: { equals: '123' },
+          id: { equals: 'testId' },
         },
       );
     });

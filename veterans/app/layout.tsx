@@ -8,6 +8,7 @@ import Banner from '@comComps/header/banner';
 import Footer from '@comComps/footer/Footer';
 import FooterContent from '@comComps/footer/FooterContent';
 import ApolloProviderWrapper from '@comps/apolloProvider';
+import SessionProviderWrapper from '@comps/sessionProvider';
 
 const lato = Lato({
   weight: ['300', '400', '700'],
@@ -43,19 +44,21 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${lato.variable} ${golosText.variable}`}>
       <body>
-        <ApolloProviderWrapper>
-          <Header>
-            <HeaderContent>
-              <Banner name="logotype" height={34} />
-            </HeaderContent>
-          </Header>
-          <main>{children}</main>
-          <Footer>
-            <FooterContent>
-              <Banner name="logotype" height={34} />
-            </FooterContent>
-          </Footer>
-        </ApolloProviderWrapper>
+        <SessionProviderWrapper>
+          <ApolloProviderWrapper>
+            <Header>
+              <HeaderContent>
+                <Banner name="logotype" height={34} />
+              </HeaderContent>
+            </Header>
+            <main>{children}</main>
+            <Footer>
+              <FooterContent>
+                <Banner name="logotype" height={34} />
+              </FooterContent>
+            </Footer>
+          </ApolloProviderWrapper>
+        </SessionProviderWrapper>
       </body>
     </html>
   );

@@ -1,20 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { getContext } from '@keystone-6/core/context';
-import config from 'keystone';
-import * as PrismaModule from '.prisma/client';
+import keystoneConfig from '../keystone';
+import { PrismaClient } from '@prisma/client';
+import { Context } from '.keystone/types';
 
-export const keystoneContext = (() => {
-  try {
-    return (
-      (globalThis as any).keystoneContext ?? getContext(config, PrismaModule)
-    );
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Failed to initialize Keystone context:', error);
-    throw error;
+const prisma = new PrismaClient();
+
+let keystoneContext: Context | null = null;
+
+export const getKeystoneContext = async (): Promise<Context> => {
+  if (!keystoneContext) {
+    const { getContext } = await import('@keystone-6/core/context');
+    keystoneContext = getContext(keystoneConfig, prisma);
   }
-})();
-
-if (process.env.NODE_ENV !== 'production') {
-  (globalThis as any).keystoneContext = keystoneContext;
-}
+  return keystoneContext;
+};
