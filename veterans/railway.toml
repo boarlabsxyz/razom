@@ -1,0 +1,10 @@
+[build]
+builder = "nixpacks"
+buildCommand = "cd veterans && npm install && npm run build"
+
+[deploy]
+startCommand = "cd veterans && npm start"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 100
+restartPolicyType = "on-failure"
+restartPolicyMaxRetries = 10 
