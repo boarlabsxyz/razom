@@ -64,7 +64,7 @@ const CheckboxGroup: React.FC<
       <div
         id={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}-content`}
         data-testid={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}-content`}
-        className={`${st.categoryList} ${isOpen ? st.show : ''}`}
+        className={`${st['category-list']} ${isOpen ? st.show : ''}`}
       >
         {categories.map((category, index) => (
           <label
@@ -72,7 +72,7 @@ const CheckboxGroup: React.FC<
             key={category.id}
             className={st.label}
           >
-            <div className={st.checkboxContainer}>
+            <div className={st['checkbox-container']}>
               <input
                 id={`checkbox-${category.id}`}
                 aria-labelledby={`label-${category.id}`}
@@ -80,11 +80,11 @@ const CheckboxGroup: React.FC<
                 value={category.name}
                 checked={!!selectedCheckboxes[category.id]}
                 onChange={() => handleCheckboxChange(category.id)}
-                className={st.customCheckbox}
+                className={st['custom-checkbox']}
               />
               <span id={`label-${category.id}`}>{category.name}</span>
             </div>
-            <p className={st.numberInfo}>({index + 1})</p>
+            <p className={st['number-info']}>({index + 1})</p>
           </label>
         ))}
       </div>

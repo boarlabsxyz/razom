@@ -26,15 +26,15 @@ export default function UkraineMap({ selectedRegion }: UkraineMapProps) {
         ) => (
           <g
             key={id}
-            className={st.regionGroup}
+            className={st['region-group']}
             aria-labelledby={`region-title-${id}`}
           >
             <title id={`region-title-${id}`}>{regionName}</title>
             <path
               d={pathRegion}
               fill="#DEDEDE"
-              className={`${st.regionPath} ${
-                selectedRegion === regionName ? st.selectedRegion : ''
+              className={`${st['region-path']} ${
+                selectedRegion === regionName ? st['selected-region'] : ''
               }`}
             />
             <path d={pathCircle} fill="white" />

@@ -29,7 +29,7 @@ export default function MapSection() {
 
   return (
     <section className={st.container}>
-      <div className={st.wrapperFilter}>
+      <div className={st['wrapper-filter']}>
         <RegionsList
           selectedRegion={selectedRegion}
           setSelectedRegion={setSelectedRegion}
