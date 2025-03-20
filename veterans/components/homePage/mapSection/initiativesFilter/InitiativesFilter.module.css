@@ -6,6 +6,7 @@
   font-weight: 500;
   margin: 15px 0 10px;
   position: relative;
+  color: var(--haiti);
   cursor: pointer;
 }
 
@@ -64,10 +65,6 @@
 @media (max-width: 480px) {
   .wrapper {
     max-width: 100%;
-  }
-
-  .wrapper button:focus {
-    outline: 2px solid var(--warning);
   }
 
   .title::after {

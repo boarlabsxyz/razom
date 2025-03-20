@@ -53,7 +53,7 @@ export default function Navigation({
   return (
     <div
       ref={menuRef}
-      className={`${st.wrapper} ${isMenuOpen ? st['[mobile-menu-is-open'] : ''}`}
+      className={`${st.wrapper} ${isMenuOpen ? st['mobile-menu-is-open'] : ''}`}
     >
       <button
         ref={buttonRef}
