@@ -1,23 +1,18 @@
 'use client';
 
 import regionsArray from 'data/RegionsArray';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 import st from './regionsList.module.css';
 
 interface RegionsListProps {
-  readonly setCurrentRegion: (region: string) => void;
+  readonly selectedRegion?: string;
+  readonly setSelectedRegion: (region: string) => void;
 }
 
-function RegionsList({ setCurrentRegion }: RegionsListProps) {
-  const defaultRegion = regionsArray.find(
-    (region) => region.name === 'Всі',
-  ) || { name: '', numOfInitiatives: 0 };
-
+function RegionsList({ selectedRegion, setSelectedRegion }: RegionsListProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
-    defaultRegion.name,
-  );
+
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -46,16 +41,17 @@ function RegionsList({ setCurrentRegion }: RegionsListProps) {
     });
   };
 
-  const handleRegionSelect = (region: {
-    name: string;
-    numOfInitiatives?: number;
-  }) => {
-    setSelectedRegion(region.name);
-    setCurrentRegion(region.name);
-    setIsOpen(false);
-    setFocusedIndex(regionsArray.findIndex((reg) => reg.name === region.name));
-    buttonRef.current?.focus();
-  };
+  const handleRegionSelect = useCallback(
+    (region: { name: string; numOfInitiatives?: number }) => {
+      setSelectedRegion(region.name);
+      setIsOpen(false);
+      setFocusedIndex(
+        regionsArray.findIndex((reg) => reg.name === region.name),
+      );
+      buttonRef.current?.focus();
+    },
+    [setSelectedRegion, setIsOpen, setFocusedIndex, regionsArray, buttonRef],
+  );
 
   const handleClickOutside = (event: MouseEvent) => {
     if (

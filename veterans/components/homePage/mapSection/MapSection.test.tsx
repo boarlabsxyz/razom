@@ -1,25 +1,77 @@
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import MapSection from './MapSection';
+import regionsArray from 'data/RegionsArray';
 
-jest.mock('@comps/homePage/mapSection/map', () =>
-  jest.fn(() => <div data-testid="UkraineMap" />),
-);
+jest.mock('./initiativesFilter', () => ({
+  __esModule: true,
+  default: ({
+    setSelectedCheckboxes,
+  }: {
+    selectedCheckboxes: Record<string, boolean>;
+    setSelectedCheckboxes: (checkboxes: Record<string, boolean>) => void;
+  }) => (
+    <div data-testid="initiatives-filter">
+      <button onClick={() => setSelectedCheckboxes({ test: true })}>
+        Select Filter
+      </button>
+    </div>
+  ),
+}));
 
-jest.mock('@comps/homePage/mapSection/regionsFilter', () =>
-  jest.fn(() => <div data-testid="regions-filter" />),
-);
+jest.mock('./map', () => ({
+  __esModule: true,
+  default: ({ selectedRegion }: { selectedRegion: string }) => (
+    <div data-testid="ukraine-map">{selectedRegion}</div>
+  ),
+}));
 
-jest.mock('@comps/homePage/mapSection/initiativesFilter', () =>
-  jest.fn(() => <div data-testid="initiateves-filter" />),
-);
+jest.mock('./regionsFilter', () => ({
+  __esModule: true,
+  default: ({
+    setSelectedRegion,
+  }: {
+    selectedRegion: string | undefined;
+    setSelectedRegion: (region: string) => void;
+  }) => (
+    <div data-testid="regions-list">
+      <button onClick={() => setSelectedRegion('Kyiv')}>Select Kyiv</button>
+    </div>
+  ),
+}));
 
-describe('HomePage', () => {
-  it('renders Container, Hero, and InitiativesSection components', () => {
+describe('MapSection Component', () => {
+  it('renders correctly', () => {
     render(<MapSection />);
+    expect(screen.getByTestId('regions-list')).toBeInTheDocument();
+    expect(screen.getByTestId('initiatives-filter')).toBeInTheDocument();
+    expect(screen.getByTestId('ukraine-map')).toBeInTheDocument();
+  });
 
-    expect(screen.getByTestId('UkraineMap')).toBeInTheDocument();
-    expect(screen.getByTestId('regions-filter')).toBeInTheDocument();
-    expect(screen.getByTestId('initiateves-filter')).toBeInTheDocument();
+  it('updates the selected region when a region is clicked', () => {
+    render(<MapSection />);
+    const selectRegionButton = screen.getByText('Select Kyiv');
+    fireEvent.click(selectRegionButton);
+    expect(screen.getByTestId('ukraine-map')).toHaveTextContent('Kyiv');
+  });
+
+  it('shows reset button when filters are applied', () => {
+    render(<MapSection />);
+    const selectFilterButton = screen.getByText('Select Filter');
+    fireEvent.click(selectFilterButton);
+    expect(screen.getByText('Очистити фільтри')).toBeInTheDocument();
+  });
+
+  it('resets filters when reset button is clicked', () => {
+    render(<MapSection />);
+    const selectRegionButton = screen.getByText('Select Kyiv');
+    fireEvent.click(selectRegionButton);
+    const selectFilterButton = screen.getByText('Select Filter');
+    fireEvent.click(selectFilterButton);
+    const resetButton = screen.getByText('Очистити фільтри');
+    fireEvent.click(resetButton);
+    expect(screen.getByTestId('ukraine-map')).toHaveTextContent(
+      regionsArray.find((r) => r.name === 'Всі')?.name ?? '',
+    );
   });
 });
