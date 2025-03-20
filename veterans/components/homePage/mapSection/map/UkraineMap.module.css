@@ -15,7 +15,7 @@
 }
 
 @media (max-width: 480px) {
-  .iconMap {
+  .icon-map {
     display: none;
   }
 }

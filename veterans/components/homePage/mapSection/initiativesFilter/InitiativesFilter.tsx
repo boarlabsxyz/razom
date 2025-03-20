@@ -30,10 +30,24 @@ const categoriesList2 = [
   { id: 'cat-13', name: 'Міжнародна' },
 ];
 
-const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, categories }) => {
+const CheckboxGroup: React.FC<
+  CheckboxGroupProps & {
+    selectedCheckboxes: Record<string, boolean>;
+    setSelectedCheckboxes: React.Dispatch<
+      React.SetStateAction<Record<string, boolean>>
+    >;
+  }
+> = ({ title, categories, selectedCheckboxes, setSelectedCheckboxes }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleList = () => setIsOpen((prev) => !prev);
+
+  const handleCheckboxChange = (id: string) => {
+    setSelectedCheckboxes((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   return (
     <div className={st.wrapper}>
@@ -50,7 +64,7 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, categories }) => {
       <div
         id={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}-content`}
         data-testid={`category-list-${title.replace(/\s+/g, '-').toLowerCase()}-content`}
-        className={`${st.categoryList} ${isOpen ? st.show : ''}`}
+        className={`${st['category-list']} ${isOpen ? st.show : ''}`}
       >
         {categories.map((category, index) => (
           <label
@@ -58,17 +72,19 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, categories }) => {
             key={category.id}
             className={st.label}
           >
-            <div className={st.checkboxContainer}>
+            <div className={st['checkbox-container']}>
               <input
                 id={`checkbox-${category.id}`}
                 aria-labelledby={`label-${category.id}`}
                 type="checkbox"
                 value={category.name}
-                className={st.customCheckbox}
+                checked={!!selectedCheckboxes[category.id]}
+                onChange={() => handleCheckboxChange(category.id)}
+                className={st['custom-checkbox']}
               />
               <span id={`label-${category.id}`}>{category.name}</span>
             </div>
-            <p className={st.numberInfo}>({index + 1})</p>
+            <p className={st['number-info']}>({index + 1})</p>
           </label>
         ))}
       </div>
@@ -78,13 +94,28 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, categories }) => {
 
 export { CheckboxGroup };
 
-export default function InitiativesFilter() {
+export default function InitiativesFilter({
+  selectedCheckboxes,
+  setSelectedCheckboxes,
+}: Readonly<{
+  selectedCheckboxes: Record<string, boolean>;
+  setSelectedCheckboxes: React.Dispatch<
+    React.SetStateAction<Record<string, boolean>>
+  >;
+}>) {
   return (
     <div>
-      <CheckboxGroup title="Вид ініціативи" categories={categoriesList1} />
+      <CheckboxGroup
+        title="Вид ініціативи"
+        categories={categoriesList1}
+        selectedCheckboxes={selectedCheckboxes}
+        setSelectedCheckboxes={setSelectedCheckboxes}
+      />
       <CheckboxGroup
         title="Походження ініціативи"
         categories={categoriesList2}
+        selectedCheckboxes={selectedCheckboxes}
+        setSelectedCheckboxes={setSelectedCheckboxes}
       />
     </div>
   );
