@@ -3,7 +3,7 @@ import regionsArray from 'data/RegionsArray';
 import InitiativesFilter from './initiativesFilter';
 import UkraineMap from './map';
 import st from './MapSection.module.css';
-import RegionsFilter from './regionsFilter';
+import RegionsList from './regionsFilter';
 
 export default function MapSection() {
   const defaultRegion = regionsArray.find(
