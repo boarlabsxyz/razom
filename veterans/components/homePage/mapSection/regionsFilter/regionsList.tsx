@@ -1,17 +1,19 @@
 'use client';
 
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import regionsArray from 'data/RegionsArray';
-import React, { useState, useEffect, useRef } from 'react';
+
+import { Region, RegionsListProps } from './types';
 
 import st from './regionsList.module.css';
 
-interface RegionsListProps {
-  setCurrentRegion?: (region: string) => void;
-}
+const DEFAULT_REGION_NAME = 'Всі';
+const SEARCH_PLACEHOLDER = 'Укажіть область...';
+const UKRAINIAN_TEXT_REGEX = /^[а-яґєіїё]+$/iu;
 
 function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
   const defaultRegion = regionsArray.find(
-    (region) => region.name === 'Всі',
+    (region) => region.name === DEFAULT_REGION_NAME,
   ) || {
     name: '',
     numOfInitiatives: 0,
@@ -24,123 +26,160 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
   const [focusedIndex, setFocusedIndex] = useState<number | null>(
     regionsArray.findIndex((region) => region.name === defaultRegion.name),
   );
-  const [searchTerm, setSearchTerm] = useState('');
+  const [inputValue, setInputValue] = useState('');
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const isUkrainianText = (text: string) => /^[а-яґєіїё]+$/iu.test(text);
+  const isUkrainianText = useCallback(
+    (text: string) => UKRAINIAN_TEXT_REGEX.test(text),
+    [],
+  );
 
   const filteredRegions = regionsArray.filter((region) =>
-    isUkrainianText(searchTerm)
-      ? region.name.toLowerCase().includes(searchTerm.toLowerCase())
+    isUkrainianText(inputValue)
+      ? region.name.toLowerCase().includes(inputValue.toLowerCase())
       : true,
   );
 
-  const toggleDropdown = () => {
-    setIsOpen((prev) => {
-      if (!prev) {
-        setSearchTerm('');
-        setTimeout(() => {
-          const startIndex =
-            selectedRegion === 'Всі' ? null : (focusedIndex ?? 0);
-          setFocusedIndex(startIndex);
-          if (startIndex !== null) {
-            itemsRef.current[startIndex]?.focus();
-          }
-        }, 0);
+  const scrollToElement = useCallback((element: HTMLElement) => {
+    try {
+      if (typeof element.scrollIntoView === 'function') {
+        element.scrollIntoView({
+          block: 'center',
+          behavior: 'smooth',
+        });
       }
-      return !prev;
-    });
-  };
+    } catch {
+      element.focus();
+    }
+  }, []);
 
-  const handleRegionSelect = (region: {
-    name: string;
-    numOfInitiatives?: number;
-  }) => {
-    setSelectedRegion(region.name);
-    setIsOpen(false);
-    setSearchTerm('');
-    if (region.name === 'Всі') {
-      setFocusedIndex(0);
-    } else {
+  const handleRegionSelect = useCallback(
+    (region: Region) => {
+      setSelectedRegion(region.name);
+      setIsOpen(false);
+      setInputValue('');
       setFocusedIndex(
-        regionsArray.findIndex((reg) => reg.name === region.name),
+        region.name === DEFAULT_REGION_NAME
+          ? 0
+          : regionsArray.findIndex((reg) => reg.name === region.name),
       );
-    }
-    buttonRef.current?.focus();
-    if (setCurrentRegion) {
-      setCurrentRegion(region.name);
-    }
-  };
+      buttonRef.current?.focus();
+      setCurrentRegion?.(region.name);
+    },
+    [setCurrentRegion],
+  );
 
-  const handleClickOutside = (event: MouseEvent) => {
+  const handleClickOutside = useCallback((event: MouseEvent) => {
     if (
       dropdownRef.current &&
       !dropdownRef.current.contains(event.target as Node)
     ) {
       setIsOpen(false);
-      setSearchTerm('');
+      setInputValue('');
       setFocusedIndex(null);
     }
-  };
+  }, []);
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
-    if (event.key === 'Escape') {
-      setIsOpen(false);
-      setSearchTerm('');
-      setFocusedIndex(null);
-    } else if (isOpen) {
-      if (event.key.length === 1 && isUkrainianText(event.key)) {
-        event.preventDefault();
-        setSearchTerm((prev) => {
-          const newTerm = prev + event.key;
-          return newTerm;
-        });
-        setTimeout(() => {
-          listRef.current?.focus();
-        }, 0);
-      } else if (event.key === 'Backspace') {
-        setSearchTerm((prev) => prev.slice(0, -1));
-      } else if (event.key === 'ArrowDown' || event.key === 'Tab') {
-        event.preventDefault();
-        setFocusedIndex((prev) => {
-          const nextIndex =
-            prev === null || prev === filteredRegions.length - 1 ? 0 : prev + 1;
-          itemsRef.current[nextIndex]?.focus();
-          return nextIndex;
-        });
-      } else if (
-        event.key === 'ArrowUp' ||
-        (event.shiftKey && event.key === 'Tab')
-      ) {
-        event.preventDefault();
-        setFocusedIndex((prev) => {
-          const nextIndex =
-            prev === null || prev === 0 ? filteredRegions.length - 1 : prev - 1;
-          itemsRef.current[nextIndex]?.focus();
-          return nextIndex;
-        });
-      } else if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        if (focusedIndex !== null) {
-          handleRegionSelect(filteredRegions[focusedIndex]);
-        }
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (!isOpen) {
+        return;
       }
-    }
-  };
+
+      let newIndex: number;
+
+      switch (e.key) {
+        case 'Tab':
+          e.preventDefault();
+          newIndex = e.shiftKey
+            ? focusedIndex === null || focusedIndex <= 0
+              ? filteredRegions.length - 1
+              : focusedIndex - 1
+            : focusedIndex === null ||
+                focusedIndex >= filteredRegions.length - 1
+              ? 0
+              : focusedIndex + 1;
+          setFocusedIndex(newIndex);
+          itemsRef.current[newIndex]?.focus();
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          newIndex =
+            focusedIndex === null || focusedIndex >= filteredRegions.length - 1
+              ? 0
+              : focusedIndex + 1;
+          setFocusedIndex(newIndex);
+          itemsRef.current[newIndex]?.focus();
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          newIndex =
+            focusedIndex === null || focusedIndex <= 0
+              ? filteredRegions.length - 1
+              : focusedIndex - 1;
+          setFocusedIndex(newIndex);
+          itemsRef.current[newIndex]?.focus();
+          break;
+        case 'Enter':
+        case ' ':
+          e.preventDefault();
+          if (focusedIndex !== null) {
+            handleRegionSelect(filteredRegions[focusedIndex]);
+          }
+          break;
+        case 'Escape':
+          e.preventDefault();
+          setIsOpen(false);
+          setInputValue('');
+          setFocusedIndex(null);
+          break;
+      }
+    },
+    [isOpen, focusedIndex, filteredRegions, handleRegionSelect],
+  );
+
+  const handleInputChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setInputValue(event.target.value);
+      setFocusedIndex(null);
+    },
+    [],
+  );
+
+  const toggleDropdown = useCallback(() => {
+    setIsOpen((prev) => {
+      if (!prev) {
+        setInputValue('');
+        setTimeout(() => {
+          if (selectedRegion !== DEFAULT_REGION_NAME) {
+            const selectedElement = itemsRef.current[focusedIndex || 0];
+            if (selectedElement) {
+              selectedElement.focus();
+              scrollToElement(selectedElement);
+            }
+          } else {
+            inputRef.current?.focus();
+          }
+        }, 0);
+      }
+      return !prev;
+    });
+  }, [selectedRegion, focusedIndex, scrollToElement]);
 
   useEffect(() => {
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      listRef.current?.focus();
+      inputRef.current?.focus();
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, handleClickOutside]);
 
   return (
     <div className={st['regions-wrapper']}>
@@ -172,6 +211,15 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
             }
             onKeyDown={handleKeyDown}
           >
+            <input
+              ref={inputRef}
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+              placeholder={SEARCH_PLACEHOLDER}
+              className={st['region-search-input']}
+              data-testid="region-search-input"
+            />
             {filteredRegions.map((region, index) => (
               <div
                 key={region.name}
@@ -186,10 +234,10 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
                     handleRegionSelect(region);
                   }
                 }}
-                tabIndex={-1}
+                tabIndex={focusedIndex === index ? 0 : -1}
                 className={`${st['region-selector-item']} ${
                   focusedIndex === index ? st.focused : ''
-                }`}
+                } ${selectedRegion === region.name ? st.selected : ''}`}
                 aria-checked={selectedRegion === region.name}
                 aria-label={`Select ${region.name}`}
               >

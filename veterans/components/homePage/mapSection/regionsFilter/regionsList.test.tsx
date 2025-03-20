@@ -39,8 +39,11 @@ const getRegionsList = () => screen.queryByTestId('list-of-regions');
 const getAllRegions = () => screen.queryAllByRole('menuitemradio');
 const getDropdownButton = () => screen.getByTestId('btn-for-region-selection');
 const openDropdown = () => fireEvent.click(getDropdownButton());
-const pressKey = (element: HTMLElement, key: string) =>
-  fireEvent.keyDown(element, { key });
+const pressKey = (
+  element: HTMLElement,
+  key: string,
+  shiftKey: boolean = false,
+) => fireEvent.keyDown(element, { key, shiftKey });
 const selectRegion = (index: number) => fireEvent.click(getAllRegions()[index]);
 
 const setupDropdown = () => {
@@ -55,10 +58,8 @@ const setupDropdownWithSelection = (index: number) => {
 };
 
 const typeText = (text: string) => {
-  const list = getRegionsList();
-  if (list) {
-    text.split('').forEach((char) => pressKey(list, char));
-  }
+  const input = screen.getByTestId('region-search-input');
+  fireEvent.change(input, { target: { value: text } });
 };
 
 describe('RegionsList Component', () => {
@@ -103,17 +104,18 @@ describe('RegionsList Component', () => {
 
   test('clears search term with backspace', async () => {
     setupDropdown();
-    const list = getRegionsList();
-    pressKey(list!, 'в');
+    typeText('в');
 
     await waitFor(() => {
-      expect(getAllRegions().length).toBeLessThan(26);
+      const filteredItems = getAllRegions();
+      expect(filteredItems.length).toBeLessThan(26);
     });
 
-    pressKey(list!, 'Backspace');
+    typeText('');
 
     await waitFor(() => {
-      expect(getAllRegions().length).toBe(26);
+      const filteredItems = getAllRegions();
+      expect(filteredItems.length).toBe(26);
     });
   });
 
@@ -159,6 +161,69 @@ describe('RegionsList Component', () => {
     setupDropdown();
     expect(getRegionsList()).toBeInTheDocument();
     fireEvent.mouseDown(document.body);
+    expect(getRegionsList()).not.toBeInTheDocument();
+  });
+
+  test('handles non-Ukrainian text input correctly', async () => {
+    setupDropdown();
+    typeText('abc123');
+
+    await waitFor(() => {
+      const filteredItems = getAllRegions();
+      expect(filteredItems.length).toBe(26);
+    });
+  });
+
+  test('handles empty input correctly', async () => {
+    setupDropdown();
+    typeText('');
+
+    await waitFor(() => {
+      const filteredItems = getAllRegions();
+      expect(filteredItems.length).toBe(26);
+    });
+  });
+
+  test('handles setCurrentRegion callback correctly', () => {
+    const mockSetCurrentRegion = jest.fn();
+    render(<RegionsList setCurrentRegion={mockSetCurrentRegion} />);
+
+    openDropdown();
+    selectRegion(1);
+
+    expect(mockSetCurrentRegion).toHaveBeenCalledWith('Луцьк');
+  });
+
+  test('handles keyboard navigation with Tab key', () => {
+    setupDropdown();
+    const list = getRegionsList();
+
+    pressKey(list!, 'Tab');
+    expect(getAllRegions()[0]).toHaveFocus();
+
+    pressKey(list!, 'Tab');
+    expect(getAllRegions()[1]).toHaveFocus();
+  });
+
+  test('handles keyboard navigation with Shift+Tab key', () => {
+    setupDropdown();
+    const list = getRegionsList();
+
+    pressKey(list!, 'Tab');
+    expect(getAllRegions()[0]).toHaveFocus();
+
+    pressKey(list!, 'Tab', true);
+    expect(getAllRegions()[25]).toHaveFocus();
+  });
+
+  test('handles Space key for selection', () => {
+    setupDropdown();
+    const regions = getAllRegions();
+
+    pressKey(regions[0], 'ArrowDown');
+    pressKey(regions[0], ' ');
+
+    expect(getDropdownButton()).toHaveTextContent('Вінниця');
     expect(getRegionsList()).not.toBeInTheDocument();
   });
 });
