@@ -1,9 +1,18 @@
 export function setupNextAuthUrl() {
-  if (typeof window === 'undefined' && !process.env.NEXTAUTH_URL) {
-    if (process.env.VERCEL_URL && process.env.VERCEL_URL.trim() !== '') {
-      process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`;
-    } else {
-      process.env.NEXTAUTH_URL = 'http://localhost:8000';
+  if (typeof window !== 'undefined') {
+    return;
+  }
+  if (process.env.NEXTAUTH_URL) {
+    return;
+  }
+
+  if (process.env.VERCEL === '1' || process.env.VERCEL_ENV) {
+    const vercelUrl = process.env.VERCEL_URL;
+    if (vercelUrl && vercelUrl.trim()) {
+      process.env.NEXTAUTH_URL = `https://${vercelUrl}`;
+      return;
     }
   }
+
+  process.env.NEXTAUTH_URL = 'http://localhost:8000';
 }
