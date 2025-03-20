@@ -2,10 +2,10 @@ import { regions } from 'icons/regions';
 import st from './UkraineMap.module.css';
 
 interface UkraineMapProps {
-  readonly currentRegion?: string;
+  readonly selectedRegion?: string;
 }
 
-export default function UkraineMap({ currentRegion }: UkraineMapProps) {
+export default function UkraineMap({ selectedRegion }: UkraineMapProps) {
   return (
     <svg
       viewBox="0 0 896 597"
@@ -26,7 +26,7 @@ export default function UkraineMap({ currentRegion }: UkraineMapProps) {
         ) => (
           <g
             key={id}
-            className={st.regionGroup}
+            className={st['region-group']}
             aria-labelledby={`region-title-${id}`}
           >
             <title id={`region-title-${id}`}>{regionName}</title>
@@ -34,7 +34,7 @@ export default function UkraineMap({ currentRegion }: UkraineMapProps) {
               d={pathRegion}
               fill="#DEDEDE"
               className={`${st['region-path']} ${
-                currentRegion === regionName ? st['selected-region'] : ''
+                selectedRegion === regionName ? st['selected-region'] : ''
               }`}
             />
             <path d={pathCircle} fill="white" />
