@@ -3,8 +3,11 @@ builder = "DOCKERFILE"
 dockerfilePath = "./Dockerfile.keystone"
 
 [deploy]
-startCommand = "npm start"
-healthcheckPath = "/"
+startCommand = "npm run keystone:dev"
+healthcheckPath = "/api/graphql"
 healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 10 
+restartPolicyMaxRetries = 10
+
+[deploy.env]
+PORT = "3000" 
