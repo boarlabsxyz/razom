@@ -14,4 +14,15 @@ RUN chmod +x /usr/src/app/wait-schema-for-keystone.sh
 
 EXPOSE 3000
 
-CMD ["npm", "run", "keystone:dev"]
+ARG NODE_ENV=development
+ENV NODE_ENV=$NODE_ENV
+
+RUN if [ "$NODE_ENV" = "production" ] ; then npm run keystone:prod:build ; fi
+
+CMD if [ "$NODE_ENV" = "production" ] ; \
+    then npm run keystone:prod:start ; \
+    else sh -c "npm run keystone:dev & \
+                /usr/src/app/wait-schema-for-keystone.sh && \
+                cp schema.prisma /usr/src/app/shared/schema.prisma && \
+                tail -f /dev/null" ; \
+    fi
