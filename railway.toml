@@ -1,11 +1,9 @@
 [build]
 builder = "DOCKERFILE"
 dockerfilePath = "./Dockerfile.keystone"
-[build.args]
-NODE_ENV = "production"
 
 [deploy]
-startCommand = "npm run keystone:prod:start"
+startCommand = "./node_modules/.bin/keystone start"
 healthcheckPath = "/api/graphql"
 healthcheckTimeout = 180
 restartPolicyType = "ON_FAILURE"

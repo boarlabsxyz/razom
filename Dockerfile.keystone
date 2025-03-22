@@ -19,23 +19,14 @@ RUN chmod +x /usr/src/app/wait-schema-for-keystone.sh
 
 EXPOSE 3000
 
-# Build argument with default value
-ARG NODE_ENV
-ENV NODE_ENV=${NODE_ENV:-development}
+# Set production mode for build
+ENV NODE_ENV=production
 
-# Always run build in production mode if NODE_ENV is production
-RUN echo "NODE_ENV is set to ${NODE_ENV}" && \
-    if [ "${NODE_ENV}" = "production" ]; then \
-    echo "Running production build..." && \
-    NODE_ENV=production ./node_modules/.bin/keystone build && \
-    echo "Build completed successfully" ; \
-    fi
+# Run the build step
+RUN echo "Running Keystone build in production mode..." && \
+    ./node_modules/.bin/keystone build && \
+    echo "Build completed successfully"
 
-# Start command based on environment
-CMD if [ "${NODE_ENV}" = "production" ]; then \
-    echo "Starting in production mode..." && \
-    NODE_ENV=production ./node_modules/.bin/keystone start ; \
-    else \
-    echo "Starting in development mode..." && \
-    npm run keystone:dev ; \
-    fi
+# Start command
+CMD echo "Starting in production mode..." && \
+    NODE_ENV=production ./node_modules/.bin/keystone start
