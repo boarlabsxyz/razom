@@ -19,20 +19,23 @@ RUN chmod +x /usr/src/app/wait-schema-for-keystone.sh
 
 EXPOSE 3000
 
-ARG NODE_ENV=development
-ENV NODE_ENV=$NODE_ENV
+# Build argument with default value
+ARG NODE_ENV
+ENV NODE_ENV=${NODE_ENV:-development}
 
-# Production build with increased memory limit and build optimization
-RUN if [ "$NODE_ENV" = "production" ] ; then \
+# Always run build in production mode if NODE_ENV is production
+RUN echo "NODE_ENV is set to ${NODE_ENV}" && \
+    if [ "${NODE_ENV}" = "production" ]; then \
     echo "Running production build..." && \
-    NODE_ENV=production npx keystone build && \
-    echo "Build completed" ; \
+    NODE_ENV=production ./node_modules/.bin/keystone build && \
+    echo "Build completed successfully" ; \
     fi
 
-CMD if [ "$NODE_ENV" = "production" ] ; \
-    then NODE_ENV=production npx keystone start ; \
-    else sh -c "npm run keystone:dev & \
-                /usr/src/app/wait-schema-for-keystone.sh && \
-                cp schema.prisma /usr/src/app/shared/schema.prisma && \
-                tail -f /dev/null" ; \
+# Start command based on environment
+CMD if [ "${NODE_ENV}" = "production" ]; then \
+    echo "Starting in production mode..." && \
+    NODE_ENV=production ./node_modules/.bin/keystone start ; \
+    else \
+    echo "Starting in development mode..." && \
+    npm run keystone:dev ; \
     fi

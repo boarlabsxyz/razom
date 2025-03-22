@@ -1,7 +1,8 @@
 [build]
 builder = "DOCKERFILE"
 dockerfilePath = "./Dockerfile.keystone"
-buildArgs = ["NODE_ENV=production"]
+[build.args]
+NODE_ENV = "production"
 
 [deploy]
 startCommand = "npm run keystone:prod:start"
