@@ -18,6 +18,7 @@ module.exports = {
     '!**/layout.tsx',
     '!node_modules/**',
     '!.next/**',
+    '!.vercel/**',
     '!.keystone/**',
     '!keystone.ts',
     '!auth.ts',

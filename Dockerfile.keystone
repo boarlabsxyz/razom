@@ -2,6 +2,9 @@ FROM node:22.11.0
 
 WORKDIR /usr/src/app
 
+# Increase Node memory limit
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 COPY ./veterans/package.json ./veterans/package-lock.json ./
 
 RUN npm ci && npm cache clean --force
@@ -17,7 +20,11 @@ EXPOSE 3000
 ARG NODE_ENV=development
 ENV NODE_ENV=$NODE_ENV
 
-RUN if [ "$NODE_ENV" = "production" ] ; then npm run keystone:prod:build ; fi
+# Production build with increased memory limit and build optimization
+RUN if [ "$NODE_ENV" = "production" ] ; then \
+    export NODE_OPTIONS="--max-old-space-size=4096" && \
+    npm run keystone:prod:build ; \
+    fi
 
 CMD if [ "$NODE_ENV" = "production" ] ; \
     then npm run keystone:prod:start ; \
