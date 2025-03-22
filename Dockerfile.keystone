@@ -22,12 +22,13 @@ ENV NODE_ENV=$NODE_ENV
 
 # Production build with increased memory limit and build optimization
 RUN if [ "$NODE_ENV" = "production" ] ; then \
-    export NODE_OPTIONS="--max-old-space-size=4096" && \
-    npm run keystone:prod:build ; \
+    echo "Running production build..." && \
+    npx keystone build && \
+    echo "Build completed" ; \
     fi
 
 CMD if [ "$NODE_ENV" = "production" ] ; \
-    then npm run keystone:prod:start ; \
+    then npx keystone start ; \
     else sh -c "npm run keystone:dev & \
                 /usr/src/app/wait-schema-for-keystone.sh && \
                 cp schema.prisma /usr/src/app/shared/schema.prisma && \
