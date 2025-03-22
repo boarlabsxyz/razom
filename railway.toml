@@ -11,4 +11,5 @@ restartPolicyMaxRetries = 10
 
 [deploy.env]
 PORT = "3000"
-NODE_ENV = "production" 
+NODE_ENV = "production"
+SESSION_SECRET = "your_actual_production_secret_minimum_32_chars_long_change_this" 
