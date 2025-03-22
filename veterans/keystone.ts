@@ -65,31 +65,9 @@ export default withAuth<TypeInfo<Session>>(
   config<TypeInfo>({
     db: {
       provider: 'postgresql',
-      url: (() => {
-        switch (process.env.NODE_ENV) {
-          case 'production':
-            if (!process.env.PRODUCTION_DATABASE_URL) {
-              throw new Error(
-                'PRODUCTION_DATABASE_URL environment variable is not set',
-              );
-            }
-            return process.env.PRODUCTION_DATABASE_URL;
-          case 'test':
-            if (!process.env.TEST_DATABASE_URL) {
-              throw new Error(
-                'TEST_DATABASE_URL environment variable is not set',
-              );
-            }
-            return process.env.TEST_DATABASE_URL;
-          default:
-            if (!process.env.DEVELOPMENT_DATABASE_URL) {
-              throw new Error(
-                'DEVELOPMENT_DATABASE_URL environment variable is not set',
-              );
-            }
-            return process.env.DEVELOPMENT_DATABASE_URL;
-        }
-      })(),
+      url:
+        process.env.DATABASE_URL ||
+        'postgresql://postgres:postgres@localhost:5432/razom',
     },
     lists,
     session: statelessSessions({
@@ -103,6 +81,15 @@ export default withAuth<TypeInfo<Session>>(
     server: {
       extendExpressApp: (app) => {
         app.use(cors(corsOptions));
+      },
+      cors: {
+        origin: [
+          process.env.FRONTEND_URL || 'http://localhost:8000',
+          'https://*.vercel.app',
+        ],
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
       },
     },
   }),
