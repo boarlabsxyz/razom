@@ -12,4 +12,6 @@ restartPolicyMaxRetries = 10
 [deploy.env]
 PORT = "3000"
 NODE_ENV = "production"
+# This is a placeholder - Railway will automatically inject the real DATABASE_URL
+DATABASE_URL = "${RAILWAY_POSTGRESQL_CONNECTION_URL}"
 SESSION_SECRET = "your_actual_production_secret_minimum_32_chars_long_change_this" 

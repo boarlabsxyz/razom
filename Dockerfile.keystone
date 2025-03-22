@@ -19,17 +19,19 @@ RUN chmod +x /usr/src/app/wait-schema-for-keystone.sh
 
 EXPOSE 3000
 
-# Set production mode and temporary SESSION_SECRET for build
+# Set production mode and temporary environment variables for build
 ENV NODE_ENV=production
 ENV SESSION_SECRET="temporary_secret_for_build_time_only_minimum_32_chars_long"
+ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/razom"
 
 # Run the build step
 RUN echo "Running Keystone build in production mode..." && \
     ./node_modules/.bin/keystone build && \
     echo "Build completed successfully"
 
-# Unset the temporary SESSION_SECRET
+# Unset the temporary environment variables
 ENV SESSION_SECRET=""
+ENV DATABASE_URL=""
 
 # Start command
 CMD echo "Starting in production mode..." && \
