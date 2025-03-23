@@ -96,32 +96,29 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
       switch (e.key) {
         case 'Tab':
           e.preventDefault();
-          newIndex = e.shiftKey
-            ? focusedIndex === null || focusedIndex <= 0
-              ? filteredRegions.length - 1
-              : focusedIndex - 1
-            : focusedIndex === null ||
-                focusedIndex >= filteredRegions.length - 1
-              ? 0
-              : focusedIndex + 1;
+          newIndex = calculateTabIndex(
+            e.shiftKey,
+            focusedIndex,
+            filteredRegions.length,
+          );
           setFocusedIndex(newIndex);
           itemsRef.current[newIndex]?.focus();
           break;
         case 'ArrowDown':
           e.preventDefault();
-          newIndex =
-            focusedIndex === null || focusedIndex >= filteredRegions.length - 1
-              ? 0
-              : focusedIndex + 1;
+          newIndex = calculateArrowDownIndex(
+            focusedIndex,
+            filteredRegions.length,
+          );
           setFocusedIndex(newIndex);
           itemsRef.current[newIndex]?.focus();
           break;
         case 'ArrowUp':
           e.preventDefault();
-          newIndex =
-            focusedIndex === null || focusedIndex <= 0
-              ? filteredRegions.length - 1
-              : focusedIndex - 1;
+          newIndex = calculateArrowUpIndex(
+            focusedIndex,
+            filteredRegions.length,
+          );
           setFocusedIndex(newIndex);
           itemsRef.current[newIndex]?.focus();
           break;
@@ -142,6 +139,40 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
     },
     [isOpen, focusedIndex, filteredRegions, handleRegionSelect],
   );
+
+  const calculateTabIndex = (
+    shiftKey: boolean,
+    focusedIndex: number | null,
+    length: number,
+  ): number => {
+    if (shiftKey) {
+      return focusedIndex === null || focusedIndex <= 0
+        ? length - 1
+        : focusedIndex - 1;
+    } else {
+      return focusedIndex === null || focusedIndex >= length - 1
+        ? 0
+        : focusedIndex + 1;
+    }
+  };
+
+  const calculateArrowDownIndex = (
+    focusedIndex: number | null,
+    length: number,
+  ): number => {
+    return focusedIndex === null || focusedIndex >= length - 1
+      ? 0
+      : focusedIndex + 1;
+  };
+
+  const calculateArrowUpIndex = (
+    focusedIndex: number | null,
+    length: number,
+  ): number => {
+    return focusedIndex === null || focusedIndex <= 0
+      ? length - 1
+      : focusedIndex - 1;
+  };
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -219,6 +250,16 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
               placeholder={SEARCH_PLACEHOLDER}
               className={st['region-search-input']}
               data-testid="region-search-input"
+              aria-label="Пошук регіону"
+              aria-controls="region-list"
+              aria-expanded={isOpen}
+              aria-haspopup="listbox"
+              aria-autocomplete="list"
+              role="combobox"
+              aria-owns="region-list"
+              aria-activedescendant={
+                focusedIndex !== null ? `region-${focusedIndex}` : undefined
+              }
             />
             {filteredRegions.map((region, index) => (
               <div
