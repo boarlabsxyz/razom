@@ -74,10 +74,10 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
     [setCurrentRegion],
   );
 
-  const handleClickOutside = useCallback((event: MouseEvent) => {
+  const handleClickOutside = useCallback((e: MouseEvent) => {
     if (
       dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
+      !dropdownRef.current.contains(e.target as Node)
     ) {
       setIsOpen(false);
       setInputValue('');
@@ -96,11 +96,9 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
       switch (e.key) {
         case 'Tab':
           e.preventDefault();
-          newIndex = calculateTabIndex(
-            e.shiftKey,
-            focusedIndex,
-            filteredRegions.length,
-          );
+          newIndex = e.shiftKey
+            ? calculatePreviousTabIndex(focusedIndex, filteredRegions.length)
+            : calculateNextTabIndex(focusedIndex, filteredRegions.length);
           setFocusedIndex(newIndex);
           itemsRef.current[newIndex]?.focus();
           break;
@@ -140,20 +138,22 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
     [isOpen, focusedIndex, filteredRegions, handleRegionSelect],
   );
 
-  const calculateTabIndex = (
-    shiftKey: boolean,
+  const calculatePreviousTabIndex = (
     focusedIndex: number | null,
     length: number,
   ): number => {
-    if (shiftKey) {
-      return focusedIndex === null || focusedIndex <= 0
-        ? length - 1
-        : focusedIndex - 1;
-    } else {
-      return focusedIndex === null || focusedIndex >= length - 1
-        ? 0
-        : focusedIndex + 1;
-    }
+    return focusedIndex === null || focusedIndex <= 0
+      ? length - 1
+      : focusedIndex - 1;
+  };
+
+  const calculateNextTabIndex = (
+    focusedIndex: number | null,
+    length: number,
+  ): number => {
+    return focusedIndex === null || focusedIndex >= length - 1
+      ? 0
+      : focusedIndex + 1;
   };
 
   const calculateArrowDownIndex = (
@@ -175,8 +175,8 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
   };
 
   const handleInputChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setInputValue(event.target.value);
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setInputValue(e.target.value);
       setFocusedIndex(null);
     },
     [],
@@ -270,8 +270,8 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
                   itemsRef.current[index] = el;
                 }}
                 onClick={() => handleRegionSelect(region)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
                     handleRegionSelect(region);
                   }
                 }}
