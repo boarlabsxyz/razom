@@ -69,93 +69,93 @@ jobs:
       - name: Run linters
         run: docker compose run --rm app-nextjs npm run lint
 
-  # e2e-tests:
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 10
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
+  e2e-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  #     - name: Create .env file
-  #       run: |
-  #         echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
-  #         echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> veterans/.env
-  #         echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> veterans/.env
+      - name: Create .env file
+        run: |
+          echo "DEVELOPMENT_DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> veterans/.env
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> veterans/.env
 
-  #     - name: Get latest run ID for playwright-snapshots
-  #       id: get-latest-run
-  #       run: |
-  #         for i in {1..3}; do
-  #           response=$(curl -sL --max-time 10 \
-  #             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-  #             -H "Accept: application/vnd.github+json" \
-  #             "https://api.github.com/repos/${{ github.repository }}/actions/artifacts")
+      - name: Get latest run ID for playwright-snapshots
+        id: get-latest-run
+        run: |
+          for i in {1..3}; do
+            response=$(curl -sL --max-time 10 \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/artifacts")
 
-  #           if [ $? -eq 0 ]; then
-  #             latest=$(echo "$response" | \
-  #               jq -r '[.artifacts[] | select(.name == "playwright-snapshots")] | sort_by(.created_at) | last')
+            if [ $? -eq 0 ]; then
+              latest=$(echo "$response" | \
+                jq -r '[.artifacts[] | select(.name == "playwright-snapshots")] | sort_by(.created_at) | last')
 
-  #             if [ "$latest" != "null" ]; then
-  #               run_id=$(echo "$latest" | jq -r '.workflow_run.id')
-  #               echo "latest_run_id=$run_id" >> $GITHUB_ENV
-  #               echo "Found latest run ID: $run_id"
-  #               break
-  #             fi
-  #           fi
-  #           echo "Attempt $i failed, retrying..."
-  #           sleep 5
-  #         done
+              if [ "$latest" != "null" ]; then
+                run_id=$(echo "$latest" | jq -r '.workflow_run.id')
+                echo "latest_run_id=$run_id" >> $GITHUB_ENV
+                echo "Found latest run ID: $run_id"
+                break
+              fi
+            fi
+            echo "Attempt $i failed, retrying..."
+            sleep 5
+          done
 
-  #     - name: Download Playwright snapshots artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: playwright-snapshots
-  #         path: e2e/nextjs-test/screenshot-test.spec.ts-snapshots
-  #         merge-multiple: true
-  #         github-token: ${{ secrets.GITHUB_TOKEN }}
-  #         repository: ${{ github.repository }}
-  #         run-id: ${{ env.latest_run_id }}
+      - name: Download Playwright snapshots artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-snapshots
+          path: e2e/nextjs-test/screenshot-test.spec.ts-snapshots
+          merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.latest_run_id }}
 
-  #     - name: Verify downloaded snapshots
-  #       run: ls -la e2e/nextjs-test/screenshot-test.spec.ts-snapshots
+      - name: Verify downloaded snapshots
+        run: ls -la e2e/nextjs-test/screenshot-test.spec.ts-snapshots
 
-  #     - name: Docker starts services
-  #       run: docker compose up -d --build
+      - name: Docker starts services
+        run: docker compose up -d --build
 
-  #     - name: Install Playwright Browsers (app-keystone)
-  #       run: docker compose exec app-keystone npx playwright install --with-deps
+      - name: Install Playwright Browsers (app-keystone)
+        run: docker compose exec app-keystone npx playwright install --with-deps
 
-  #     - name: Show Keystone logs
-  #       run: docker compose logs app-keystone
+      - name: Show Keystone logs
+        run: docker compose logs app-keystone
 
-  #     - name: Run Playwright tests (app-keystone)
-  #       run: |
-  #         timeout 600s docker compose exec app-keystone sh -c "npm run test:e2e -- e2e/keystone-test" || echo "TESTS_FAILED=true" >> $GITHUB_ENV
-  #       continue-on-error: true
+      - name: Run Playwright tests (app-keystone)
+        run: |
+          timeout 600s docker compose exec app-keystone sh -c "npm run test:e2e -- e2e/keystone-test" || echo "TESTS_FAILED=true" >> $GITHUB_ENV
+        continue-on-error: true
 
-  #     - name: Install Playwright Browsers (app-nextjs)
-  #       run: docker compose exec app-nextjs npx playwright install --with-deps
+      - name: Install Playwright Browsers (app-nextjs)
+        run: docker compose exec app-nextjs npx playwright install --with-deps
 
-  #     - name: Copy snapshots to Docker container
-  #       run: |
-  #         docker cp e2e/nextjs-test/screenshot-test.spec.ts-snapshots razom-app-nextjs-1:/usr/src/app/e2e/nextjs-test/
+      - name: Copy snapshots to Docker container
+        run: |
+          docker cp e2e/nextjs-test/screenshot-test.spec.ts-snapshots razom-app-nextjs-1:/usr/src/app/e2e/nextjs-test/
 
-  #     - name: Run Playwright tests (app-nextjs)
-  #       run: |
-  #         timeout 600s docker compose exec app-nextjs sh -c "npm run test:e2e -- e2e/nextjs-test" || echo "TESTS_FAILED=true" >> $GITHUB_ENV
-  #       continue-on-error: true
+      - name: Run Playwright tests (app-nextjs)
+        run: |
+          timeout 600s docker compose exec app-nextjs sh -c "npm run test:e2e -- e2e/nextjs-test" || echo "TESTS_FAILED=true" >> $GITHUB_ENV
+        continue-on-error: true
 
-  #     - name: Upload snapshots as new artifact
-  #       uses: actions/upload-artifact@v4
-  #       if: always()
-  #       with:
-  #         name: playwright-report
-  #         path: veterans/playwright-report/
-  #         retention-days: 30
+      - name: Upload snapshots as new artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: veterans/playwright-report/
+          retention-days: 30
 
-  #     - name: Fail workflow if tests failed
-  #       if: ${{ env.TESTS_FAILED == 'true' }}
-  #       run: exit 1
+      - name: Fail workflow if tests failed
+        if: ${{ env.TESTS_FAILED == 'true' }}
+        run: exit 1
 
   sonarqube:
     runs-on: ubuntu-latest
@@ -192,7 +192,7 @@ jobs:
     needs:
       - lint
       - unit-tests
-      # - e2e-tests
+      - e2e-tests
       - sonarqube
     steps:
       - name: Checkout repository
