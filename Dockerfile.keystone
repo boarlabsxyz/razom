@@ -1,51 +1,72 @@
+# FROM node:22.11.0
+
+# WORKDIR /usr/src/app
+
+# # Increase Node memory limit
+# ENV NODE_OPTIONS="--max-old-space-size=4096"
+
+# # First copy only package files to optimize layer caching
+# COPY ./veterans/package*.json ./
+
+# RUN npm ci && npm cache clean --force
+
+# # Then copy the rest of the application
+# COPY ./veterans ./
+
+# EXPOSE 3000
+
+# # Set production mode and temporary environment variables for build
+# ENV NODE_ENV=production
+# ENV SESSION_SECRET="temporary_secret_for_build_time_only_minimum_32_chars_long"
+
+# # Run the build step
+# RUN echo "Running Keystone build in production mode..." && \
+#     ./node_modules/.bin/keystone build && \
+#     echo "Build completed successfully"
+
+# # Install PostgreSQL client for health checks
+# RUN apt-get update && apt-get install -y postgresql-client
+
+# # Create startup script with proper database connection handling
+# RUN echo '#!/bin/bash\n\
+# echo "Starting in production mode..."\n\
+# \n\
+# # Parse DATABASE_URL\n\
+# DB_HOST=$(echo $DATABASE_URL | sed -n "s/.*@\(.*\):.*/\1/p")\n\
+# DB_PORT=$(echo $DATABASE_URL | sed -n "s/.*:\([0-9]*\)\/.*/\1/p")\n\
+# DB_USER=$(echo $DATABASE_URL | sed -n "s/.*:\/\/\(.*\):.*/\1/p")\n\
+# DB_PASS=$(echo $DATABASE_URL | sed -n "s/.*:\/\/.*:\(.*\)@.*/\1/p")\n\
+# \n\
+# echo "Waiting for database at $DB_HOST:$DB_PORT..."\n\
+# \n\
+# until PGPASSWORD=$DB_PASS psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "postgres" -c "\q" >/dev/null 2>&1; do\n\
+#   echo "Database is unavailable - sleeping"\n\
+#   sleep 2\n\
+# done\n\
+# \n\
+# echo "Database is up - starting application"\n\
+# exec node_modules/.bin/keystone start\n' > /usr/src/app/start.sh && \
+# chmod +x /usr/src/app/start.sh
+
+# CMD ["/usr/src/app/start.sh"]
+
 FROM node:22.11.0
 
 WORKDIR /usr/src/app
 
-# Increase Node memory limit
-ENV NODE_OPTIONS="--max-old-space-size=4096"
-
-# First copy only package files to optimize layer caching
-COPY ./veterans/package*.json ./
+COPY ./veterans/package.json ./veterans/package-lock.json ./
 
 RUN npm ci && npm cache clean --force
 
-# Then copy the rest of the application
-COPY ./veterans ./
+COPY ./veterans .
+
+COPY ./scripts/wait-schema-for-keystone.sh /usr/src/app/wait-schema-for-keystone.sh
+
+RUN chmod +x /usr/src/app/wait-schema-for-keystone.sh
 
 EXPOSE 3000
 
-# Set production mode and temporary environment variables for build
-ENV NODE_ENV=production
-ENV SESSION_SECRET="temporary_secret_for_build_time_only_minimum_32_chars_long"
-
-# Run the build step
-RUN echo "Running Keystone build in production mode..." && \
-    ./node_modules/.bin/keystone build && \
-    echo "Build completed successfully"
-
-# Install PostgreSQL client for health checks
-RUN apt-get update && apt-get install -y postgresql-client
-
-# Create startup script with proper database connection handling
-RUN echo '#!/bin/bash\n\
-echo "Starting in production mode..."\n\
-\n\
-# Parse DATABASE_URL\n\
-DB_HOST=$(echo $DATABASE_URL | sed -n "s/.*@\(.*\):.*/\1/p")\n\
-DB_PORT=$(echo $DATABASE_URL | sed -n "s/.*:\([0-9]*\)\/.*/\1/p")\n\
-DB_USER=$(echo $DATABASE_URL | sed -n "s/.*:\/\/\(.*\):.*/\1/p")\n\
-DB_PASS=$(echo $DATABASE_URL | sed -n "s/.*:\/\/.*:\(.*\)@.*/\1/p")\n\
-\n\
-echo "Waiting for database at $DB_HOST:$DB_PORT..."\n\
-\n\
-until PGPASSWORD=$DB_PASS psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "postgres" -c "\q" >/dev/null 2>&1; do\n\
-  echo "Database is unavailable - sleeping"\n\
-  sleep 2\n\
-done\n\
-\n\
-echo "Database is up - starting application"\n\
-exec node_modules/.bin/keystone start\n' > /usr/src/app/start.sh && \
-chmod +x /usr/src/app/start.sh
-
-CMD ["/usr/src/app/start.sh"]
+CMD ["sh", "-c", "npm run keystone:dev & \
+                  /usr/src/app/wait-schema-for-keystone.sh && \
+                  cp schema.prisma /usr/src/app/shared/schema.prisma &&\
+                  tail -f /dev/null"]

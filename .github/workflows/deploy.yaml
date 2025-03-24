@@ -1,11 +1,11 @@
 name: Vercel Deployment
 
 on:
-  pull_request:
-      types:
-      - opened
-      - synchronize
-      - reopened
+  # pull_request:
+  #     types:
+  #     - opened
+  #     - synchronize
+  #     - reopened
   workflow_dispatch:
 
 env:
@@ -37,9 +37,9 @@ jobs:
 
       - name: Create .env file
         run: |
-             echo "DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
-             echo "TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }}" >> veterans/.env
-             echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> veterans/.env
+          echo "DATABASE_URL=${{ secrets.DEVELOPMENT_DATABASE_URL }}" > veterans/.env
+          echo "TEST_DATABASE_URL=${{ secrets.TEST_DATABASE_URL }}" >> veterans/.env
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> veterans/.env
 
       - name: Build app image
         run: docker compose build
