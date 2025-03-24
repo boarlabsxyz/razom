@@ -28,14 +28,23 @@ RUN echo "Running Keystone build in production mode..." && \
 # Install PostgreSQL client for health checks
 RUN apt-get update && apt-get install -y postgresql-client
 
-# Create startup script
+# Create startup script with proper database connection handling
 RUN echo '#!/bin/bash\n\
 echo "Starting in production mode..."\n\
-echo "Waiting for database..."\n\
-until pg_isready -h $(echo $DATABASE_URL | sed -n "s/.*@\(.*\):.*/\1/p") -p $(echo $DATABASE_URL | sed -n "s/.*:\([0-9]*\)\/.*/\1/p"); do\n\
+\n\
+# Parse DATABASE_URL\n\
+DB_HOST=$(echo $DATABASE_URL | sed -n "s/.*@\(.*\):.*/\1/p")\n\
+DB_PORT=$(echo $DATABASE_URL | sed -n "s/.*:\([0-9]*\)\/.*/\1/p")\n\
+DB_USER=$(echo $DATABASE_URL | sed -n "s/.*:\/\/\(.*\):.*/\1/p")\n\
+DB_PASS=$(echo $DATABASE_URL | sed -n "s/.*:\/\/.*:\(.*\)@.*/\1/p")\n\
+\n\
+echo "Waiting for database at $DB_HOST:$DB_PORT..."\n\
+\n\
+until PGPASSWORD=$DB_PASS psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "postgres" -c "\q" >/dev/null 2>&1; do\n\
   echo "Database is unavailable - sleeping"\n\
   sleep 2\n\
 done\n\
+\n\
 echo "Database is up - starting application"\n\
 exec node_modules/.bin/keystone start\n' > /usr/src/app/start.sh && \
 chmod +x /usr/src/app/start.sh
