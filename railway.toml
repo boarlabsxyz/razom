@@ -7,7 +7,7 @@ PRODUCTION_DATABASE_URL = "${{PRODUCTION_DATABASE_URL}}"
 SESSION_SECRET = "${{SESSION_SECRET}}"
 
 [deploy]
-startCommand = "node_modules/.bin/keystone start"
+startCommand = "/usr/src/app/start.sh"
 healthcheckPath = "/api/graphql"
 healthcheckTimeout = 180
 restartPolicyType = "ON_FAILURE"
