@@ -3,7 +3,7 @@ builder = "DOCKERFILE"
 dockerfilePath = "./Dockerfile.keystone"
 
 [deploy]
-startCommand = "./node_modules/.bin/keystone start"
+startCommand = "/usr/src/app/start.sh"
 healthcheckPath = "/api/graphql"
 healthcheckTimeout = 180
 restartPolicyType = "ON_FAILURE"
@@ -12,6 +12,6 @@ restartPolicyMaxRetries = 10
 [deploy.env]
 PORT = "3000"
 NODE_ENV = "production"
-# Railway will automatically inject the DATABASE_URL from the linked PostgreSQL service
+# Make sure to link your PostgreSQL service in Railway dashboard
 DATABASE_URL = "${{Postgres.DATABASE_URL}}"
 SESSION_SECRET = "your_actual_production_secret_minimum_32_chars_long_change_this" 
