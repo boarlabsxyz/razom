@@ -19,6 +19,10 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV SESSION_SECRET="temporary_secret_for_build_time_only_minimum_32_chars_long"
 
+# Use build argument for database URL
+ARG PRODUCTION_DATABASE_URL
+ENV PRODUCTION_DATABASE_URL=$PRODUCTION_DATABASE_URL
+
 # Run the build step
 RUN echo "Running Keystone build in production mode..." && \
     ./node_modules/.bin/keystone build && \
@@ -31,11 +35,11 @@ RUN apt-get update && apt-get install -y postgresql-client
 RUN echo '#!/bin/bash\n\
 echo "Starting in production mode..."\n\
 \n\
-# Parse DATABASE_URL\n\
-DB_HOST=$(echo $DATABASE_URL | sed -n "s/.*@\(.*\):.*/\1/p")\n\
-DB_PORT=$(echo $DATABASE_URL | sed -n "s/.*:\([0-9]*\)\/.*/\1/p")\n\
-DB_USER=$(echo $DATABASE_URL | sed -n "s/.*:\/\/\(.*\):.*/\1/p")\n\
-DB_PASS=$(echo $DATABASE_URL | sed -n "s/.*:\/\/.*:\(.*\)@.*/\1/p")\n\
+# Parse PRODUCTION_DATABASE_URL\n\
+DB_HOST=$(echo $PRODUCTION_DATABASE_URL | sed -n "s/.*@\(.*\):.*/\1/p")\n\
+DB_PORT=$(echo $PRODUCTION_DATABASE_URL | sed -n "s/.*:\([0-9]*\)\/.*/\1/p")\n\
+DB_USER=$(echo $PRODUCTION_DATABASE_URL | sed -n "s/.*:\/\/\(.*\):.*/\1/p")\n\
+DB_PASS=$(echo $PRODUCTION_DATABASE_URL | sed -n "s/.*:\/\/.*:\(.*\)@.*/\1/p")\n\
 \n\
 echo "Waiting for database at $DB_HOST:$DB_PORT..."\n\
 \n\
