@@ -18,7 +18,6 @@ EXPOSE 3000
 # Set production mode and temporary environment variables for build
 ENV NODE_ENV=production
 ENV SESSION_SECRET="temporary_secret_for_build_time_only_minimum_32_chars_long"
-ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/razom"
 
 # Run the build step
 RUN echo "Running Keystone build in production mode..." && \
