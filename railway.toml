@@ -1,12 +1,13 @@
 [build]
 builder = "DOCKERFILE"
 dockerfilePath = "./Dockerfile.keystone"
+
 [build.args]
 PRODUCTION_DATABASE_URL = "${{PRODUCTION_DATABASE_URL}}"
 SESSION_SECRET = "${{SESSION_SECRET}}"
 
 [deploy]
-startCommand = "docker run -p $PORT:3000 my-keystone"
+startCommand = "node_modules/.bin/keystone start"
 healthcheckPath = "/api/graphql"
 healthcheckTimeout = 180
 restartPolicyType = "ON_FAILURE"
