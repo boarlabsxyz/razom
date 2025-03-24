@@ -18,17 +18,8 @@ RUN mkdir -p /usr/src/app/shared
 
 EXPOSE 3000
 
-# Set production mode and environment variables
+# Set production mode
 ENV NODE_ENV=production
-
-# Use build arguments for sensitive information
-ARG PRODUCTION_DATABASE_URL
-ARG SESSION_SECRET
-
-# Set environment variables from build arguments
-ENV PRODUCTION_DATABASE_URL=${PRODUCTION_DATABASE_URL}
-ENV SESSION_SECRET=${SESSION_SECRET}
-ENV DATABASE_URL=${PRODUCTION_DATABASE_URL}
 
 # Install PostgreSQL client for health checks
 RUN apt-get update && apt-get install -y postgresql-client
@@ -37,13 +28,13 @@ RUN apt-get update && apt-get install -y postgresql-client
 RUN echo '#!/bin/bash\n\
 echo "Starting in production mode..."\n\
 \n\
-# Check if PRODUCTION_DATABASE_URL is set\n\
-if [ -z "$PRODUCTION_DATABASE_URL" ]; then\n\
-    echo "Error: PRODUCTION_DATABASE_URL is not set"\n\
+# Check if DATABASE_URL is set\n\
+if [ -z "$DATABASE_URL" ]; then\n\
+    echo "Error: DATABASE_URL is not set"\n\
     exit 1\n\
 fi\n\
 \n\
-DB_URL="$PRODUCTION_DATABASE_URL"\n\
+DB_URL="$DATABASE_URL"\n\
 echo "Using database URL: $DB_URL"\n\
 \n\
 # Extract components from DATABASE_URL\n\
