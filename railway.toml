@@ -3,16 +3,16 @@ builder = "DOCKERFILE"
 dockerfilePath = "./Dockerfile.keystone"
 [build.args]
 PRODUCTION_DATABASE_URL = "${{PRODUCTION_DATABASE_URL}}"
+SESSION_SECRET = "${{SESSION_SECRET}}"
 
 [deploy]
-startCommand = "/usr/src/app/start.sh"
+startCommand = "docker run -p $PORT:3000 my-keystone"
 healthcheckPath = "/api/graphql"
 healthcheckTimeout = 180
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
 [deploy.env]
-PORT = "3000"
 NODE_ENV = "production"
 PRODUCTION_DATABASE_URL = "${{PRODUCTION_DATABASE_URL}}"
-SESSION_SECRET = "your_actual_production_secret_minimum_32_chars_long_change_this" 
+SESSION_SECRET = "${{SESSION_SECRET}}" 
