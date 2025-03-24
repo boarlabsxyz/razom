@@ -28,6 +28,7 @@ ARG SESSION_SECRET
 # Set environment variables from build arguments
 ENV PRODUCTION_DATABASE_URL=${PRODUCTION_DATABASE_URL}
 ENV SESSION_SECRET=${SESSION_SECRET}
+ENV DATABASE_URL=${PRODUCTION_DATABASE_URL}
 
 # Install PostgreSQL client for health checks
 RUN apt-get update && apt-get install -y postgresql-client
@@ -36,7 +37,12 @@ RUN apt-get update && apt-get install -y postgresql-client
 RUN echo '#!/bin/bash\n\
 echo "Starting in production mode..."\n\
 \n\
-# Parse PRODUCTION_DATABASE_URL\n\
+# Check if PRODUCTION_DATABASE_URL is set\n\
+if [ -z "$PRODUCTION_DATABASE_URL" ]; then\n\
+    echo "Error: PRODUCTION_DATABASE_URL is not set"\n\
+    exit 1\n\
+fi\n\
+\n\
 DB_URL="$PRODUCTION_DATABASE_URL"\n\
 echo "Using database URL: $DB_URL"\n\
 \n\
@@ -52,6 +58,11 @@ echo "Parsed database connection:"\n\
 echo "Host: $DB_HOST"\n\
 echo "Port: $DB_PORT"\n\
 echo "User: $DB_USER"\n\
+\n\
+if [ -z "$DB_HOST" ] || [ -z "$DB_USER" ] || [ -z "$DB_PASS" ]; then\n\
+    echo "Error: Failed to parse database URL components"\n\
+    exit 1\n\
+fi\n\
 \n\
 echo "Waiting for database at $DB_HOST:$DB_PORT..."\n\
 \n\
