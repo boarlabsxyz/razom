@@ -12,6 +12,6 @@ restartPolicyMaxRetries = 10
 [deploy.env]
 PORT = "3000"
 NODE_ENV = "production"
-# Make sure to link your PostgreSQL service in Railway dashboard
-DATABASE_URL = "${{Postgres.DATABASE_URL}}"
+# Use PRODUCTION_DATABASE_URL from .env file
+DATABASE_URL = "${{PRODUCTION_DATABASE_URL}}"
 SESSION_SECRET = "your_actual_production_secret_minimum_32_chars_long_change_this" 
