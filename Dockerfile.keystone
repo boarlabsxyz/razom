@@ -19,13 +19,13 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV SESSION_SECRET="temporary_secret_for_build_time_only_minimum_32_chars_long"
 
-# Use build argument for database URL
+# Use build argument for database URL and ensure it's available during build
 ARG PRODUCTION_DATABASE_URL
-ENV PRODUCTION_DATABASE_URL=$PRODUCTION_DATABASE_URL
+ENV PRODUCTION_DATABASE_URL=${PRODUCTION_DATABASE_URL}
 
-# Run the build step
+# Run the build step with explicit environment variable
 RUN echo "Running Keystone build in production mode..." && \
-    ./node_modules/.bin/keystone build && \
+    PRODUCTION_DATABASE_URL=${PRODUCTION_DATABASE_URL} ./node_modules/.bin/keystone build && \
     echo "Build completed successfully"
 
 # Install PostgreSQL client for health checks
