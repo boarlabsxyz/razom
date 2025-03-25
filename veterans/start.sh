@@ -1,5 +1,8 @@
 #!/bin/bash
 echo "Starting in production mode..."
+echo "Environment variables:"
+env
+echo "Starting in production mode..."
 
 if [ -z "$DATABASE_URL" ]; then
     echo "Error: DATABASE_URL is not set"
