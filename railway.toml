@@ -2,6 +2,9 @@
 builder = "DOCKERFILE"
 dockerfilePath = "./Dockerfile.keystone"
 
+[build.args]
+SESSION_SECRET = "${{SESSION_SECRET}}"
+
 [deploy]
 startCommand = "/usr/src/app/start.sh"
 healthcheckPath = "/api/graphql"

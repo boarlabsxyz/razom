@@ -16,6 +16,10 @@ COPY ./veterans .
 # Create shared directory
 RUN mkdir -p /usr/src/app/shared
 
+# Set build arguments
+ARG SESSION_SECRET
+ENV SESSION_SECRET=${SESSION_SECRET}
+
 # Run keystone build during image creation
 RUN node_modules/.bin/keystone build
 
