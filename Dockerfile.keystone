@@ -5,23 +5,30 @@ WORKDIR /usr/src/app
 # Increase Node memory limit
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
-# Copy package files first to optimize layer caching
+# First copy only package files to optimize layer caching
 COPY ./veterans/package.json ./veterans/package-lock.json ./
 
 RUN npm ci && npm cache clean --force
 
-# Copy the rest of the application
+# Then copy the rest of the application
 COPY ./veterans .
 
-# Copy startup script
-COPY ./veterans/start.sh /usr/src/app/start.sh
-RUN chmod +x /usr/src/app/start.sh
+# Create shared directory
+RUN mkdir -p /usr/src/app/shared
+
+# Run keystone build during image creation
+RUN node_modules/.bin/keystone build
 
 EXPOSE 3000
 
+# Set production mode
 ENV NODE_ENV=production
 
 # Install PostgreSQL client for health checks
 RUN apt-get update && apt-get install -y postgresql-client
+
+# Copy startup script
+COPY ./veterans/start.sh /usr/src/app/start.sh
+RUN chmod +x /usr/src/app/start.sh
 
 CMD ["/usr/src/app/start.sh"]
