@@ -7,10 +7,11 @@ SESSION_SECRET = "${{SESSION_SECRET}}"
 
 [deploy]
 startCommand = "/usr/src/app/start.sh"
-healthcheckPath = "/"
+healthcheckPath = "/api/graphql"
 healthcheckTimeout = 180
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
+healthcheckHeaders = { "Content-Type" = "application/json", "x-apollo-operation-name" = "HealthCheck", "apollo-require-preflight" = "true" }
 
 [deploy.env]
 NODE_ENV = "production"
