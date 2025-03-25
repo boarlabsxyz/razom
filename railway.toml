@@ -11,4 +11,6 @@ restartPolicyMaxRetries = 10
 
 [deploy.env]
 NODE_ENV = "production"
-PORT = "3000" 
+PORT = "3000"
+DATABASE_URL = "${{DATABASE_URL}}"
+SESSION_SECRET = "${{SESSION_SECRET}}" 
