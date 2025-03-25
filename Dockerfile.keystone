@@ -5,65 +5,23 @@ WORKDIR /usr/src/app
 # Increase Node memory limit
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
-# First copy only package files to optimize layer caching
+# Copy package files first to optimize layer caching
 COPY ./veterans/package.json ./veterans/package-lock.json ./
 
 RUN npm ci && npm cache clean --force
 
-# Then copy the rest of the application
+# Copy the rest of the application
 COPY ./veterans .
 
-# Create shared directory
-RUN mkdir -p /usr/src/app/shared
+# Copy startup script
+COPY ./veterans/start.sh /usr/src/app/start.sh
+RUN chmod +x /usr/src/app/start.sh
 
 EXPOSE 3000
 
-# Set production mode
 ENV NODE_ENV=production
 
 # Install PostgreSQL client for health checks
 RUN apt-get update && apt-get install -y postgresql-client
-
-# Create startup script with proper database connection handling
-RUN echo '#!/bin/bash\n\
-echo "Starting in production mode..."\n\
-\n\
-# Check if DATABASE_URL is set\n\
-if [ -z "$DATABASE_URL" ]; then\n\
-    echo "Error: DATABASE_URL is not set"\n\
-    exit 1\n\
-fi\n\
-\n\
-DB_URL="$DATABASE_URL"\n\
-echo "Using database URL: $DB_URL"\n\
-\n\
-# Extract components from DATABASE_URL\n\
-DB_HOST=$(echo "$DB_URL" | cut -d@ -f2 | cut -d/ -f1)\n\
-DB_USER=$(echo "$DB_URL" | cut -d/ -f3 | cut -d: -f1)\n\
-DB_PASS=$(echo "$DB_URL" | cut -d/ -f3 | cut -d: -f2 | cut -d@ -f1)\n\
-\n\
-# Set default port\n\
-DB_PORT="5432"\n\
-\n\
-echo "Parsed database connection:"\n\
-echo "Host: $DB_HOST"\n\
-echo "Port: $DB_PORT"\n\
-echo "User: $DB_USER"\n\
-\n\
-if [ -z "$DB_HOST" ] || [ -z "$DB_USER" ] || [ -z "$DB_PASS" ]; then\n\
-    echo "Error: Failed to parse database URL components"\n\
-    exit 1\n\
-fi\n\
-\n\
-echo "Waiting for database at $DB_HOST:$DB_PORT..."\n\
-\n\
-until PGPASSWORD="$DB_PASS" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "postgres" -c "\q" >/dev/null 2>&1; do\n\
-  echo "Database is unavailable - sleeping"\n\
-  sleep 2\n\
-done\n\
-\n\
-echo "Database is up - starting application"\n\
-exec node_modules/.bin/keystone start\n' > /usr/src/app/start.sh && \
-chmod +x /usr/src/app/start.sh
 
 CMD ["/usr/src/app/start.sh"]
