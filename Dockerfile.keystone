@@ -18,7 +18,9 @@ RUN mkdir -p /usr/src/app/shared
 
 # Set build arguments
 ARG SESSION_SECRET
+ARG DEVELOPMENT_DATABASE_URL
 ENV SESSION_SECRET=${SESSION_SECRET}
+ENV DEVELOPMENT_DATABASE_URL=${DEVELOPMENT_DATABASE_URL}
 
 # Run keystone build during image creation
 RUN node_modules/.bin/keystone build
