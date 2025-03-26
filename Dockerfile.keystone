@@ -6,12 +6,12 @@ WORKDIR /usr/src/app
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 # First copy only package files to optimize layer caching
-COPY package.json package-lock.json ./
+COPY veterans/package.json veterans/package-lock.json ./
 
 RUN npm ci && npm cache clean --force
 
 # Then copy the rest of the application
-COPY . .
+COPY veterans .
 
 # Create shared directory
 RUN mkdir -p /usr/src/app/shared
@@ -34,7 +34,7 @@ ENV NODE_ENV=production
 RUN apt-get update && apt-get install -y postgresql-client
 
 # Copy startup script
-COPY start.sh /usr/src/app/start.sh
+COPY veterans/start.sh /usr/src/app/start.sh
 RUN chmod +x /usr/src/app/start.sh
 
 CMD ["/usr/src/app/start.sh"]
