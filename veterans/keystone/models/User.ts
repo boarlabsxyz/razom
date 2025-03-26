@@ -7,7 +7,7 @@ import {
   select,
   timestamp,
 } from '@keystone-6/core/fields';
-import { BaseItem, ListConfig } from '@keystone-6/core/types';
+import { ListConfig } from '@keystone-6/core';
 import type { Lists } from '.keystone/types';
 
 import {
@@ -19,6 +19,7 @@ import {
   isAdminOrSameUser,
   isAdminOrSameUserFilter,
 } from '../access';
+import { CustomBaseItem } from 'types';
 
 export const User: ListConfig<Lists.User.TypeInfo<Session>> = list({
   access: {
@@ -33,8 +34,13 @@ export const User: ListConfig<Lists.User.TypeInfo<Session>> = list({
         isAdminOrSameUserFilter({ session }),
     },
     item: {
-      update: ({ session, item }: { session?: Session; item: BaseItem }) =>
-        isAdminOrSameUser({ session, item }),
+      update: ({
+        session,
+        item,
+      }: {
+        session?: Session;
+        item: CustomBaseItem;
+      }) => isAdminOrSameUser({ session, item }),
     },
   },
   ui: {
@@ -47,8 +53,13 @@ export const User: ListConfig<Lists.User.TypeInfo<Session>> = list({
     name: text({
       access: {
         read: allowAll,
-        update: ({ session, item }: { session?: Session; item: BaseItem }) =>
-          isAdminOrSameUser({ session, item }),
+        update: ({
+          session,
+          item,
+        }: {
+          session?: Session;
+          item: CustomBaseItem;
+        }) => isAdminOrSameUser({ session, item }),
       },
       validation: { isRequired: true },
       ui: {
@@ -58,7 +69,7 @@ export const User: ListConfig<Lists.User.TypeInfo<Session>> = list({
             item,
           }: {
             session?: Session;
-            item: BaseItem;
+            item: CustomBaseItem;
           }) => (isAdminOrSameUser({ session, item }) ? 'edit' : 'read'),
         },
       },
@@ -66,8 +77,13 @@ export const User: ListConfig<Lists.User.TypeInfo<Session>> = list({
 
     email: text({
       access: {
-        read: ({ session, item }: { session?: Session; item: BaseItem }) =>
-          isAdminOrModerator({ session }) || isSameUser({ session, item }),
+        read: ({
+          session,
+          item,
+        }: {
+          session?: Session;
+          item: CustomBaseItem;
+        }) => isAdminOrModerator({ session }) || isSameUser({ session, item }),
         update: ({ session, item }) => isSameUser({ session, item }),
       },
       isIndexed: 'unique',
@@ -79,7 +95,7 @@ export const User: ListConfig<Lists.User.TypeInfo<Session>> = list({
             item,
           }: {
             session?: Session;
-            item: BaseItem;
+            item: CustomBaseItem;
           }) => (isSameUser({ session, item }) ? 'edit' : 'hidden'),
         },
         listView: { fieldMode: 'hidden' },
@@ -89,8 +105,13 @@ export const User: ListConfig<Lists.User.TypeInfo<Session>> = list({
     password: password({
       access: {
         read: denyAll,
-        update: ({ session, item }: { session?: Session; item: BaseItem }) =>
-          isSameUser({ session, item }),
+        update: ({
+          session,
+          item,
+        }: {
+          session?: Session;
+          item: CustomBaseItem;
+        }) => isSameUser({ session, item }),
       },
       validation: { isRequired: true },
       ui: {
@@ -100,7 +121,7 @@ export const User: ListConfig<Lists.User.TypeInfo<Session>> = list({
             item,
           }: {
             session?: Session;
-            item: BaseItem;
+            item: CustomBaseItem;
           }) => (isSameUser({ session, item }) ? 'edit' : 'hidden'),
         },
         listView: { fieldMode: 'hidden' },
@@ -131,7 +152,7 @@ export const User: ListConfig<Lists.User.TypeInfo<Session>> = list({
             item,
           }: {
             session?: Session;
-            item: BaseItem;
+            item: CustomBaseItem;
           }) =>
             isAdmin({ session }) && !isSameUser({ session, item })
               ? 'edit'
@@ -154,7 +175,7 @@ export const User: ListConfig<Lists.User.TypeInfo<Session>> = list({
             item,
           }: {
             session?: Session;
-            item: BaseItem;
+            item: CustomBaseItem;
           }) =>
             isAdmin({ session }) && !isSameUser({ session, item })
               ? 'edit'
