@@ -18,6 +18,7 @@ import {
   isAdminOrModerator,
 } from '../access';
 import { updateInitiativesCount } from '../utils/updateInitiativesCount';
+import { BaseItem } from './CommonTaxonomyModel';
 
 type InitiativeItem = BaseItem & {
   region?: { id: string } | null;
@@ -25,6 +26,29 @@ type InitiativeItem = BaseItem & {
   originalItem?: InitiativeItem;
 };
 import { CustomBaseItem } from 'types';
+
+export interface Initiative {
+  id: string;
+  name: string;
+  initiativeDescription?: {
+    document?: Array<{
+      type: string;
+      children?: Array<{
+        text?: string;
+      }>;
+    }>;
+  };
+  region?: {
+    name?: string;
+  } | null;
+  category?: {
+    name?: string;
+  } | null;
+  source?: {
+    name?: string;
+  } | null;
+  status?: string;
+}
 
 export const Initiative = list({
   access: {
@@ -128,17 +152,18 @@ export const Initiative = list({
         validateInput: async ({ resolvedData, item, addValidationError }) => {
           const description = resolvedData.description || item?.description;
 
-            if (!description || !Array.isArray(description)) {
-              addValidationError('Invalid description format.');
-              return;
-            }
+          if (!description || !Array.isArray(description)) {
+            addValidationError('Invalid description format.');
+            return;
+          }
 
-            type SlateNode = {
-              type: string;
-              children?: SlateNode[];
-              text?: string;
-            };
+          type SlateNode = {
+            type: string;
+            children?: SlateNode[];
+            text?: string;
+          };
 
+          try {
             const hasText = description.some((block: SlateNode) =>
               block.children?.some(
                 (child: SlateNode) =>
@@ -153,23 +178,6 @@ export const Initiative = list({
           } catch {
             addValidationError('Invalid description format.');
             return;
-          }
-
-          type SlateNode = {
-            type: string;
-            children?: SlateNode[];
-            text?: string;
-          };
-
-          const hasText = description.some((block: SlateNode) =>
-            block.children?.some(
-              (child: SlateNode) =>
-                typeof child.text === 'string' && child.text.trim().length > 0,
-            ),
-          );
-
-          if (!hasText) {
-            addValidationError('Description must contain some text.');
           }
         },
       },

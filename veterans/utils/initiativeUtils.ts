@@ -1,4 +1,14 @@
-import { Initiative, ProcessedInitiative, Paragraph, Child } from 'types';
+import type { Initiative } from '../keystone/models/Initiative';
+
+export interface ProcessedInitiative {
+  id: string;
+  title: string;
+  description: string;
+  region: string;
+  category: string;
+  source: string;
+  status: string;
+}
 
 export function processInitiatives(data?: {
   initiatives: Initiative[];
@@ -7,19 +17,31 @@ export function processInitiatives(data?: {
     return [];
   }
 
-  return data.initiatives.map(({ id, title, description }) => ({
-    id,
-    title,
-    description: extractTextFromDocument(description?.document) ?? null,
-  }));
+  return data.initiatives.map(processInitiative);
 }
 
 export function getDescription(description?: {
-  document?: Paragraph[];
+  document?: Array<{
+    type: string;
+    children?: Array<{
+      text?: string;
+    }>;
+  }>;
 }): string {
   if (!description?.document) {
     return '';
   }
+
+  return description.document
+    .map((block) =>
+      block.children
+        ?.map((child) => child.text || '')
+        .join('')
+        .trim(),
+    )
+    .filter(Boolean)
+    .join('\n');
+}
 
 export function processInitiative(initiative: Initiative): ProcessedInitiative {
   return {
