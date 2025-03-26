@@ -5,12 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - Unreleased
+
+### Fixed
+
+- ability to generate a preview deployment URL for Razom ([136](https://github.com/boarlabsxyz/razom/pull/136))
+
 ## [1.5.0] - Unreleased
 
 ### Added
 
 - registration functionality ([105](https://github.com/boarlabsxyz/razom/pull/105))
 - regionsList component ([117](https://github.com/boarlabsxyz/razom/pull/117))
+- Google Auth ([118](https://github.com/boarlabsxyz/razom/pull/118))
 - reset filter button to the map section ([128](https://github.com/boarlabsxyz/razom/pull/128))
 - region filed to create initiative page, get the list from db to display on web-site ([141](https://github.com/boarlabsxyz/razom/pull/141))
 

@@ -7,7 +7,6 @@ import {
   relationship,
   timestamp,
 } from '@keystone-6/core/fields';
-import { BaseItem } from '@keystone-6/core/types';
 import { document } from '@keystone-6/fields-document';
 
 import {
@@ -25,6 +24,7 @@ type InitiativeItem = BaseItem & {
   regionId?: string;
   originalItem?: InitiativeItem;
 };
+import { CustomBaseItem } from 'types';
 
 export const Initiative = list({
   access: {
@@ -111,7 +111,7 @@ export const Initiative = list({
             item,
           }: {
             session?: Session;
-            item: BaseItem;
+            item: CustomBaseItem;
           }) =>
             isAdminOrModerator({ session }) || isSameUser({ session, item })
               ? 'edit'
@@ -126,8 +126,7 @@ export const Initiative = list({
       dividers: true,
       hooks: {
         validateInput: async ({ resolvedData, item, addValidationError }) => {
-          try {
-            const description = resolvedData.description || item?.description;
+          const description = resolvedData.description || item?.description;
 
             if (!description || !Array.isArray(description)) {
               addValidationError('Invalid description format.');
@@ -153,9 +152,28 @@ export const Initiative = list({
             }
           } catch {
             addValidationError('Invalid description format.');
+            return;
+          }
+
+          type SlateNode = {
+            type: string;
+            children?: SlateNode[];
+            text?: string;
+          };
+
+          const hasText = description.some((block: SlateNode) =>
+            block.children?.some(
+              (child: SlateNode) =>
+                typeof child.text === 'string' && child.text.trim().length > 0,
+            ),
+          );
+
+          if (!hasText) {
+            addValidationError('Description must contain some text.');
           }
         },
       },
+
       ui: {
         createView: {
           fieldMode: ({ session }: { session?: Session }) =>
@@ -164,10 +182,13 @@ export const Initiative = list({
               : 'hidden',
         },
         itemView: {
-          fieldMode: ({ session, item }) =>
-            isAdminOrModerator({ session }) || isSameUser({ session, item })
+          fieldMode: ({ context, item }) => {
+            const session = context.session as Session | undefined;
+            return isAdminOrModerator({ session }) ||
+              isSameUser({ session, item })
               ? 'edit'
-              : 'read',
+              : 'read';
+          },
         },
       },
     }),
@@ -299,7 +320,7 @@ export const Initiative = list({
             item,
           }: {
             session?: Session;
-            item: BaseItem;
+            item: CustomBaseItem;
           }) =>
             isAdminOrModerator({ session }) || isSameUser({ session, item })
               ? 'edit'

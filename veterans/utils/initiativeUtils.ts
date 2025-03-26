@@ -1,7 +1,17 @@
 import { Initiative, ProcessedInitiative, Paragraph, Child } from 'types';
 
-export function getTextFromParagraph(paragraph: Paragraph): string {
-  return paragraph.children.map((child: Child) => child.text).join(' ');
+export function processInitiatives(data?: {
+  initiatives: Initiative[];
+}): ProcessedInitiative[] {
+  if (!data?.initiatives) {
+    return [];
+  }
+
+  return data.initiatives.map(({ id, title, description }) => ({
+    id,
+    title,
+    description: extractTextFromDocument(description?.document) ?? null,
+  }));
 }
 
 export function getDescription(description?: {
@@ -10,11 +20,6 @@ export function getDescription(description?: {
   if (!description?.document) {
     return '';
   }
-  return description.document.reduce((acc: string, paragraph: Paragraph) => {
-    const text = getTextFromParagraph(paragraph);
-    return acc ? `${acc}\n${text}` : text;
-  }, '');
-}
 
 export function processInitiative(initiative: Initiative): ProcessedInitiative {
   return {

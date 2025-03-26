@@ -53,3 +53,10 @@ export type Child = {
 };
 
 export type CorsCallback = (err: Error | null, allow?: boolean) => void;
+
+export type CustomBaseItem = {
+  [key: string]: unknown;
+  id: {
+    toString(): string;
+  };
+};

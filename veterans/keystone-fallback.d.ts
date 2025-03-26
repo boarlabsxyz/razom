@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-unused-vars */
+
 declare module '.keystone/types' {
+  import { KeystoneContext } from '@keystone-6/core/types';
+
   export namespace Lists {
     export namespace User {
       export type TypeInfo<Session = any> = any;
@@ -25,4 +28,6 @@ declare module '.keystone/types' {
     prisma: any;
     session: Session;
   };
+
+  export type Context = KeystoneContext<TypeInfo>;
 }
