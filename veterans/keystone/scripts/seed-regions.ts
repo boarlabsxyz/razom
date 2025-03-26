@@ -1,6 +1,6 @@
-import { PrismaClient } from '.prisma/client';
+import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
 const regions = [
   {
@@ -131,7 +131,7 @@ const regions = [
   { name: 'Всі', numOfInitiatives: 0, isDefault: true, order: 25 },
 ];
 
-async function main() {
+export async function main() {
   try {
     await prisma.region.deleteMany({});
 
@@ -150,4 +150,6 @@ async function main() {
   }
 }
 
-main();
+if (require.main === module) {
+  main();
+}

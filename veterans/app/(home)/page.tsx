@@ -28,7 +28,7 @@ export default function HomePage() {
   if (loading) {
     content = <Spinner />;
   } else if (error) {
-    content = <p data-test-id="error-message">{error.message}</p>;
+    content = <p data-testid="error-message">{error.message}</p>;
   } else if (processedInitiatives.length === 0) {
     content = <p>No initiatives available at the moment.</p>;
   } else {
@@ -53,7 +53,7 @@ export default function HomePage() {
       <section
         className={st.section}
         aria-label="Blog initiatives"
-        data-test-id="blog-initiatives"
+        data-testid="blog-initiatives"
       >
         {content}
       </section>

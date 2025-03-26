@@ -7,13 +7,41 @@ export type RegisterFormData = LoginFormData & {
   name: string;
 };
 
-export type Initiative = {
+export interface Initiative {
+  id: string;
+  name: string;
+  initiativeDescription?: {
+    document: {
+      type: string;
+      children: Array<{
+        text: string;
+      }>;
+    }[];
+  };
+  category?: {
+    id: string;
+    name: string;
+  };
+  source?: {
+    id: string;
+    name: string;
+  };
+  region?: {
+    id: string;
+    name: string;
+  };
+  status?: string;
+}
+
+export interface ProcessedInitiative {
   id: string;
   title: string;
-  description?: {
-    document: Paragraph[];
-  };
-};
+  description: string;
+  region: string;
+  category: string;
+  source: string;
+  status: string;
+}
 
 export type Paragraph = {
   type: string;
@@ -22,12 +50,6 @@ export type Paragraph = {
 
 export type Child = {
   text: string;
-};
-
-export type ProcessedInitiative = {
-  id: string;
-  title: string;
-  description: string | null;
 };
 
 export type CorsCallback = (err: Error | null, allow?: boolean) => void;

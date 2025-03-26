@@ -6,9 +6,9 @@ export function getTextFromParagraph(paragraph: Paragraph): string {
 
 export function getDescription(description?: {
   document?: Paragraph[];
-}): string | null {
+}): string {
   if (!description?.document) {
-    return null;
+    return '';
   }
   return description.document.reduce((acc: string, paragraph: Paragraph) => {
     const text = getTextFromParagraph(paragraph);
@@ -19,7 +19,11 @@ export function getDescription(description?: {
 export function processInitiative(initiative: Initiative): ProcessedInitiative {
   return {
     id: initiative.id,
-    title: initiative.title,
-    description: getDescription(initiative.description),
+    title: initiative.name,
+    description: getDescription(initiative.initiativeDescription),
+    region: initiative.region?.name || '',
+    category: initiative.category?.name || '',
+    source: initiative.source?.name || '',
+    status: initiative.status || '',
   };
 }
