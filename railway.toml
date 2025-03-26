@@ -6,7 +6,6 @@ dockerfilePath = "./Dockerfile.keystone"
 SESSION_SECRET = "${{SESSION_SECRET}}"
 
 [deploy]
-startCommand = "/usr/src/app/start.sh"
 healthcheckPath = "/"
 healthcheckTimeout = 180
 restartPolicyType = "ON_FAILURE"

@@ -20,8 +20,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.keystone
-      args:
-        NODE_ENV: development
+
     ports:
       - '3000:3000'
     depends_on:
@@ -32,8 +31,6 @@ services:
       - ./veterans/playwright-report:/usr/src/app/playwright-report
     env_file:
       - ./veterans/.env
-    environment:
-      NODE_ENV: development
 
   app-nextjs:
     build:

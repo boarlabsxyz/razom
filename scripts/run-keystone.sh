@@ -1,23 +1,14 @@
 #!/bin/bash
 
-# Get the directory where the script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo "Starting in production mode..."
 
-# Change to the veterans directory
-cd "$SCRIPT_DIR/../veterans"
+# Check database connection
+echo "Using database URL: $DATABASE_URL"
+# until PGPASSWORD=$(echo $DATABASE_URL | sed -n 's/.*:\/\/[^:]*:\([^@]*\)@.*/\1/p') psql -h $(echo $DATABASE_URL | sed -n 's/.*@\([^/]*\)\/.*/\1/p') -U $(echo $DATABASE_URL | sed -n 's/.*:\/\/\([^:]*\):.*/\1/p') -d $(echo $DATABASE_URL | sed -n 's/.*\/\(.*\)?.*/\1/p') -c '\q'; do
+#   echo "Waiting for database to be ready..."
+#   sleep 1
+# done
+echo "Database is up - starting application"
 
-# Load environment variables from .env file
-if [ -f .env ]; then
-    export $(cat .env | grep -v '^#' | xargs)
-else
-    echo "Error: .env file not found in veterans directory"
-    exit 1
-fi
-
-# Run the container
-docker run --rm \
-  -p 3000:3000 \
-  -e PRODUCTION_DATABASE_URL="$PRODUCTION_DATABASE_URL" \
-  -e SESSION_SECRET="$SESSION_SECRET" \
-  --name keystone-app \
-  my-keystone 
+# Start the application
+node_modules/.bin/keystone dev 
