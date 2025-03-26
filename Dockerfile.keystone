@@ -2,8 +2,11 @@ FROM node:22.11.0
 
 WORKDIR /usr/src/app
 
-ENV NODE_ENV=production
-ENV PORT=3000
+ARG NODE_ENV=production
+ARG PORT=3000
+
+ENV NODE_ENV=${NODE_ENV}
+ENV PORT=${PORT}
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 COPY ./veterans/package.json ./veterans/package-lock.json ./

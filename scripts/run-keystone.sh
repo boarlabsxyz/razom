@@ -11,4 +11,4 @@ echo "Using database URL: $DATABASE_URL"
 echo "Database is up - starting application"
 
 # Start the application
-node_modules/.bin/keystone dev 
+node_modules/.bin/keystone start 
