@@ -6,12 +6,12 @@ WORKDIR /usr/src/app
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 # First copy only package files to optimize layer caching
-COPY veterans/package.json veterans/package-lock.json ./
+COPY ./veterans/package.json ./veterans/package-lock.json ./
 
 RUN npm ci && npm cache clean --force
 
 # Then copy the rest of the application
-COPY veterans .
+COPY ./veterans .
 
 # Create shared directory
 RUN mkdir -p /usr/src/app/shared
@@ -19,8 +19,10 @@ RUN mkdir -p /usr/src/app/shared
 # Set build arguments
 ARG SESSION_SECRET
 ARG DATABASE_URL
+ARG DEVELOPMENT_DATABASE_URL
 ENV SESSION_SECRET=${SESSION_SECRET}
 ENV DATABASE_URL=${DATABASE_URL}
+ENV DEVELOPMENT_DATABASE_URL=${DEVELOPMENT_DATABASE_URL}
 
 # Run keystone build during image creation
 RUN node_modules/.bin/keystone build
@@ -34,7 +36,7 @@ ENV NODE_ENV=production
 RUN apt-get update && apt-get install -y postgresql-client
 
 # Copy startup script
-COPY veterans/start.sh /usr/src/app/start.sh
+COPY ./veterans/start.sh /usr/src/app/start.sh
 RUN chmod +x /usr/src/app/start.sh
 
 CMD ["/usr/src/app/start.sh"]

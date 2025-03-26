@@ -17,6 +17,7 @@ fi
 # Build the Docker image using environment variables
 docker build \
     --build-arg DATABASE_URL="$DATABASE_URL" \
+    --build-arg DEVELOPMENT_DATABASE_URL="$DATABASE_URL" \
     --build-arg SESSION_SECRET="$SESSION_SECRET" \
     -t my-keystone \
     -f Dockerfile.keystone . 
