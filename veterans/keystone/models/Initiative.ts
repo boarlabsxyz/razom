@@ -18,6 +18,13 @@ import {
   isSameUser,
   isAdminOrModerator,
 } from '../access';
+import { updateInitiativesCount } from '../utils/updateInitiativesCount';
+
+type InitiativeItem = BaseItem & {
+  region?: { id: string } | null;
+  regionId?: string;
+  originalItem?: InitiativeItem;
+};
 
 export const Initiative = list({
   access: {
@@ -42,6 +49,11 @@ export const Initiative = list({
       },
     },
   },
+  ui: {
+    listView: {
+      initialColumns: ['title', 'region', 'status', 'createdAt'],
+    },
+  },
   hooks: {
     resolveInput: async ({ resolvedData, context, operation }) => {
       if (operation === 'create' && context.session?.itemId) {
@@ -52,8 +64,37 @@ export const Initiative = list({
       }
       return resolvedData;
     },
-  },
+    afterOperation: async ({ operation, context, item }) => {
+      if (
+        operation === 'create' ||
+        operation === 'update' ||
+        operation === 'delete'
+      ) {
+        const initiativeItem = item as InitiativeItem;
 
+        await updateInitiativesCount(context, null);
+
+        if (operation === 'create' || operation === 'update') {
+          const regionId =
+            initiativeItem?.region?.id || initiativeItem?.regionId;
+          if (regionId) {
+            await updateInitiativesCount(context, regionId);
+          }
+        }
+
+        if (operation === 'update' && initiativeItem?.originalItem?.regionId) {
+          await updateInitiativesCount(
+            context,
+            initiativeItem.originalItem.regionId,
+          );
+        }
+
+        if (operation === 'delete' && initiativeItem?.regionId) {
+          await updateInitiativesCount(context, initiativeItem.regionId);
+        }
+      }
+    },
+  },
   fields: {
     title: text({
       validation: { isRequired: true },
@@ -110,8 +151,7 @@ export const Initiative = list({
             if (!hasText) {
               addValidationError('Description must contain some text.');
             }
-            // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-          } catch (error) {
+          } catch {
             addValidationError('Invalid description format.');
           }
         },
@@ -192,13 +232,46 @@ export const Initiative = list({
       },
     }),
 
+    region: relationship({
+      ref: 'Region',
+      many: false,
+      ui: {
+        createView: {
+          fieldMode: ({ session }: { session?: Session }) =>
+            isAdminOrModerator({ session }) || isInitiativeManager({ session })
+              ? 'edit'
+              : 'hidden',
+        },
+        itemView: {
+          fieldMode: ({ session }: { session?: Session }) =>
+            isAdmin({ session }) ? 'edit' : 'read',
+        },
+        listView: {
+          fieldMode: 'read',
+        },
+      },
+      hooks: {
+        validateInput: async ({ resolvedData, item, addValidationError }) => {
+          const isRegionBeingRemoved =
+            resolvedData.region && 'disconnect' in resolvedData.region;
+          const isRegionMissing =
+            (!resolvedData.region?.connect?.id && !item?.regionId) ||
+            isRegionBeingRemoved;
+
+          if (isRegionMissing) {
+            addValidationError('Region is required.');
+          }
+        },
+      },
+    }),
+
     status: select({
       options: [
-        { label: 'Approved', value: 'approved' },
-        { label: 'Rejected', value: 'rejected' },
-        { label: 'Draft', value: 'draft' },
+        { label: 'На розгляді', value: 'pending' },
+        { label: 'Схвалено', value: 'approved' },
+        { label: 'Відхилено', value: 'rejected' },
       ],
-      defaultValue: 'draft',
+      defaultValue: 'pending',
       validation: { isRequired: true },
       access: {
         read: allowAll,
