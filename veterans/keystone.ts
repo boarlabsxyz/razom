@@ -108,7 +108,15 @@ export default withAuth<TypeInfo<Session>>(
     }),
     graphql: {
       path: '/api/graphql',
-      cors: corsOptions,
+      cors: {
+        origin: [
+          process.env.FRONTEND_URL || 'http://localhost:8000',
+          'https://*.vercel.app',
+        ],
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+      },
       apolloConfig: {
         csrfPrevention: false,
       },
