@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 echo "Starting Keystone build process..."
 
 echo "Generating Prisma client..."

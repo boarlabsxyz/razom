@@ -2,28 +2,47 @@ FROM node:22.11.0
 
 WORKDIR /usr/src/app
 
-ARG NODE_ENV=production
-ARG PORT=3000
-
-ENV NODE_ENV=${NODE_ENV}
-ENV PORT=${PORT}
+# Set environment variables early
+ENV NODE_ENV=production
+ENV PORT=3000
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
+# Set build arguments
+ARG SESSION_SECRET
+ARG DATABASE_URL
+ARG DEVELOPMENT_DATABASE_URL
+ENV SESSION_SECRET=${SESSION_SECRET}
+ENV DATABASE_URL=${DATABASE_URL}
+ENV DEVELOPMENT_DATABASE_URL=${DEVELOPMENT_DATABASE_URL}
+
+# Copy package files first
 COPY ./veterans/package.json ./veterans/package-lock.json ./
+
+# Install dependencies
 RUN npm ci && npm cache clean --force
 
+# Copy the entire project
 COPY ./veterans .
 
+# Create shared directory
 RUN mkdir -p /usr/src/app/shared
 
+# Copy and set up build script
 COPY ./scripts/build-keystone.sh /usr/src/app/build-keystone.sh
 RUN chmod +x /usr/src/app/build-keystone.sh
 
+# Run build script
 RUN /usr/src/app/build-keystone.sh
 
+# Install PostgreSQL client for database connection check
+RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
+
+# Copy and set up run script
 COPY ./scripts/run-keystone.sh /usr/src/app/run-keystone.sh
 RUN chmod +x /usr/src/app/run-keystone.sh
 
+# Expose port
 EXPOSE 3000
 
+# Start the application
 CMD ["/usr/src/app/run-keystone.sh"]
