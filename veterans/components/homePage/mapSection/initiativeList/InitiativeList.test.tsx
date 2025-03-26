@@ -11,8 +11,8 @@ const GET_INITIATIVES_MOCK = {
       query GetInitiatives {
         initiatives {
           id
-          title
-          description {
+          name
+          initiativeDescription {
             document
           }
         }
@@ -24,8 +24,8 @@ const GET_INITIATIVES_MOCK = {
       initiatives: [
         {
           id: '1',
-          title: 'Initiative 1',
-          description: {
+          name: 'Initiative 1',
+          initiativeDescription: {
             document: [
               { children: [{ text: 'This is initiative 1 content' }] },
             ],
@@ -33,8 +33,8 @@ const GET_INITIATIVES_MOCK = {
         },
         {
           id: '2',
-          title: 'Initiative 2',
-          description: {
+          name: 'Initiative 2',
+          initiativeDescription: {
             document: [
               { children: [{ text: 'This is initiative 2 content' }] },
             ],
@@ -93,15 +93,15 @@ describe('HomePage', () => {
     const initiatives = [
       {
         id: '1',
-        title: 'Initiative 1',
-        description: {
+        name: 'Initiative 1',
+        initiativeDescription: {
           document: [{ children: [{ text: 'This is initiative 1 content' }] }],
         },
       },
       {
         id: '2',
-        title: 'Initiative 2',
-        description: {
+        name: 'Initiative 2',
+        initiativeDescription: {
           document: [{ children: [{ text: 'This is initiative 2 content' }] }],
         },
       },
@@ -113,8 +113,8 @@ describe('HomePage', () => {
           query GetInitiatives {
             initiatives {
               id
-              title
-              description {
+              name
+              initiativeDescription {
                 document
               }
             }
@@ -148,8 +148,8 @@ describe('HomePage', () => {
           query GetInitiatives {
             initiatives {
               id
-              title
-              description {
+              name
+              initiativeDescription {
                 document
               }
             }
@@ -180,8 +180,8 @@ describe('HomePage', () => {
           query GetInitiatives {
             initiatives {
               id
-              title
-              description {
+              name
+              initiativeDescription {
                 document
               }
             }
