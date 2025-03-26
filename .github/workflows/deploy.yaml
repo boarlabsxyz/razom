@@ -1,11 +1,11 @@
 name: Vercel Deployment
 
 on:
-  # pull_request:
-  #     types:
-  #     - opened
-  #     - synchronize
-  #     - reopened
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
   workflow_dispatch:
 
 env:
