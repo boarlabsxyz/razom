@@ -188,7 +188,7 @@ jobs:
     timeout-minutes: 10
     environment:
       name: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
-      url: ${{ github.event_name == 'pull_request' && 'https://' || 'https://razom.vercel.app/' }}
+      url: ${{ github.event_name == 'pull_request' && steps.deploy.outputs.url || 'https://razom.vercel.app/' }}
     needs:
       - lint
       - unit-tests

@@ -15,6 +15,8 @@ services:
       - ./veterans/.env
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
+    networks:
+      - mynetwork
 
   app-keystone:
     build:
@@ -31,6 +33,8 @@ services:
       - ./veterans/playwright-report:/usr/src/app/playwright-report
     env_file:
       - ./veterans/.env
+    networks:
+      - mynetwork
 
   app-nextjs:
     build:
@@ -45,11 +49,19 @@ services:
       - ./veterans/e2e/nextjs-test:/usr/src/app/e2e/nextjs-test
     env_file:
       - ./veterans/.env
+    environment:
+      - NEXT_PUBLIC_API_URL=http://razom-app-keystone-1:3000/api/graphql
+
     develop:
       watch:
         - action: sync
           path: ./veterans
           target: /usr/src/app
+    networks:
+      - mynetwork
 
 volumes:
   shared-volume:
+
+networks:
+  mynetwork:

@@ -48,7 +48,10 @@ export default function MapSection() {
           </button>
         )}
       </div>
-      <UkraineMap selectedRegion={selectedRegion} />
+      <UkraineMap
+        selectedRegion={selectedRegion}
+        setSelectedRegion={setSelectedRegion}
+      />
     </section>
   );
 }
