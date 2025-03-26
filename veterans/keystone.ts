@@ -43,6 +43,7 @@ const allowedOrigins = (origin: string | undefined) => {
     'http://localhost:3000',
     'http://localhost:8000',
     'https://razom.vercel.app',
+    'https://razom-production.up.railway.app',
   ];
 
   return allowed.includes(origin) || origin.endsWith('.vercel.app');
