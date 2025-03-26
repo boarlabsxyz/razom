@@ -85,7 +85,7 @@ describe('initiativeUtils', () => {
 
   describe('getDescription', () => {
     it('should return empty string if description is undefined', () => {
-      expect(getDescription(undefined)).toBe('');
+      expect(getDescription()).toBe('');
     });
 
     it('should return empty string if document is undefined', () => {

@@ -35,7 +35,7 @@ export function getDescription(description?: {
   return description.document
     .map((block) =>
       block.children
-        ?.map((child) => child.text || '')
+        ?.map((child) => child.text ?? '')
         .join('')
         .trim(),
     )
@@ -48,9 +48,9 @@ export function processInitiative(initiative: Initiative): ProcessedInitiative {
     id: initiative.id,
     title: initiative.name,
     description: getDescription(initiative.initiativeDescription),
-    region: initiative.region?.name || '',
-    category: initiative.category?.name || '',
-    source: initiative.source?.name || '',
-    status: initiative.status || '',
+    region: initiative.region?.name ?? '',
+    category: initiative.category?.name ?? '',
+    source: initiative.source?.name ?? '',
+    status: initiative.status ?? '',
   };
 }

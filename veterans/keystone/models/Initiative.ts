@@ -100,7 +100,7 @@ export const Initiative = list({
 
         if (operation === 'create' || operation === 'update') {
           const regionId =
-            initiativeItem?.region?.id || initiativeItem?.regionId;
+            initiativeItem?.region?.id ?? initiativeItem?.regionId;
           if (regionId) {
             await updateInitiativesCount(context, regionId);
           }

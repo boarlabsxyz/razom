@@ -6,7 +6,7 @@ export async function updateInitiativesCount(
   regionId: string | null,
 ) {
   try {
-    if (!context || !context.db) {
+    if (!context?.db) {
       console.error('Keystone context is not initialized.');
       return;
     }
