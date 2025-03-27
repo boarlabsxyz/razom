@@ -46,8 +46,8 @@ export function getDescription(description?: {
 export function processInitiative(initiative: Initiative): ProcessedInitiative {
   return {
     id: initiative.id,
-    title: initiative.name,
-    description: getDescription(initiative.initiativeDescription),
+    title: initiative.title,
+    description: getDescription(initiative.description),
     region: initiative.region?.name ?? '',
     category: initiative.category?.name ?? '',
     source: initiative.source?.name ?? '',

@@ -3,15 +3,6 @@ import { allowAll } from '@keystone-6/core/access';
 import { text, relationship, timestamp } from '@keystone-6/core/fields';
 import { Session, isAdminOrModerator } from '../access';
 
-export type BaseItem = {
-  id: string;
-  title: string;
-  createdBy?: {
-    id: string;
-  };
-  createdAt?: Date;
-};
-
 export const commonTaxonomyModel = () =>
   list({
     access: {

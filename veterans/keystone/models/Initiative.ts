@@ -18,19 +18,18 @@ import {
   isAdminOrModerator,
 } from '../access';
 import { updateInitiativesCount } from '../utils/updateInitiativesCount';
-import { BaseItem } from './CommonTaxonomyModel';
+import { CustomBaseItem } from 'types';
 
-type InitiativeItem = BaseItem & {
+type InitiativeItem = CustomBaseItem & {
   region?: { id: string } | null;
   regionId?: string;
   originalItem?: InitiativeItem;
 };
-import { CustomBaseItem } from 'types';
 
 export interface Initiative {
   id: string;
-  name: string;
-  initiativeDescription?: {
+  title: string;
+  description?: {
     document?: Array<{
       type: string;
       children?: Array<{

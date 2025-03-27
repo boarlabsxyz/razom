@@ -19,8 +19,8 @@ describe('initiativeUtils', () => {
       const mockInitiatives: Initiative[] = [
         {
           id: '1',
-          name: 'Initiative 1',
-          initiativeDescription: {
+          title: 'Initiative 1',
+          description: {
             document: [
               {
                 type: 'paragraph',
@@ -58,8 +58,8 @@ describe('initiativeUtils', () => {
       const mockInitiatives: Initiative[] = [
         {
           id: '2',
-          name: 'Initiative without optional fields',
-          initiativeDescription: undefined,
+          title: 'Initiative without optional fields',
+          description: undefined,
           region: null,
           category: null,
           source: null,
@@ -129,8 +129,8 @@ describe('initiativeUtils', () => {
     it('should correctly process a single initiative', () => {
       const mockInitiative: Initiative = {
         id: '1',
-        name: 'Test Initiative',
-        initiativeDescription: {
+        title: 'Test Initiative',
+        description: {
           document: [
             {
               type: 'paragraph',
@@ -160,8 +160,8 @@ describe('initiativeUtils', () => {
     it('should handle missing optional fields', () => {
       const mockInitiative: Initiative = {
         id: '1',
-        name: 'Test Initiative',
-        initiativeDescription: undefined,
+        title: 'Test Initiative',
+        description: undefined,
         region: null,
         category: null,
         source: null,

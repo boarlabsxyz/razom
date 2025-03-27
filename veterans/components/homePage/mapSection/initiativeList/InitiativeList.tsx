@@ -14,8 +14,8 @@ const GET_INITIATIVES = gql`
   query GetInitiatives {
     initiatives {
       id
-      name
-      initiativeDescription {
+      title
+      description {
         document
       }
     }

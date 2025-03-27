@@ -9,8 +9,8 @@ export type RegisterFormData = LoginFormData & {
 
 export interface Initiative {
   id: string;
-  name: string;
-  initiativeDescription?: {
+  title: string;
+  description?: {
     document: {
       type: string;
       children: Array<{
