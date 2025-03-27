@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.6.0] - Unreleased
 
+### Added
+
+- possibility to filter regionsList with a keyboard([130](https://github.com/boarlabsxyz/razom/pull/130))
+
+### Changed
+
+- all className attr to cebab case format ([126](https://github.com/boarlabsxyz/razom/pull/126))
+
 ### Fixed
 
 - ability to generate a preview deployment URL for Razom ([136](https://github.com/boarlabsxyz/razom/pull/136))

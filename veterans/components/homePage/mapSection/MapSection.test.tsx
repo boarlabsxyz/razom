@@ -29,13 +29,15 @@ jest.mock('./map', () => ({
 jest.mock('./regionsFilter', () => ({
   __esModule: true,
   default: ({
+    selectedRegion,
     setSelectedRegion,
   }: {
-    selectedRegion: string | undefined;
+    selectedRegion?: string;
     setSelectedRegion: (region: string) => void;
   }) => (
     <div data-testid="regions-list">
-      <button onClick={() => setSelectedRegion('Kyiv')}>Select Kyiv</button>
+      <button onClick={() => setSelectedRegion('Київ')}>Select Kyiv</button>
+      <span>{selectedRegion}</span>
     </div>
   ),
 }));
@@ -52,7 +54,7 @@ describe('MapSection Component', () => {
     render(<MapSection />);
     const selectRegionButton = screen.getByText('Select Kyiv');
     fireEvent.click(selectRegionButton);
-    expect(screen.getByTestId('ukraine-map')).toHaveTextContent('Kyiv');
+    expect(screen.getByTestId('ukraine-map')).toHaveTextContent('Київ');
   });
 
   it('shows reset button when filters are applied', () => {
