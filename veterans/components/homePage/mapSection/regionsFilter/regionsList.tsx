@@ -97,14 +97,20 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
         case 'Tab':
           e.preventDefault();
           newIndex = e.shiftKey
-            ? calculatePreviousTabIndex(focusedIndex, filteredRegions.length)
-            : calculateNextTabIndex(focusedIndex, filteredRegions.length);
+            ? calculatePreviousTabOrArrowUpIndex(
+                focusedIndex,
+                filteredRegions.length,
+              )
+            : calculateNextTabOrArrowDownIndex(
+                focusedIndex,
+                filteredRegions.length,
+              );
           setFocusedIndex(newIndex);
           itemsRef.current[newIndex]?.focus();
           break;
         case 'ArrowDown':
           e.preventDefault();
-          newIndex = calculateArrowDownIndex(
+          newIndex = calculateNextTabOrArrowDownIndex(
             focusedIndex,
             filteredRegions.length,
           );
@@ -113,7 +119,7 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
           break;
         case 'ArrowUp':
           e.preventDefault();
-          newIndex = calculateArrowUpIndex(
+          newIndex = calculatePreviousTabOrArrowUpIndex(
             focusedIndex,
             filteredRegions.length,
           );
@@ -138,7 +144,7 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
     [isOpen, focusedIndex, filteredRegions, handleRegionSelect],
   );
 
-  const calculatePreviousTabIndex = (
+  const calculatePreviousTabOrArrowUpIndex = (
     focusedIndex: number | null,
     length: number,
   ): number => {
@@ -147,31 +153,13 @@ function RegionsList({ setCurrentRegion }: Readonly<RegionsListProps>) {
       : focusedIndex - 1;
   };
 
-  const calculateNextTabIndex = (
+  const calculateNextTabOrArrowDownIndex = (
     focusedIndex: number | null,
     length: number,
   ): number => {
     return focusedIndex === null || focusedIndex >= length - 1
       ? 0
       : focusedIndex + 1;
-  };
-
-  const calculateArrowDownIndex = (
-    focusedIndex: number | null,
-    length: number,
-  ): number => {
-    return focusedIndex === null || focusedIndex >= length - 1
-      ? 0
-      : focusedIndex + 1;
-  };
-
-  const calculateArrowUpIndex = (
-    focusedIndex: number | null,
-    length: number,
-  ): number => {
-    return focusedIndex === null || focusedIndex <= 0
-      ? length - 1
-      : focusedIndex - 1;
   };
 
   const handleInputChange = useCallback(
