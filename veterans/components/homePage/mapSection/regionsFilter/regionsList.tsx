@@ -12,7 +12,7 @@ const DEFAULT_REGION_NAME = 'Всі';
 const SEARCH_PLACEHOLDER = 'Укажіть область...';
 const UKRAINIAN_TEXT_REGEX = /^[а-яґєіїё]+$/iu;
 
-function RegList({
+function RegionsList({
   selectedRegion,
   setSelectedRegion,
 }: Readonly<RegionsListProps>) {
@@ -277,4 +277,4 @@ function RegList({
   );
 }
 
-export default RegList;
+export default RegionsList;
