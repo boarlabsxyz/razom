@@ -29,12 +29,15 @@ jest.mock('./map', () => ({
 jest.mock('./regionsFilter', () => ({
   __esModule: true,
   default: ({
-    setCurrentRegion,
+    selectedRegion,
+    setSelectedRegion,
   }: {
-    setCurrentRegion: (region: string) => void;
+    selectedRegion?: string;
+    setSelectedRegion: (region: string) => void;
   }) => (
     <div data-testid="regions-list">
-      <button onClick={() => setCurrentRegion('Київ')}>Select Kyiv</button>
+      <button onClick={() => setSelectedRegion('Київ')}>Select Kyiv</button>
+      <span>{selectedRegion}</span>
     </div>
   ),
 }));

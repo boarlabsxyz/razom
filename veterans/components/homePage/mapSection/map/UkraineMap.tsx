@@ -1,11 +1,23 @@
+'use client';
+
+import React, { useCallback } from 'react';
 import { regions } from 'icons/regions';
 import st from './UkraineMap.module.css';
 
 interface UkraineMapProps {
   readonly selectedRegion?: string;
+  readonly setSelectedRegion: (region: string) => void;
 }
 
-export default function UkraineMap({ selectedRegion }: UkraineMapProps) {
+export default function UkraineMap({
+  selectedRegion,
+  setSelectedRegion,
+}: UkraineMapProps) {
+  const handleRegionClick = useCallback(
+    (regionName: string) => () => setSelectedRegion(regionName),
+    [setSelectedRegion],
+  );
+
   return (
     <svg
       viewBox="0 0 896 597"
@@ -28,6 +40,7 @@ export default function UkraineMap({ selectedRegion }: UkraineMapProps) {
             key={id}
             className={st['region-group']}
             aria-labelledby={`region-title-${id}`}
+            onClick={handleRegionClick(regionName)}
           >
             <title id={`region-title-${id}`}>{regionName}</title>
             <path

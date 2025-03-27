@@ -30,7 +30,10 @@ export default function MapSection() {
   return (
     <section className={st.container}>
       <div className={st['wrapper-filter']}>
-        <RegionsList setCurrentRegion={setSelectedRegion} />
+        <RegionsList
+          selectedRegion={selectedRegion}
+          setSelectedRegion={setSelectedRegion}
+        />
         <InitiativesFilter
           selectedCheckboxes={selectedCheckboxes}
           setSelectedCheckboxes={setSelectedCheckboxes}
@@ -45,7 +48,10 @@ export default function MapSection() {
           </button>
         )}
       </div>
-      <UkraineMap selectedRegion={selectedRegion} />
+      <UkraineMap
+        selectedRegion={selectedRegion}
+        setSelectedRegion={setSelectedRegion}
+      />
     </section>
   );
 }

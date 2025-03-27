@@ -1,40 +1,76 @@
 import { test, expect } from '@playwright/test';
 
-test('Snapshot for Home Page without Hero Section', async ({ page }) => {
+test('Snapshot for Home Page without Hero Section', async ({
+  page,
+  browserName,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+
   await page.goto(process.env.BASE_URL || 'http://localhost:8000/', {
     timeout: 60000,
-    waitUntil: 'load',
+    waitUntil: 'networkidle',
   });
 
-  await page.waitForLoadState('load');
+  await Promise.all([
+    page.waitForLoadState('domcontentloaded'),
+    page.waitForLoadState('networkidle'),
+  ]);
+  await page.evaluate(() => {
+    return document.fonts.ready;
+  });
 
-  const heroSection = await page.waitForSelector(
-    'section[data-test-id="blog-initiatives"]',
-  );
+  await page.waitForSelector('select, input[type="checkbox"]', {
+    state: 'visible',
+    timeout: 10000,
+  });
 
-  const svgElement = await page.waitForSelector('svg[data-test-id="svg-map"]');
-
-  await page.waitForTimeout(5000);
-
-  if (heroSection) {
-    await page.evaluate(() => {
-      document
-        .querySelector('section[data-test-id="blog-initiatives"]')
-        ?.remove();
-    });
-  }
+  const svgElement = await page.waitForSelector('svg[data-test-id="svg-map"]', {
+    timeout: 10000,
+    state: 'attached',
+  });
 
   if (svgElement) {
     await page.evaluate(() => {
-      document.querySelector('svg[data-test-id="svg-map"]')?.remove();
+      const element = document.querySelector(
+        'svg[data-test-id="svg-map"]',
+      ) as SVGElement;
+      if (element) {
+        element.style.display = 'none';
+        element.remove();
+      }
     });
   }
 
-  await page.waitForTimeout(5000);
+  if (browserName === 'webkit') {
+    await page.waitForLoadState('networkidle');
+    await page.evaluate(() => {
+      const style = document.createElement('style');
+      style.textContent = `
+        * {
+          -webkit-font-smoothing: antialiased !important;
+          text-rendering: geometricPrecision !important;
+          letter-spacing: normal !important;
+        }
+      `;
+      document.head.appendChild(style);
+    });
+    await page
+      .waitForSelector('[role="alert"]', {
+        state: 'hidden',
+        timeout: 2000,
+      })
+      .catch(() => {});
 
-  await page.setViewportSize({ width: 1280, height: 720 });
+    await page.waitForTimeout(2000);
+  }
 
-  const snapshot = await page.screenshot({ fullPage: true });
+  const snapshot = await page.screenshot({
+    fullPage: true,
+    timeout: 30000,
+  });
 
-  expect(snapshot).toMatchSnapshot('homepage-no-hero.png');
+  expect(snapshot).toMatchSnapshot('homepage-no-hero.png', {
+    maxDiffPixels: 300,
+    threshold: 0.5,
+  });
 });

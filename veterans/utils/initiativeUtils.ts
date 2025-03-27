@@ -1,19 +1,46 @@
-import { Initiative, ProcessedInitiative, Paragraph, Child } from 'types';
+import type { Initiative } from '../keystone/models/Initiative';
 
-export function getTextFromParagraph(paragraph: Paragraph): string {
-  return paragraph.children.map((child: Child) => child.text).join(' ');
+export interface ProcessedInitiative {
+  id: string;
+  title: string;
+  description: string;
+  region: string;
+  category: string;
+  source: string;
+  status: string;
+}
+
+export function processInitiatives(data?: {
+  initiatives: Initiative[];
+}): ProcessedInitiative[] {
+  if (!data?.initiatives) {
+    return [];
+  }
+
+  return data.initiatives.map(processInitiative);
 }
 
 export function getDescription(description?: {
-  document?: Paragraph[];
-}): string | null {
+  document?: Array<{
+    type: string;
+    children?: Array<{
+      text?: string;
+    }>;
+  }>;
+}): string {
   if (!description?.document) {
-    return null;
+    return '';
   }
-  return description.document.reduce((acc: string, paragraph: Paragraph) => {
-    const text = getTextFromParagraph(paragraph);
-    return acc ? `${acc}\n${text}` : text;
-  }, '');
+
+  return description.document
+    .map((block) =>
+      block.children
+        ?.map((child) => child.text ?? '')
+        .join('')
+        .trim(),
+    )
+    .filter(Boolean)
+    .join('\n');
 }
 
 export function processInitiative(initiative: Initiative): ProcessedInitiative {
@@ -21,5 +48,9 @@ export function processInitiative(initiative: Initiative): ProcessedInitiative {
     id: initiative.id,
     title: initiative.title,
     description: getDescription(initiative.description),
+    region: initiative.region?.name ?? '',
+    category: initiative.category?.name ?? '',
+    source: initiative.source?.name ?? '',
+    status: initiative.status ?? '',
   };
 }

@@ -13,6 +13,16 @@ export const CURRENT_USER_QUERY = gql`
   }
 `;
 
+export const GET_REGIONS = gql`
+  query GetRegions {
+    regions {
+      id
+      name
+      order
+    }
+  }
+`;
+
 export const LOGIN_MUTATION = gql`
   mutation AuthenticateUser($email: String!, $password: String!) {
     authenticateUserWithPassword(email: $email, password: $password) {
@@ -56,6 +66,16 @@ export const GET_INITIATIVES = gql`
       description {
         document
       }
+    }
+  }
+`;
+
+export const CHECK_USER_QUERY = gql`
+  query CheckUser($email: String!) {
+    user(where: { email: $email }) {
+      id
+      email
+      name
     }
   }
 `;
