@@ -18,6 +18,9 @@ declare module '.keystone/types' {
     export namespace Source {
       export type TypeInfo<Session = any> = any;
     }
+    export namespace Region {
+      export type TypeInfo<Session = any> = any;
+    }
   }
 
   export type TypeInfo<Session = any> = {

@@ -13,6 +13,16 @@ export const CURRENT_USER_QUERY = gql`
   }
 `;
 
+export const GET_REGIONS = gql`
+  query GetRegions {
+    regions {
+      id
+      name
+      order
+    }
+  }
+`;
+
 export const LOGIN_MUTATION = gql`
   mutation AuthenticateUser($email: String!, $password: String!) {
     authenticateUserWithPassword(email: $email, password: $password) {
