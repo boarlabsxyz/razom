@@ -12,7 +12,10 @@ const DEFAULT_REGION_NAME = 'Всі';
 const SEARCH_PLACEHOLDER = 'Укажіть область...';
 const UKRAINIAN_TEXT_REGEX = /^[а-яґєіїё]+$/iu;
 
-function RegList({ selectedRegion, setSelectedRegion }: RegionsListProps) {
+function RegList({
+  selectedRegion,
+  setSelectedRegion,
+}: Readonly<RegionsListProps>) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
