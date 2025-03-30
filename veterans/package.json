@@ -18,10 +18,11 @@
     "test:e2e": "playwright test",
     "format": "prettier --write '**/**/*.{js,jsx,ts,tsx,json,css,md}'",
     "format:check": "prettier --check '**/**/*.{js,jsx,ts,tsx,json,css,md}'",
-    "format:staged": "prettier --write $(git diff --cached --name-only --diff-filter=ACMR | grep -E '\\.(js|jsx|ts|tsx|json|css|md)$' | xargs)"
+    "format:staged": "prettier --write $(git diff --cached --name-only --diff-filter=ACMR | grep -E '\\.(js|jsx|ts|tsx|json|css|md)$' | xargs)",
+    "seed-regions": "ts-node keystone/scripts/seed-regions.ts"
   },
   "dependencies": {
-    "@apollo/client": "^3.13.1",
+    "@apollo/client": "^3.13.5",
     "@auth/core": "^0.34.2",
     "@hookform/resolvers": "^4.0.0",
     "@keystone-6/auth": "^8.0.0",
@@ -32,7 +33,7 @@
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "dotenv": "^16.4.7",
-    "graphql": "^16.9.0",
+    "graphql": "^16.10.0",
     "https-browserify": "^1.0.0",
     "next": "^14.2.18",
     "next-auth": "^4.24.11",

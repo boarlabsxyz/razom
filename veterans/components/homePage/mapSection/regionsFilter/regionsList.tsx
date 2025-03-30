@@ -1,7 +1,10 @@
 'use client';
 
-import regionsArray from 'data/RegionsArray';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useQuery } from '@apollo/client';
+import { GET_REGIONS, type Region } from '@helpers/queries';
+
+import Spinner from '@comComps/spinner';
 
 import st from './regionsList.module.css';
 
@@ -12,19 +15,21 @@ interface RegionsListProps {
 
 function RegionsList({ selectedRegion, setSelectedRegion }: RegionsListProps) {
   const [isOpen, setIsOpen] = useState(false);
-
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const { data, loading, error } = useQuery(GET_REGIONS);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
 
+  const regions = data?.regions || [];
+
   const toggleDropdown = () => {
     setIsOpen((prev) => {
       if (!prev) {
-        const selectedIndex = regionsArray.findIndex(
-          (region) => region.name === selectedRegion,
+        const selectedIndex = regions.findIndex(
+          (region: Region) => region.name === selectedRegion,
         );
 
         let focusIndex = 0;
@@ -42,15 +47,15 @@ function RegionsList({ selectedRegion, setSelectedRegion }: RegionsListProps) {
   };
 
   const handleRegionSelect = useCallback(
-    (region: { name: string; numOfInitiatives?: number }) => {
+    (region: Region) => {
       setSelectedRegion(region.name);
       setIsOpen(false);
       setFocusedIndex(
-        regionsArray.findIndex((reg) => reg.name === region.name),
+        regions.findIndex((reg: Region) => reg.name === region.name),
       );
       buttonRef.current?.focus();
     },
-    [setSelectedRegion, setIsOpen, setFocusedIndex, regionsArray, buttonRef],
+    [setSelectedRegion, setIsOpen, setFocusedIndex, regions, buttonRef],
   );
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -73,7 +78,7 @@ function RegionsList({ selectedRegion, setSelectedRegion }: RegionsListProps) {
         event.preventDefault();
         setFocusedIndex((prev) => {
           const nextIndex =
-            prev === null || prev === regionsArray.length - 1 ? 0 : prev + 1;
+            prev === null || prev === regions.length - 1 ? 0 : prev + 1;
           itemsRef.current[nextIndex]?.focus();
           return nextIndex;
         });
@@ -84,14 +89,14 @@ function RegionsList({ selectedRegion, setSelectedRegion }: RegionsListProps) {
         event.preventDefault();
         setFocusedIndex((prev) => {
           const nextIndex =
-            prev === null || prev === 0 ? regionsArray.length - 1 : prev - 1;
+            prev === null || prev === 0 ? regions.length - 1 : prev - 1;
           itemsRef.current[nextIndex]?.focus();
           return nextIndex;
         });
       } else if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         if (focusedIndex !== null) {
-          handleRegionSelect(regionsArray[focusedIndex]);
+          handleRegionSelect(regions[focusedIndex]);
         }
       }
     }
@@ -106,6 +111,13 @@ function RegionsList({ selectedRegion, setSelectedRegion }: RegionsListProps) {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
+
+  if (loading) {
+    return <Spinner />;
+  }
+  if (error) {
+    return <div>Помилка завантаження регіонів</div>;
+  }
 
   return (
     <div className={st['regions-wrapper']}>
@@ -137,9 +149,9 @@ function RegionsList({ selectedRegion, setSelectedRegion }: RegionsListProps) {
             }
             onKeyDown={handleKeyDown}
           >
-            {regionsArray.map((region, index) => (
+            {regions.map((region: Region, index: number) => (
               <div
-                key={region.name}
+                key={region.id}
                 id={`region-${index}`}
                 role="menuitemradio"
                 ref={(el) => {
