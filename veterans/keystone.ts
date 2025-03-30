@@ -12,8 +12,7 @@ export default withAuth(
   config({
     db: {
       provider: 'postgresql',
-      url:
-        process.env.DATABASE_URL || process.env.DEVELOPMENT_DATABASE_URL || '',
+      url: process.env.DATABASE_URL || '',
       onConnect: async () => {
         // Database connection successful
       },
