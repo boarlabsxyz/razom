@@ -19,6 +19,7 @@ next-env.d.ts
 schema.graphql
 schema.prisma
 .vercel
+.npm/
 
 /e2e/nextjs-test/screenshot-test.spec.ts-snapshots/
 
