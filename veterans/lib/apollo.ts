@@ -69,7 +69,11 @@ export const retryLink = new RetryLink({
 });
 
 const httpLink = createHttpLink({
-  uri: process.env.NEXT_PUBLIC_GRAPHQL_API,
+  // uri: process.env.NEXT_PUBLIC_GRAPHQL_API,
+  uri:
+    typeof window === 'undefined'
+      ? 'http://razom-app-keystone-1:3000/api/graphql'
+      : 'http://localhost:3000/api/graphql',
   credentials: 'include',
 });
 
