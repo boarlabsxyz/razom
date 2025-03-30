@@ -44,7 +44,8 @@ jobs:
         run: docker compose build
 
       - name: Run tests
-        run: docker compose run --rm app-nextjs npm run test -- --coverage
+        run: |
+          docker compose run --rm app-nextjs sh -c "NODE_ENV=test SESSION_SECRET=${{ secrets.SESSION_SECRET }} DATABASE_URL=${{ secrets.DATABASE_URL }} npm test"
 
       - name: Save coverage report
         uses: actions/upload-artifact@v4
