@@ -12,7 +12,9 @@ ARG DATABASE_URL
 ENV SESSION_SECRET=${SESSION_SECRET}
 ENV DATABASE_URL=${DATABASE_URL}
 
+# Copy package files and npm config
 COPY ./veterans/package.json ./veterans/package-lock.json ./
+COPY ./veterans/.npmrc ./
 
 RUN npm ci && npm cache clean --force
 
