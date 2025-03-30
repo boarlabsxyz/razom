@@ -266,11 +266,11 @@ export const Initiative = list({
 
     status: select({
       options: [
-        { label: 'На розгляді', value: 'pending' },
-        { label: 'Схвалено', value: 'approved' },
-        { label: 'Відхилено', value: 'rejected' },
+        { label: 'Approved', value: 'approved' },
+        { label: 'Rejected', value: 'rejected' },
+        { label: 'Draft', value: 'draft' },
       ],
-      defaultValue: 'pending',
+      defaultValue: 'draft',
       validation: { isRequired: true },
       access: {
         read: allowAll,
