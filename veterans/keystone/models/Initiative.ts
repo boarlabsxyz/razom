@@ -17,14 +17,7 @@ import {
   isSameUser,
   isAdminOrModerator,
 } from '../access';
-import { updateInitiativesCount } from '../utils/updateInitiativesCount';
 import { CustomBaseItem } from 'types';
-
-type InitiativeItem = CustomBaseItem & {
-  region?: { id: string } | null;
-  regionId?: string;
-  originalItem?: InitiativeItem;
-};
 
 export interface Initiative {
   id: string;
