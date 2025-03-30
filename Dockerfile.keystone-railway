@@ -21,6 +21,18 @@ COPY ./veterans/package.json ./veterans/package-lock.json ./
 # Install dependencies
 RUN npm ci && npm cache clean --force
 
+# Install polyfills explicitly
+RUN npm install --save \
+    crypto-browserify \
+    stream-browserify \
+    assert \
+    stream-http \
+    os-browserify \
+    url \
+    buffer \
+    process \
+    util
+
 # Copy the entire project
 COPY ./veterans .
 
