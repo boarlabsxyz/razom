@@ -1,0 +1,73 @@
+name: Production Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Are you sure you want to deploy to production?'
+        required: true
+        type: boolean
+        default: false
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
+  SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+  NODE_ENV: production
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: ${{ inputs.confirm == true }}
+    environment:
+      name: production
+      url: https://razom.vercel.app/
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        run: |
+          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "$VERCEL_CLI_TOKEN" ]; then
+            echo "::error::Missing required Vercel secrets"
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.18.2'
+          cache: 'npm'
+          cache-dependency-path: './veterans/package-lock.json'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./veterans
+
+      - name: Build project
+        run: npx vercel build --yes --prod --token="$VERCEL_CLI_TOKEN"
+        working-directory: ./veterans
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
+          echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
+          echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
+          echo "Preview URL: $DEPLOYMENT_URL"
+        working-directory: ./veterans
+
+      - name: Check if DEPLOYMENT_URL is set
+        run: |
+          if [ -z "${{ env.DEPLOYMENT_URL }}" ]; then
+            echo "::error::DEPLOYMENT_URL is not set. This might be due to:"
+            echo "1. Failed Vercel deployment"
+            echo "2. Missing or invalid VERCEL_CLI_TOKEN"
+            echo "3. Network connectivity issues"
+            echo "Please check the deployment logs above for more details."
+            exit 1
+          else
+            echo "DEPLOYMENT_URL is set to: ${{ env.DEPLOYMENT_URL }}"
+          fi
