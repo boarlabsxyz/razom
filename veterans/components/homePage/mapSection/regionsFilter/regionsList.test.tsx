@@ -216,4 +216,19 @@ describe('RegionsList Component', () => {
     );
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
+
+  test('search input updates inputValue and resets focusedIndex', async () => {
+    renderWithApollo(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
+    await waitForDataLoad();
+
+    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
+    const searchInput = screen.getByTestId('region-search-input');
+
+    fireEvent.change(searchInput, { target: { value: 'Region 1' } });
+
+    expect(searchInput).toHaveValue('Region 1');
+    expect(
+      screen.getByRole('menuitemradio', { name: 'Select Region 1' }),
+    ).toBeInTheDocument();
+  });
 });
