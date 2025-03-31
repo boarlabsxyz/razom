@@ -97,3 +97,9 @@
   max-width: 70px;
   max-height: 40px;
 }
+
+.verify-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
