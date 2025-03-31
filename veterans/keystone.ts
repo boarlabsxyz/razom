@@ -23,7 +23,7 @@ if (!databaseUrl) {
 
 const allowedOrigins = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(',')
-  : [process.env.FRONTEND_URL as string];
+  : ['http://localhost:8000'];
 
 const corsConfig = {
   origin: allowedOrigins,

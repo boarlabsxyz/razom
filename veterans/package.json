@@ -13,7 +13,7 @@
     "build": "next build",
     "next:prod:build": "NODE_ENV=production next build",
     "next:prod:start": "NODE_ENV=production next start",
-    "test": "NODE_ENV=test dotenv -e .env.test -- jest",
+    "test": "dotenv -e .env jest",
     "lint": "eslint .",
     "test:e2e": "playwright test",
     "format": "prettier --write '**/**/*.{js,jsx,ts,tsx,json,css,md}'",
