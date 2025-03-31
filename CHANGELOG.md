@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.6.0] - Unreleased
 
+### Added
+
+- possibility to filter regionsList with a keyboard([130](https://github.com/boarlabsxyz/razom/pull/130))
+- email verification after the user registers([147](https://github.com/boarlabsxyz/razom/pull/147))
+
+### Changed
+
+- all className attr to cebab case format ([126](https://github.com/boarlabsxyz/razom/pull/126))
+
 ### Fixed
 
 - ability to generate a preview deployment URL for Razom ([136](https://github.com/boarlabsxyz/razom/pull/136))
@@ -19,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - regionsList component ([117](https://github.com/boarlabsxyz/razom/pull/117))
 - Google Auth ([118](https://github.com/boarlabsxyz/razom/pull/118))
 - reset filter button to the map section ([128](https://github.com/boarlabsxyz/razom/pull/128))
+- region filed to create initiative page, get the list from db to display on web-site ([141](https://github.com/boarlabsxyz/razom/pull/141))
 
 ### Changed
 

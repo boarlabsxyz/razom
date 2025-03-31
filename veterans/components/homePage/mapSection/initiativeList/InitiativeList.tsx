@@ -29,10 +29,10 @@ export default function InitiativesList() {
   const processedInitiatives = useMemo(() => processInitiatives(data), [data]);
 
   if (loading) {
-    return <Spinner />;
+    return <Spinner data-testid="loader" />;
   }
   if (error) {
-    return <p data-test-id="error-message">{error.message}</p>;
+    return <p data-testid="error-message">{error.message}</p>;
   }
   if (processedInitiatives.length === 0) {
     return <p>No initiatives available at the moment.</p>;

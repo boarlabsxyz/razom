@@ -2,13 +2,28 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import RegionsList from './regionsList';
+import { MockedProvider } from '@apollo/client/testing';
+import { GET_REGIONS } from '@helpers/queries';
 
-jest.mock('data/RegionsArray', () =>
-  Array.from({ length: 26 }, (_, i) => ({
-    name: `Region ${i + 1}`,
-    numOfInitiatives: i * 2,
-  })),
-);
+const mockRegions = Array.from({ length: 26 }, (_, i) => ({
+  id: `region-${i + 1}`,
+  name: `Region ${i + 1}`,
+  numOfInitiatives: i * 2,
+  order: i,
+}));
+
+const mocks = [
+  {
+    request: {
+      query: GET_REGIONS,
+    },
+    result: {
+      data: {
+        regions: mockRegions,
+      },
+    },
+  },
+];
 
 describe('RegionsList Component', () => {
   let mockSetSelectedRegion: jest.Mock;
@@ -17,13 +32,29 @@ describe('RegionsList Component', () => {
     mockSetSelectedRegion = jest.fn();
   });
 
-  test('correctly renders and shows default region', () => {
-    render(
+  const renderWithApollo = (component: React.ReactElement) => {
+    return render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        {component}
+      </MockedProvider>,
+    );
+  };
+
+  const waitForDataLoad = async () => {
+    await waitFor(() => {
+      expect(screen.queryByTestId('loader')).not.toBeInTheDocument();
+    });
+  };
+
+  test('correctly renders and shows default region', async () => {
+    renderWithApollo(
       <RegionsList
         selectedRegion="Region 5"
         setSelectedRegion={mockSetSelectedRegion}
       />,
     );
+
+    await waitForDataLoad();
 
     expect(screen.getByTestId('btn-for-region-selection')).toBeInTheDocument();
     expect(screen.getByTestId('btn-for-region-selection')).toHaveTextContent(
@@ -32,16 +63,20 @@ describe('RegionsList Component', () => {
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
 
-  test('dropdown opens and highlights the selected region', () => {
-    render(
+  test('dropdown opens and highlights the selected region', async () => {
+    renderWithApollo(
       <RegionsList
         selectedRegion="Region 10"
         setSelectedRegion={mockSetSelectedRegion}
       />,
     );
 
+    await waitForDataLoad();
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
-    expect(screen.getByTestId('list-of-regions')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('list-of-regions')).toBeInTheDocument();
+    });
 
     const selectedRegionElement = screen.getByRole('menuitemradio', {
       name: /Region 10/i,
@@ -49,24 +84,29 @@ describe('RegionsList Component', () => {
     expect(selectedRegionElement).toHaveClass('focused');
   });
 
-  test('contains exactly 26 regions', () => {
-    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
+  test('contains exactly 26 regions', async () => {
+    renderWithApollo(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
+    await waitForDataLoad();
+
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
-    const items = screen.getAllByRole('menuitemradio');
-    expect(items.length).toBe(26);
+    await waitFor(() => {
+      const items = screen.getAllByRole('menuitemradio');
+      expect(items.length).toBe(26);
+    });
   });
 
-  test('keyboard navigation works (ArrowDown, ArrowUp, Enter, Space)', () => {
-    const mockSetSelectedRegion = jest.fn();
-    render(
+  test('keyboard navigation works (ArrowDown, ArrowUp, Enter, Space)', async () => {
+    renderWithApollo(
       <RegionsList
         selectedRegion="Region 1"
         setSelectedRegion={mockSetSelectedRegion}
       />,
     );
 
+    await waitForDataLoad();
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
+
     const list = screen.getByTestId('list-of-regions');
     const regions = screen.getAllByRole('menuitemradio');
 
@@ -95,8 +135,9 @@ describe('RegionsList Component', () => {
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
 
-  test('closes dropdown on Escape key', () => {
-    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
+  test('closes dropdown on Escape key', async () => {
+    renderWithApollo(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
+    await waitForDataLoad();
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     const list = screen.getByTestId('list-of-regions');
@@ -105,8 +146,9 @@ describe('RegionsList Component', () => {
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
 
-  test('closes dropdown when clicking outside', () => {
-    render(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
+  test('closes dropdown when clicking outside', async () => {
+    renderWithApollo(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
+    await waitForDataLoad();
 
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
     expect(screen.getByTestId('list-of-regions')).toBeInTheDocument();
@@ -116,13 +158,14 @@ describe('RegionsList Component', () => {
   });
 
   test('focus moves to selected region when dropdown opens', async () => {
-    render(
+    renderWithApollo(
       <RegionsList
         selectedRegion="Region 5"
         setSelectedRegion={mockSetSelectedRegion}
       />,
     );
 
+    await waitForDataLoad();
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
     await waitFor(() =>
@@ -132,14 +175,15 @@ describe('RegionsList Component', () => {
     );
   });
 
-  test('clicking a region updates the selectedRegion and closes dropdown', () => {
-    render(
+  test('clicking a region updates the selectedRegion and closes dropdown', async () => {
+    renderWithApollo(
       <RegionsList
         selectedRegion="Region 10"
         setSelectedRegion={mockSetSelectedRegion}
       />,
     );
 
+    await waitForDataLoad();
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
     const region10 = screen.getByRole('menuitemradio', { name: /Region 10/i });
@@ -152,14 +196,15 @@ describe('RegionsList Component', () => {
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
   });
 
-  test('pressing Enter or Space selects a region', () => {
-    render(
+  test('pressing Enter or Space selects a region', async () => {
+    renderWithApollo(
       <RegionsList
         selectedRegion="Region 5"
         setSelectedRegion={mockSetSelectedRegion}
       />,
     );
 
+    await waitForDataLoad();
     fireEvent.click(screen.getByTestId('btn-for-region-selection'));
 
     const region5 = screen.getByRole('menuitemradio', { name: /Region 5/i });
@@ -170,5 +215,20 @@ describe('RegionsList Component', () => {
       /Region 5/i,
     );
     expect(screen.queryByTestId('list-of-regions')).not.toBeInTheDocument();
+  });
+
+  test('search input updates inputValue and resets focusedIndex', async () => {
+    renderWithApollo(<RegionsList setSelectedRegion={mockSetSelectedRegion} />);
+    await waitForDataLoad();
+
+    fireEvent.click(screen.getByTestId('btn-for-region-selection'));
+    const searchInput = screen.getByTestId('region-search-input');
+
+    fireEvent.change(searchInput, { target: { value: 'Region 1' } });
+
+    expect(searchInput).toHaveValue('Region 1');
+    expect(
+      screen.getByRole('menuitemradio', { name: 'Select Region 1' }),
+    ).toBeInTheDocument();
   });
 });
