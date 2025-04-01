@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 import { useForm, Controller } from 'react-hook-form';
@@ -12,6 +11,8 @@ import { useMutation } from '@apollo/client';
 import { RegisterFormData } from 'types';
 import { REGISTER_MUTATION } from 'constants/graphql';
 import st from '@comComps/authForm/AuthForm.module.css';
+import { handleSendEmail } from '@helpers/handleSendEmail';
+import EmailVerification from './EmailVerification/EmailVerification';
 
 const registerSchema = yup.object().shape({
   name: yup.string().required('Name is required'),
@@ -34,11 +35,8 @@ const registerSchema = yup.object().shape({
 export default function RegisterForm() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [confirmedCode, setConfirmedCode] = useState<string>('');
   const stepRef = useRef<'register' | 'verify'>('register');
   const verificationCodeRef = useRef<string>('');
-
-  const router = useRouter();
 
   const {
     control,
@@ -58,36 +56,6 @@ export default function RegisterForm() {
     setPasswordVisible((prev) => !prev);
   };
 
-  const CODE_MIN = 1000;
-  const CODE_MAX = 9999;
-
-  const handleSendEmail = async (email: string) => {
-    const newCode = Math.floor(
-      CODE_MIN + Math.random() * (CODE_MAX - CODE_MIN + 1),
-    ).toString();
-    verificationCodeRef.current = newCode;
-
-    const message = `You need to verify your email address. Enter the following code to verify your email address: ${newCode}`;
-    try {
-      const response = await fetch('/api/sendEmail', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to: email, message }),
-      });
-
-      if (response.ok) {
-        alert('Verification email sent! Check your inbox.');
-        return true;
-      } else {
-        throw new Error('Failed to send verification email');
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error sending email:', error);
-      return false;
-    }
-  };
-
   const [register] = useMutation(REGISTER_MUTATION, {
     onCompleted(data) {
       const createdUser = data?.createUser;
@@ -104,22 +72,19 @@ export default function RegisterForm() {
   const onSubmit = async (data: RegisterFormData) => {
     setSubmitError(null);
     try {
-      await register({ variables: { ...data } });
-      // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-      const emailSent = await handleSendEmail(data.email);
-      if (!emailSent) {
-        setSubmitError('Failed to send verification email.');
+      const { data: responseData } = await register({ variables: { ...data } });
+
+      if (responseData?.createUser) {
+        const { success, code } = await handleSendEmail(data.email);
+        if (success && code) {
+          verificationCodeRef.current = code;
+        } else {
+          setSubmitError('Failed to send verification email.');
+        }
       }
+      // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     } catch (error) {
       setSubmitError('An error occurred during registration');
-    }
-  };
-
-  const handleVerifyCode = () => {
-    if (confirmedCode === verificationCodeRef.current) {
-      router.push('/login');
-    } else {
-      alert('Invalid verification code');
     }
   };
 
@@ -235,27 +200,7 @@ export default function RegisterForm() {
           </div>
         </form>
       ) : (
-        <div className={st['verify-container']}>
-          <h3>Verify your email address</h3>
-
-          <input
-            type="text"
-            id="confirmEmail"
-            placeholder="Email verification"
-            className={st.input}
-            style={{ textAlign: 'center' }}
-            value={confirmedCode}
-            onChange={(e) => setConfirmedCode(e.target.value)}
-          />
-
-          <button
-            type="button"
-            className={st.button}
-            onClick={handleVerifyCode}
-          >
-            Ok
-          </button>
-        </div>
+        <EmailVerification verificationCode={verificationCodeRef.current} />
       )}
     </div>
   );

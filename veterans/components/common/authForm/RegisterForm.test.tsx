@@ -12,6 +12,7 @@ import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { useRouter } from 'next/navigation';
 import { SessionProvider } from 'next-auth/react';
 import { REGISTER_MUTATION } from 'constants/graphql';
+import { generateSecureCode } from '@helpers/generateSecureCode';
 
 const mocks: MockedResponse[] = [
   {
@@ -98,7 +99,7 @@ describe('Auth Forms', () => {
 
   beforeEach(() => {
     (useRouter as jest.Mock).mockReturnValue({
-      push: mockPush,
+      push: jest.fn(),
       back: jest.fn(),
     });
     jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -117,16 +118,12 @@ describe('Auth Forms', () => {
 
   it('should toggle password visibility', () => {
     customRender(<RegisterForm />);
-    const toggleButton = screen.getByRole('button', {
-      name: /show password/i,
-    });
+    const toggleButton = screen.getByRole('button', { name: /show password/i });
     const passwordInput = screen.getByPlaceholderText('New Password');
 
     expect(passwordInput).toHaveAttribute('type', 'password');
-
     fireEvent.click(toggleButton);
     expect(passwordInput).toHaveAttribute('type', 'text');
-
     fireEvent.click(toggleButton);
     expect(passwordInput).toHaveAttribute('type', 'password');
   });
@@ -146,7 +143,6 @@ describe('Auth Forms', () => {
     const consoleErrorMock = jest
       .spyOn(console, 'error')
       .mockImplementation(() => {});
-
     customRender(<RegisterForm />, errorMocks);
     fillRegisterForm();
     fireEvent.click(screen.getByRole('button', { name: /submit/i }));
@@ -156,5 +152,76 @@ describe('Auth Forms', () => {
     });
 
     consoleErrorMock.mockRestore();
+  });
+
+  it('should generate a secure code within the expected range', () => {
+    const secureCode = generateSecureCode();
+    expect(Number(secureCode)).toBeGreaterThanOrEqual(1000);
+    expect(Number(secureCode)).toBeLessThanOrEqual(9999);
+  });
+
+  it('should show an error if the registration fails', async () => {
+    customRender(<RegisterForm />, errorMocks);
+
+    fillRegisterForm();
+
+    fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Email is already taken')).toBeInTheDocument();
+    });
+  });
+
+  it('should submit form and send verification email on successful registration', async () => {
+    customRender(<RegisterForm />, mocks);
+
+    fillRegisterForm();
+
+    const mockSendEmail = jest.spyOn(window, 'fetch').mockResolvedValueOnce(
+      new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        statusText: 'OK',
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByPlaceholderText('Email verification'),
+      ).toBeInTheDocument();
+    });
+
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      '/api/sendEmail',
+      expect.objectContaining({
+        method: 'POST',
+        body: expect.stringContaining('You need to verify your email address'),
+        headers: expect.objectContaining({
+          'Content-Type': 'application/json',
+        }),
+      }),
+    );
+
+    mockSendEmail.mockRestore();
+  });
+
+  it('should update confirmedCode state when typing in the verification input', async () => {
+    customRender(<RegisterForm />, mocks);
+
+    fillRegisterForm();
+    fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByPlaceholderText('Email verification'),
+      ).toBeInTheDocument();
+    });
+
+    const verificationInput = screen.getByPlaceholderText('Email verification');
+
+    fireEvent.change(verificationInput, { target: { value: '1234' } });
+    expect(verificationInput).toHaveValue('1234');
   });
 });
