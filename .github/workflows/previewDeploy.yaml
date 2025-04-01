@@ -5,7 +5,15 @@ on:
     workflows: ['Test Stage']
     types:
       - completed
+    branches:
+      - ${{ github.head_ref }}
   workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Are you sure you want to deploy preview?'
+        required: true
+        type: boolean
+        default: false
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -15,9 +23,34 @@ env:
   NODE_ENV: preview
 
 jobs:
+  check-test-status:
+    runs-on: ubuntu-latest
+    outputs:
+      test_status: ${{ steps.check_status.outputs.status }}
+    steps:
+      - name: Check Test Stage Status
+        id: check_status
+        run: |
+          response=$(curl -sL \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/testStage.yaml/runs?branch=${{ github.head_ref }}&per_page=1")
+
+          status=$(echo "$response" | jq -r '.workflow_runs[0].conclusion')
+          echo "status=$status" >> $GITHUB_OUTPUT
+
+          if [ "$status" != "success" ]; then
+            echo "::error::Test Stage has not passed on this branch. Please run tests first."
+            exit 1
+          fi
+
   deployment:
+    needs: check-test-status
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    if: |
+      (github.event_name == 'workflow_dispatch' && inputs.confirm == true) ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     environment:
       name: preview
       url: ${{ steps.deploy.outputs.url }}

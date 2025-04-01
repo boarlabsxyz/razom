@@ -5,13 +5,6 @@ on:
     types:
       - synchronize
 
-# env:
-#   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-#   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-#   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
-#   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-#   NODE_ENV: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
-
 jobs:
   docker-lint:
     runs-on: ubuntu-latest
