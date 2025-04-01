@@ -95,8 +95,6 @@ const fillRegisterForm = () => {
 };
 
 describe('Auth Forms', () => {
-  const mockPush = jest.fn();
-
   beforeEach(() => {
     (useRouter as jest.Mock).mockReturnValue({
       push: jest.fn(),

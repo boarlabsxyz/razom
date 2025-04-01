@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import st from '@comComps/authForm/AuthForm.module.css';
 
 interface EmailVerificationProps {
-  verificationCode: string;
+  readonly verificationCode: string;
 }
 
 export default function EmailVerification({
