@@ -26,6 +26,8 @@ export default function UkraineMap({
       data-test-id="svg-map"
       aria-labelledby="map-title map-desc"
       className={st['icon-map']}
+      width="100%"
+      height="auto"
     >
       <title id="map-title">Карта регіонів України</title>
       <desc id="map-desc">

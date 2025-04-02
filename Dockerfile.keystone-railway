@@ -1,0 +1,51 @@
+FROM node:22.11.0
+
+WORKDIR /usr/src/app
+
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
+ARG SESSION_SECRET
+ARG DATABASE_URL
+
+ENV SESSION_SECRET=${SESSION_SECRET}
+ENV DATABASE_URL=${DATABASE_URL}
+
+# Copy package files and npm config
+COPY ./veterans/package.json ./veterans/package-lock.json ./
+COPY ./veterans/.npmrc ./
+
+RUN npm ci && npm cache clean --force
+
+RUN npm install --save \
+    crypto-browserify \
+    stream-browserify \
+    assert \
+    stream-http \
+    os-browserify \
+    url \
+    buffer \
+    process \
+    util
+
+COPY ./veterans .
+
+RUN mkdir -p /usr/src/app/shared
+
+COPY ./scripts/build-keystone.sh /usr/src/app/build-keystone.sh
+RUN chmod +x /usr/src/app/build-keystone.sh
+
+RUN /usr/src/app/build-keystone.sh
+
+RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
+
+COPY ./scripts/run-keystone.sh /usr/src/app/run-keystone.sh
+RUN chmod +x /usr/src/app/run-keystone.sh
+
+COPY ./scripts/wait-schema-for-keystone.sh /usr/src/app/wait-schema-for-keystone.sh
+RUN chmod +x /usr/src/app/wait-schema-for-keystone.sh
+
+EXPOSE 3000
+
+CMD ["/usr/src/app/run-keystone.sh"]
