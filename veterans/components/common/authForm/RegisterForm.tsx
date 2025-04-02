@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 
 import { useForm, Controller } from 'react-hook-form';
@@ -12,6 +11,8 @@ import { useMutation } from '@apollo/client';
 import { RegisterFormData } from 'types';
 import { REGISTER_MUTATION } from 'constants/graphql';
 import st from '@comComps/authForm/AuthForm.module.css';
+import { handleSendEmail } from '@helpers/handleSendEmail';
+import EmailVerification from './EmailVerification/EmailVerification';
 
 const registerSchema = yup.object().shape({
   name: yup.string().required('Name is required'),
@@ -34,8 +35,8 @@ const registerSchema = yup.object().shape({
 export default function RegisterForm() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-
-  const router = useRouter();
+  const stepRef = useRef<'register' | 'verify'>('register');
+  const verificationCodeRef = useRef<string>('');
 
   const {
     control,
@@ -52,7 +53,7 @@ export default function RegisterForm() {
   });
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
+    setPasswordVisible((prev) => !prev);
   };
 
   const [register] = useMutation(REGISTER_MUTATION, {
@@ -60,11 +61,7 @@ export default function RegisterForm() {
       const createdUser = data?.createUser;
 
       if (createdUser) {
-        if (window.history.length > 1) {
-          router.back();
-        } else {
-          router.push('/');
-        }
+        stepRef.current = 'verify';
       }
     },
     onError(err) {
@@ -75,7 +72,16 @@ export default function RegisterForm() {
   const onSubmit = async (data: RegisterFormData) => {
     setSubmitError(null);
     try {
-      await register({ variables: { ...data } });
+      const { data: responseData } = await register({ variables: { ...data } });
+
+      if (responseData?.createUser) {
+        const { success, code } = await handleSendEmail(data.email);
+        if (success && code) {
+          verificationCodeRef.current = code;
+        } else {
+          setSubmitError('Failed to send verification email.');
+        }
+      }
       // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     } catch (error) {
       setSubmitError('An error occurred during registration');
@@ -84,114 +90,118 @@ export default function RegisterForm() {
 
   return (
     <div className={st.container}>
-      <form className={st.form} onSubmit={handleSubmit(onSubmit)}>
-        <div className={st.header}>
-          <h1>Sign Up</h1>
-        </div>
+      {stepRef.current === 'register' ? (
+        <form className={st.form} onSubmit={handleSubmit(onSubmit)}>
+          <div className={st.header}>
+            <h1>Sign Up</h1>
+          </div>
 
-        <div className={st['input-group']}>
-          <label htmlFor="name" className={st.label}>
-            Name
-          </label>
-          <Controller
-            control={control}
-            name="name"
-            render={({ field }) => (
-              <input
-                type="text"
-                id="name"
-                placeholder="Name"
-                className={`${st.input} ${errors.name ? st['input-error'] : ''}`}
-                {...field}
-              />
-            )}
-          />
-          {errors.name && <p className={st.error}>{errors.name.message}</p>}
-        </div>
-
-        <div className={st['input-group']}>
-          <label htmlFor="email" className={st.label}>
-            Email
-          </label>
-          <Controller
-            control={control}
-            name="email"
-            render={({ field }) => (
-              <input
-                type="email"
-                id="email"
-                placeholder="Email"
-                className={`${st.input} ${errors.email ? st['input-error'] : ''}`}
-                {...field}
-              />
-            )}
-          />
-          {errors.email && <p className={st.error}>{errors.email.message}</p>}
-        </div>
-
-        <div className={st['input-group']}>
-          <fieldset className={st.fieldset}>
-            <legend className={st.label}>Password</legend>
-            <div className={st['password-group']}>
-              <Controller
-                control={control}
-                name="password"
-                render={({ field }) => (
-                  <input
-                    type={passwordVisible ? 'text' : 'password'}
-                    id="password"
-                    placeholder="New Password"
-                    className={`${st.input} ${errors.password ? st['input-error'] : ''}`}
-                    {...field}
-                  />
-                )}
-              />
-              {errors.password && (
-                <p className={st.error}>{errors.password.message}</p>
+          <div className={st['input-group']}>
+            <label htmlFor="name" className={st.label}>
+              Name
+            </label>
+            <Controller
+              control={control}
+              name="name"
+              render={({ field }) => (
+                <input
+                  type="text"
+                  id="name"
+                  placeholder="Name"
+                  className={`${st.input} ${errors.name ? st['input-error'] : ''}`}
+                  {...field}
+                />
               )}
+            />
+            {errors.name && <p className={st.error}>{errors.name.message}</p>}
+          </div>
 
-              <Controller
-                control={control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <input
-                    type={passwordVisible ? 'text' : 'password'}
-                    id="confirmPassword"
-                    placeholder="Confirm Password"
-                    className={`${st.input} ${errors.confirmPassword ? st['input-error'] : ''}`}
-                    {...field}
-                  />
-                )}
-              />
-              {errors.confirmPassword && (
-                <p className={st.error}>{errors.confirmPassword.message}</p>
+          <div className={st['input-group']}>
+            <label htmlFor="email" className={st.label}>
+              Email
+            </label>
+            <Controller
+              control={control}
+              name="email"
+              render={({ field }) => (
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="Email"
+                  className={`${st.input} ${errors.email ? st['input-error'] : ''}`}
+                  {...field}
+                />
               )}
+            />
+            {errors.email && <p className={st.error}>{errors.email.message}</p>}
+          </div>
 
-              <button
-                type="button"
-                className={st['toggle-button']}
-                onClick={togglePasswordVisibility}
-              >
-                {passwordVisible ? 'Hide' : 'Show'} Password
-              </button>
-            </div>
-          </fieldset>
-        </div>
+          <div className={st['input-group']}>
+            <fieldset className={st.fieldset}>
+              <legend className={st.label}>Password</legend>
+              <div className={st['password-group']}>
+                <Controller
+                  control={control}
+                  name="password"
+                  render={({ field }) => (
+                    <input
+                      type={passwordVisible ? 'text' : 'password'}
+                      id="password"
+                      placeholder="New Password"
+                      className={`${st.input} ${errors.password ? st['input-error'] : ''}`}
+                      {...field}
+                    />
+                  )}
+                />
+                {errors.password && (
+                  <p className={st.error}>{errors.password.message}</p>
+                )}
 
-        {submitError && <p className={st.error}>{submitError}</p>}
+                <Controller
+                  control={control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <input
+                      type={passwordVisible ? 'text' : 'password'}
+                      id="confirmPassword"
+                      placeholder="Confirm Password"
+                      className={`${st.input} ${errors.confirmPassword ? st['input-error'] : ''}`}
+                      {...field}
+                    />
+                  )}
+                />
+                {errors.confirmPassword && (
+                  <p className={st.error}>{errors.confirmPassword.message}</p>
+                )}
 
-        <div className={st['button-container']}>
-          <button type="submit" className={st.button}>
-            Get started
-          </button>
-        </div>
+                <button
+                  type="button"
+                  className={st['toggle-button']}
+                  onClick={togglePasswordVisibility}
+                >
+                  {passwordVisible ? 'Hide' : 'Show'} Password
+                </button>
+              </div>
+            </fieldset>
+          </div>
 
-        <div className={st['text-container']}>
-          <p>
-            Already have an account? <Link href="/login">Sign in here</Link>.
-          </p>
-        </div>
-      </form>
+          {submitError && <p className={st.error}>{submitError}</p>}
+
+          <div className={st['button-container']}>
+            <button type="submit" className={st.button}>
+              Submit
+            </button>
+          </div>
+
+          <div className={st['text-container']}>
+            <p>
+              Already have an account? <Link href="/login">Sign in here</Link>.
+            </p>
+          </div>
+        </form>
+      ) : (
+        <EmailVerification verificationCode={verificationCodeRef.current} />
+      )}
     </div>
   );
 }
