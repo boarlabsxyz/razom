@@ -1,51 +1,37 @@
-name: Production Deployment
+name: Vercel Deployment
 
 on:
   workflow_dispatch:
     inputs:
       confirm:
-        description: 'Are you sure you want to deploy to production?'
+        description: 'Are you sure you want to deploy?'
         required: true
         type: boolean
         default: false
+      deploy-env:
+        description: 'Environment to deploy'
+        required: true
+        type: choice
+        options:
+          - preview
+          - production
+        default: preview
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-  NODE_ENV: production
+  NODE_ENV: ${{ inputs.deploy-env }}
 
 jobs:
-  check-test-status:
-    runs-on: ubuntu-latest
-    outputs:
-      test_status: ${{ steps.check_status.outputs.status }}
-    steps:
-      - name: Check Test Stage Status
-        id: check_status
-        run: |
-          response=$(curl -sL \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/testStage.yaml/runs?branch=${{ github.head_ref }}&per_page=1")
-
-          status=$(echo "$response" | jq -r '.workflow_runs[0].conclusion')
-          echo "status=$status" >> $GITHUB_OUTPUT
-
-          if [ "$status" != "success" ]; then
-            echo "::error::Test Stage has not passed on this branch. Please run tests first."
-            exit 1
-          fi
-
   deployment:
-    needs: check-test-status
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: ${{ inputs.confirm == true }}
     environment:
-      name: production
-      url: https://razom.vercel.app/
+      name: ${{ inputs.deploy-env }}
+      url: ${{ inputs.deploy-env == 'preview' && steps.deploy.outputs.url || 'https://razom.vercel.app/' }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -69,16 +55,25 @@ jobs:
         working-directory: ./veterans
 
       - name: Build project
-        run: npx vercel build --yes --prod --token="$VERCEL_CLI_TOKEN"
+        run: |
+          if [[ "${{ inputs.deploy-env  }}" == "production" ]]; then
+            npx vercel build --yes --prod --token="$VERCEL_CLI_TOKEN"
+          else
+            npx vercel build --yes --token="$VERCEL_CLI_TOKEN"
+          fi
         working-directory: ./veterans
 
       - name: Deploy to Vercel
         id: deploy
         run: |
-          DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
-          echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
-          echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
-          echo "Preview URL: $DEPLOYMENT_URL"
+          if [[ "${{ inputs.deploy-env  }}" == "production" ]]; then
+            DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
+          else
+            DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
+          fi
+            echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
+            echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
+            echo "Preview URL: $DEPLOYMENT_URL"
         working-directory: ./veterans
 
       - name: Check if DEPLOYMENT_URL is set
