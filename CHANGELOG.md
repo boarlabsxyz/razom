@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - possibility to filter regionsList with a keyboard([130](https://github.com/boarlabsxyz/razom/pull/130))
+- email verification after the user registers([147](https://github.com/boarlabsxyz/razom/pull/147))
 
 ### Changed
 
