@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Google Auth ([118](https://github.com/boarlabsxyz/razom/pull/118))
 - reset filter button to the map section ([128](https://github.com/boarlabsxyz/razom/pull/128))
 - region filed to create initiative page, get the list from db to display on web-site ([141](https://github.com/boarlabsxyz/razom/pull/141))
+- deploy backend on the railway server ([132](https://github.com/boarlabsxyz/razom/pull/132))
 
 ### Changed
 
