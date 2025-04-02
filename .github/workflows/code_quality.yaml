@@ -203,7 +203,7 @@ jobs:
 
   deploy-trigger:
     runs-on: ubuntu-latest
-    needs: [vercel-build-project]
+    needs: vercel-build-project
     if: success()
     steps:
       - name: Trigger deploy workflow
