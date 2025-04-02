@@ -24,7 +24,7 @@ const regionsArray = [
   { name: 'Чернівецька', numOfInitiatives: 23 },
   { name: 'Чернігівська', numOfInitiatives: 18 },
   { name: 'АР Крим', numOfInitiatives: 1 },
-  { name: 'Всі', numOfInitiatives: 185 },
+  { name: 'Всі області', numOfInitiatives: 185 },
 ];
 
 export default regionsArray;

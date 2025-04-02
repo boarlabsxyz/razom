@@ -8,7 +8,7 @@ import Spinner from '@comComps/spinner';
 
 import st from './regionsList.module.css';
 
-const DEFAULT_REGION_NAME = 'Всі';
+const DEFAULT_REGION_NAME = 'Всі області';
 const SEARCH_PLACEHOLDER = 'Укажіть область...';
 const UKRAINIAN_TEXT_REGEX = /^[а-яґєіїё]+$/iu;
 
@@ -56,7 +56,7 @@ function RegionsList({
         );
 
         let focusIndex = 0;
-        if (selectedRegion !== 'Всі' && selectedIndex !== -1) {
+        if (selectedRegion !== 'Всі області' && selectedIndex !== -1) {
           focusIndex = selectedIndex;
         }
 

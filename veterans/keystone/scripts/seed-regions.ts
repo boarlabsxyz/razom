@@ -128,7 +128,7 @@ const regions = [
     order: 23,
   },
   { name: 'АР Крим', numOfInitiatives: 0, isDefault: false, order: 24 },
-  { name: 'Всі', numOfInitiatives: 0, isDefault: true, order: 25 },
+  { name: 'Всі області', numOfInitiatives: 0, isDefault: true, order: 25 },
 ];
 
 export async function main() {

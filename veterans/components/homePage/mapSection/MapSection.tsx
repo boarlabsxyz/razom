@@ -7,7 +7,7 @@ import RegionsList from './regionsFilter';
 
 export default function MapSection() {
   const defaultRegion = regionsArray.find(
-    (region) => region.name === 'Всі',
+    (region) => region.name === 'Всі області',
   ) || { name: '', numOfInitiatives: 0 };
 
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(

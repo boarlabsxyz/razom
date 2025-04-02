@@ -12,7 +12,7 @@ export async function updateInitiativesCount(
     }
 
     const allRegions = await context.db.Region.findMany({
-      where: { name: { equals: 'Всі' } },
+      where: { name: { equals: 'Всі області' } },
     });
     if (allRegions.length > 0) {
       const totalInitiatives = await context.db.Initiative.count({
@@ -26,7 +26,7 @@ export async function updateInitiativesCount(
         data: { numOfInitiatives: totalInitiatives },
       });
     } else {
-      console.warn("Region with name 'Всі' not found.");
+      console.warn("Region with name 'Всі області' not found.");
     }
 
     if (regionId) {
@@ -44,7 +44,7 @@ export async function updateInitiativesCount(
     }
 
     const allOtherRegions = await context.db.Region.findMany({
-      where: { name: { not: { equals: 'Всі' } } },
+      where: { name: { not: { equals: 'Всі області' } } },
     });
 
     for (const region of allOtherRegions) {
