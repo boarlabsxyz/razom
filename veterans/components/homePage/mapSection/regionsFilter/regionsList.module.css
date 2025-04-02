@@ -99,11 +99,12 @@
   max-height: 300px;
   overflow-y: auto;
   z-index: 1;
-  display: none;}
+  display: none;
+}
 
 .region-selector-list.show {
-    display: block;
-  }
+  display: block;
+}
 
 .region-search-input {
   position: sticky;

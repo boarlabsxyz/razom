@@ -44,6 +44,8 @@ jest.mock('@prisma/client', () => {
           { id: 'reg12', name: 'Чернівецька' },
           { id: 'reg13', name: 'Хмельницька' },
           { id: 'reg14', name: 'Полтавська' },
+          { id: 'reg15', name: 'Тернопільська' },
+          { id: 'reg16', name: 'Рівненська' },
         ]),
       },
       initiative: {
@@ -118,7 +120,7 @@ describe('seed-initiative', () => {
 
   it('створює ініціативи на основі даних', async () => {
     await main();
-    expect(prisma.initiative.create).toHaveBeenCalledTimes(23);
+    expect(prisma.initiative.create).toHaveBeenCalledTimes(30);
   });
 
   it("від'єднується від бази даних після завершення", async () => {

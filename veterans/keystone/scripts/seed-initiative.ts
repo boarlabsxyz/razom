@@ -524,35 +524,61 @@ const initiatives = [
   },
 ];
 
+function validateInitiativeData(
+  initiative: (typeof initiatives)[0],
+  categoryId: string | undefined,
+  sourceId: string | undefined,
+  regionId: string | undefined,
+): void {
+  const missingData = {
+    category: !categoryId,
+    source: !sourceId,
+    region: !regionId,
+  };
+
+  if (missingData.category || missingData.source || missingData.region) {
+    const missingFields = Object.entries(missingData)
+      .filter(([, isMissing]) => isMissing)
+      .map(([field]) => field)
+      .join(', ');
+
+    throw new Error(
+      `Не знайдено необхідні дані для ініціативи "${initiative.title}": відсутні ${missingFields}`,
+    );
+  }
+}
+
 export async function main() {
   try {
     await prisma.initiative.deleteMany({});
     await prisma.category.deleteMany({});
     await prisma.source.deleteMany({});
 
-    for (const title of categories) {
+    for (const categoryTitle of categories) {
       await prisma.category.create({
-        data: { title },
+        data: {
+          title: categoryTitle,
+        },
       });
     }
 
     // eslint-disable-next-line no-console
     console.log('✅ Категорії успішно створені');
 
-    for (const title of sources) {
+    for (const sourceTitle of sources) {
       await prisma.source.create({
-        data: { title },
+        data: {
+          title: sourceTitle,
+        },
       });
     }
 
     // eslint-disable-next-line no-console
     console.log('✅ Джерела успішно створені');
 
-    const [allCategories, allSources, allRegions] = await Promise.all([
-      prisma.category.findMany(),
-      prisma.source.findMany(),
-      prisma.region.findMany(),
-    ]);
+    const allCategories = await prisma.category.findMany();
+    const allSources = await prisma.source.findMany();
+    const allRegions = await prisma.region.findMany();
 
     for (const initiative of initiatives) {
       const categoryId = allCategories.find(
@@ -565,13 +591,7 @@ export async function main() {
         (reg) => reg.name === initiative.region,
       )?.id;
 
-      if (!categoryId || !sourceId || !regionId) {
-        // eslint-disable-next-line no-console
-        console.log('✅ Ініціативи успішно створені');
-        throw new Error(
-          `Не знайдено необхідні дані для ініціативи: ${initiative.title}`,
-        );
-      }
+      validateInitiativeData(initiative, categoryId, sourceId, regionId);
 
       await prisma.initiative.create({
         data: {
