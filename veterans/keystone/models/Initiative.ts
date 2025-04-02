@@ -17,14 +17,7 @@ import {
   isSameUser,
   isAdminOrModerator,
 } from '../access';
-import { updateInitiativesCount } from '../utils/updateInitiativesCount';
 import { CustomBaseItem } from 'types';
-
-type InitiativeItem = CustomBaseItem & {
-  region?: { id: string } | null;
-  regionId?: string;
-  originalItem?: InitiativeItem;
-};
 
 export interface Initiative {
   id: string;
@@ -87,37 +80,8 @@ export const Initiative = list({
       }
       return resolvedData;
     },
-    afterOperation: async ({ operation, context, item }) => {
-      if (
-        operation === 'create' ||
-        operation === 'update' ||
-        operation === 'delete'
-      ) {
-        const initiativeItem = item as InitiativeItem;
-
-        await updateInitiativesCount(context, null);
-
-        if (operation === 'create' || operation === 'update') {
-          const regionId =
-            initiativeItem?.region?.id ?? initiativeItem?.regionId;
-          if (regionId) {
-            await updateInitiativesCount(context, regionId);
-          }
-        }
-
-        if (operation === 'update' && initiativeItem?.originalItem?.regionId) {
-          await updateInitiativesCount(
-            context,
-            initiativeItem.originalItem.regionId,
-          );
-        }
-
-        if (operation === 'delete' && initiativeItem?.regionId) {
-          await updateInitiativesCount(context, initiativeItem.regionId);
-        }
-      }
-    },
   },
+
   fields: {
     title: text({
       validation: { isRequired: true },
