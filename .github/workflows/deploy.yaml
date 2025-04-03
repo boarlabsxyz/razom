@@ -14,6 +14,7 @@ on:
         type: choice
         options:
           - preview
+          - staging
           - production
         default: preview
 
@@ -66,10 +67,15 @@ jobs:
       - name: Deploy to Vercel
         id: deploy
         run: |
-          if [[ "${{ inputs.deploy-env  }}" == "production" ]]; then
+          if [[ "${{ inputs.deploy-env }}" == "production" ]]; then
             DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
+            echo "DEPLOY_URL=mozhlyvosti.org.ua" >> "$GITHUB_ENV"
+          elif [[ "${{ inputs.deploy-env }}" == "staging" ]]; then
+            DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
+            echo "DEPLOY_URL=razom.vercel.app" >> "$GITHUB_ENV"
           else
             DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
+            echo "DEPLOY_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
           fi
             echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
             echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
