@@ -185,6 +185,31 @@ export const User: ListConfig<Lists.User.TypeInfo<Session>> = list({
       },
     }),
 
+    isVerified: checkbox({
+      defaultValue: false,
+      access: {
+        read: allowAll,
+        update: ({
+          session,
+          item,
+        }: {
+          session?: Session;
+          item: CustomBaseItem;
+        }) => isSameUser({ session, item }),
+      },
+      ui: {
+        createView: { fieldMode: 'hidden' },
+        itemView: {
+          fieldMode: ({
+            session,
+          }: {
+            session?: Session;
+            item: CustomBaseItem;
+          }) => (isAdmin({ session }) ? 'edit' : 'read'),
+        },
+      },
+    }),
+
     createdAt: timestamp({
       defaultValue: { kind: 'now' },
       ui: {
