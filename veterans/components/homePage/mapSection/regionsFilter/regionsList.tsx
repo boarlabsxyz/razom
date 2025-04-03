@@ -40,10 +40,11 @@ function RegionsList({
 
   const defaultRegion = regions.find(
     (region: Region) => region.name === DEFAULT_REGION_NAME,
-  ) || {
+  ) ?? {
     name: '',
     numOfInitiatives: 0,
   };
+
   const [focusedIndex, setFocusedIndex] = useState<number | null>(
     regions.findIndex((region: Region) => region.name === defaultRegion.name),
   );
@@ -222,7 +223,7 @@ function RegionsList({
             onKeyDown={handleKeyDown}
           >
             {loading ? (
-              <Spinner />
+              <Spinner data-testid="loader" />
             ) : (
               <div>
                 <input
