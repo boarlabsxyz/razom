@@ -184,4 +184,4 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
             "https://api.github.com/repos/${{ github.repository }}/actions/workflows/deploy.yaml/dispatches" \
-            -d "{\"ref\":\"${{ github.ref }}\", \"inputs\": {\"confirm\": \"true\", \"deploy-env\": \"preview\"}}"
+            -d "{\"ref\":\"${{ github.head_ref }}\"}"
