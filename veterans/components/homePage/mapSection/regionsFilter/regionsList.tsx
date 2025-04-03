@@ -187,9 +187,6 @@ function RegionsList({
     };
   }, [isOpen, handleClickOutside]);
 
-  if (loading) {
-    return <Spinner />;
-  }
   if (error) {
     return <div>Помилка завантаження регіонів</div>;
   }
@@ -224,52 +221,58 @@ function RegionsList({
             }
             onKeyDown={handleKeyDown}
           >
-            <input
-              ref={inputRef}
-              type="text"
-              value={inputValue}
-              onChange={handleInputChange}
-              placeholder={SEARCH_PLACEHOLDER}
-              className={st['region-search-input']}
-              data-testid="region-search-input"
-              aria-label="Пошук регіону"
-              aria-controls="region-list"
-              aria-expanded={isOpen}
-              aria-haspopup="listbox"
-              aria-autocomplete="list"
-              role="combobox"
-              aria-owns="region-list"
-              aria-activedescendant={
-                focusedIndex !== null ? `region-${focusedIndex}` : undefined
-              }
-            />
-            {filteredRegions.map((region: Region, index: number) => (
-              <div
-                key={region.id}
-                id={`region-${index}`}
-                role="menuitemradio"
-                ref={(el) => {
-                  itemsRef.current[index] = el;
-                }}
-                onClick={() => handleRegionSelect(region)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    handleRegionSelect(region);
+            {loading ? (
+              <Spinner />
+            ) : (
+              <div>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  placeholder={SEARCH_PLACEHOLDER}
+                  className={st['region-search-input']}
+                  data-testid="region-search-input"
+                  aria-label="Пошук регіону"
+                  aria-controls="region-list"
+                  aria-expanded={isOpen}
+                  aria-haspopup="listbox"
+                  aria-autocomplete="list"
+                  role="combobox"
+                  aria-owns="region-list"
+                  aria-activedescendant={
+                    focusedIndex !== null ? `region-${focusedIndex}` : undefined
                   }
-                }}
-                tabIndex={focusedIndex === index ? 0 : -1}
-                className={`${st['region-selector-item']} ${
-                  focusedIndex === index ? st.focused : ''
-                } ${selectedRegion === region.name ? st.selected : ''}`}
-                aria-checked={selectedRegion === region.name}
-                aria-label={`Select ${region.name}`}
-              >
-                <span className={st['region-name']}>{region.name}</span>
-                <span className={st['num-of-initiatives']}>
-                  ({region.numOfInitiatives})
-                </span>
+                />
+                {filteredRegions.map((region: Region, index: number) => (
+                  <div
+                    key={region.id}
+                    id={`region-${index}`}
+                    role="menuitemradio"
+                    ref={(el) => {
+                      itemsRef.current[index] = el;
+                    }}
+                    onClick={() => handleRegionSelect(region)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        handleRegionSelect(region);
+                      }
+                    }}
+                    tabIndex={focusedIndex === index ? 0 : -1}
+                    className={`${st['region-selector-item']} ${
+                      focusedIndex === index ? st.focused : ''
+                    } ${selectedRegion === region.name ? st.selected : ''}`}
+                    aria-checked={selectedRegion === region.name}
+                    aria-label={`Select ${region.name}`}
+                  >
+                    <span className={st['region-name']}>{region.name}</span>
+                    <span className={st['num-of-initiatives']}>
+                      ({region.numOfInitiatives})
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         )}
       </div>
