@@ -31,7 +31,7 @@ function RegionsList({
     [],
   );
 
-  const regions = data?.regions || [];
+  const regions = data?.regions ?? [];
   const filteredRegions = regions.filter((region: Region) =>
     isUkrainianText(inputValue)
       ? region.name.toLowerCase().includes(inputValue.toLowerCase())
