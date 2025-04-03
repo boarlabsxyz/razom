@@ -111,3 +111,11 @@ Format: MAJOR.MINOR.PATCH
 Example: 1.2.3 — the third patch of the second minor update of the first major version.
 
 The SemVer is updated in the `version` field of the `veterans/package.json` file.
+
+## Seeding db
+   To run the scripts that will seed the db with initiatives and regions use these commands:
+   docker exec -it razom-app-keystone-1 npm run seed-regions
+   docker exec -it razom-app-keystone-1 npm run seed-initiative
+   docker exec -it razom-app-keystone-1 npm run seed:all (runs both previous scripts in one)
+   They are used for seeding the db inside the docker container (razom-app-keystone-1)
+   If you want to seed your local db, just run the script, like it is written in package.json, e.g. npm run seed-regions
