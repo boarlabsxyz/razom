@@ -188,10 +188,6 @@ function RegionsList({
     };
   }, [isOpen, handleClickOutside]);
 
-  if (error) {
-    return <div>Помилка завантаження регіонів</div>;
-  }
-
   return (
     <div className={st['regions-wrapper']}>
       <h3 className={st['region-list-title']}>Область</h3>
@@ -222,7 +218,9 @@ function RegionsList({
             }
             onKeyDown={handleKeyDown}
           >
-            {loading ? (
+            {error ? (
+              <div>Помилка завантаження регіонів</div>
+            ) : loading ? (
               <Spinner data-testid="loader" />
             ) : (
               <div>
