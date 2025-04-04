@@ -24,23 +24,6 @@ test('Snapshot for Home Page without Hero Section', async ({
     timeout: 10000,
   });
 
-  const svgElement = await page.waitForSelector('svg[data-test-id="svg-map"]', {
-    timeout: 10000,
-    state: 'attached',
-  });
-
-  if (svgElement) {
-    await page.evaluate(() => {
-      const element = document.querySelector(
-        'svg[data-test-id="svg-map"]',
-      ) as SVGElement;
-      if (element) {
-        element.style.display = 'none';
-        element.remove();
-      }
-    });
-  }
-
   if (browserName === 'webkit') {
     await page.waitForLoadState('networkidle');
     await page.evaluate(() => {
