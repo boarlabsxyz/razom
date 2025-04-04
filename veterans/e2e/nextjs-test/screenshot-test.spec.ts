@@ -6,7 +6,7 @@ test('Snapshot for Home Page without Hero Section', async ({
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
 
-  await page.goto(process.env.BASE_URL || 'http://localhost:8000/', {
+  await page.goto(process.env.BASE_URL ?? 'http://localhost:8000/', {
     timeout: 60000,
     waitUntil: 'networkidle',
   });
@@ -23,23 +23,6 @@ test('Snapshot for Home Page without Hero Section', async ({
     state: 'visible',
     timeout: 10000,
   });
-
-  const svgElement = await page.waitForSelector('svg[data-test-id="svg-map"]', {
-    timeout: 10000,
-    state: 'attached',
-  });
-
-  if (svgElement) {
-    await page.evaluate(() => {
-      const element = document.querySelector(
-        'svg[data-test-id="svg-map"]',
-      ) as SVGElement;
-      if (element) {
-        element.style.display = 'none';
-        element.remove();
-      }
-    });
-  }
 
   if (browserName === 'webkit') {
     await page.waitForLoadState('networkidle');
