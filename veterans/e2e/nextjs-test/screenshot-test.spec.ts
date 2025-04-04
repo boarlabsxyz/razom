@@ -6,7 +6,7 @@ test('Snapshot for Home Page without Hero Section', async ({
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
 
-  await page.goto(process.env.BASE_URL || 'http://localhost:8000/', {
+  await page.goto(process.env.BASE_URL ?? 'http://localhost:8000/', {
     timeout: 60000,
     waitUntil: 'networkidle',
   });
