@@ -72,7 +72,7 @@ jobs:
             echo "DEPLOY_URL=mozhlyvosti.org.ua" >> "$GITHUB_ENV"
           elif [[ "${{ inputs.deploy-env }}" == "staging" ]]; then
             DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
-            echo "DEPLOY_URL=razom.vercel.app" >> "$GITHUB_ENV"
+            echo "DEPLOY_URL=staging-razom.vercel.app" >> "$GITHUB_ENV"
           else
             DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
             echo "DEPLOY_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
