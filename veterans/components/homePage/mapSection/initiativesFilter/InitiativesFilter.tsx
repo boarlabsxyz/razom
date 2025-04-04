@@ -55,18 +55,20 @@ const CheckboxGroup: React.FC<
     categoryId: string,
   ) => {
     const totalCheckboxes = categories.length;
+    let nextIndex: number;
+    let prevIndex: number;
 
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        const nextIndex = (index + 1) % totalCheckboxes;
+        nextIndex = (index + 1) % totalCheckboxes;
         document
           .getElementById(`checkbox-${categories[nextIndex].id}`)
           ?.focus();
         break;
       case 'ArrowUp':
         e.preventDefault();
-        const prevIndex = (index - 1 + totalCheckboxes) % totalCheckboxes;
+        prevIndex = (index - 1 + totalCheckboxes) % totalCheckboxes;
         document
           .getElementById(`checkbox-${categories[prevIndex].id}`)
           ?.focus();
