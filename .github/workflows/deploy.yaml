@@ -24,6 +24,7 @@ env:
   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
   NODE_ENV: ${{ inputs.deploy-env }}
+  VERCEL_ENV: ${{ inputs.deploy-env }}
   STATIC_DEPLOY_URL_PROD: mozhlyvosti.org.ua
   STATIC_DEPLOY_URL_STAGING: staging-razom.vercel.app
 
@@ -59,10 +60,10 @@ jobs:
 
       - name: Build project
         run: |
-          if [[ "${{ inputs.deploy-env  }}" == "production" ]]; then
-            npx vercel build --yes --prod --token="$VERCEL_CLI_TOKEN"
-          else
+          if [[ "${{ inputs.deploy-env }}" == "preview" ]]; then
             npx vercel build --yes --token="$VERCEL_CLI_TOKEN"
+          else
+            npx vercel build --yes --prod --token="$VERCEL_CLI_TOKEN"
           fi
         working-directory: ./veterans
 
