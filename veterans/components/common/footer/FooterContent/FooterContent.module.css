@@ -51,11 +51,10 @@
 }
 
 @media (max-width: 1024px) {
-
   .footer-wrapper {
     padding-top: 23px;
   }
-  
+
   .nav-list {
     flex-direction: column;
   }
