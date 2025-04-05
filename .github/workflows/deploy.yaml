@@ -34,7 +34,7 @@ jobs:
     environment:
       name: ${{ inputs.deploy-env }}
       #  url: ${{ inputs.deploy-env == 'preview' && steps.deploy.outputs.url || (inputs.deploy-env == 'staging' && env.STATIC_DEPLOY_URL_STAGING || env.STATIC_DEPLOY_URL_PROD) }}
-       url: ${{ inputs.deploy-env == 'preview' && steps.deploy.outputs.url || (inputs.deploy-env == 'staging' && staging-razom.vercel.app || mozhlyvosti.org.ua) }}
+      url: ${{ inputs.deploy-env == 'preview' && steps.deploy.outputs.url || (inputs.deploy-env == 'staging' && staging-razom.vercel.app || mozhlyvosti.org.ua) }}
 
     steps:
       - name: Checkout repository
