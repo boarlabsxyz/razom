@@ -37,6 +37,11 @@ jobs:
       url: ${{ inputs.deploy-env == 'preview' && steps.deploy.outputs.url || (inputs.deploy-env == 'staging' && env.STATIC_DEPLOY_URL_STAGING || env.STATIC_DEPLOY_URL_PROD) }}
 
     steps:
+      - name: Check if user confirmed the deployment
+        if: ${{ inputs.confirm != 'true' }}
+        run: |
+          echo "❌ Deployment was not confirmed. Exiting..."
+          exit 1
       - name: Checkout repository
         uses: actions/checkout@v4
 
