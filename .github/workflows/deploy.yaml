@@ -24,8 +24,8 @@ env:
   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
   NODE_ENV: ${{ inputs.deploy-env }}
-  # STATIC_DEPLOY_URL_PROD: mozhlyvosti.org.ua
-  # STATIC_DEPLOY_URL_STAGING: staging-razom.vercel.app
+  STATIC_DEPLOY_URL_PROD: mozhlyvosti.org.ua
+  STATIC_DEPLOY_URL_STAGING: staging-razom.vercel.app
 
 jobs:
   deployment:
@@ -33,8 +33,7 @@ jobs:
     timeout-minutes: 10
     environment:
       name: ${{ inputs.deploy-env }}
-      #  url: ${{ inputs.deploy-env == 'preview' && steps.deploy.outputs.url || (inputs.deploy-env == 'staging' && env.STATIC_DEPLOY_URL_STAGING || env.STATIC_DEPLOY_URL_PROD) }}
-      url: ${{ inputs.deploy-env == 'preview' && steps.deploy.outputs.url || (inputs.deploy-env == 'staging' && staging-razom.vercel.app || mozhlyvosti.org.ua) }}
+      url: ${{ inputs.deploy-env == 'preview' && steps.deploy.outputs.url || (inputs.deploy-env == 'staging' && env.STATIC_DEPLOY_URL_STAGING || env.STATIC_DEPLOY_URL_PROD) }}
 
     steps:
       - name: Checkout repository
@@ -75,8 +74,7 @@ jobs:
             echo "DEPLOY_URL=${{ env.STATIC_DEPLOY_URL_PROD }}" >> "$GITHUB_ENV"
           elif [[ "${{ inputs.deploy-env }}" == "staging" ]]; then
             DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
-            # echo "DEPLOY_URL=${{ env.STATIC_DEPLOY_URL_STAGING }}" >> "$GITHUB_ENV"
-            echo "DEPLOY_URL=staging-razom.vercel.app" >> "$GITHUB_ENV"
+            echo "DEPLOY_URL=${{ env.STATIC_DEPLOY_URL_STAGING }}" >> "$GITHUB_ENV"
           else
             DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
             echo "DEPLOY_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
