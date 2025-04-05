@@ -231,4 +231,21 @@ describe('RegionsList Component', () => {
       screen.getByRole('menuitemradio', { name: 'Select Region 1' }),
     ).toBeInTheDocument();
   });
+
+  test('displays loader while fetching data', async () => {
+    const { getByTestId, queryByTestId } = renderWithApollo(
+      <RegionsList
+        selectedRegion="Region 1"
+        setSelectedRegion={mockSetSelectedRegion}
+      />,
+    );
+
+    fireEvent.click(getByTestId('btn-for-region-selection'));
+
+    expect(getByTestId('loader')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(queryByTestId('loader')).not.toBeInTheDocument();
+    });
+  });
 });
