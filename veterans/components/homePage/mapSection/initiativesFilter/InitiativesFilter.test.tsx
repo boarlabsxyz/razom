@@ -87,6 +87,51 @@ describe('CheckboxGroup Component', () => {
     fireEvent.click(checkbox);
     expect(setSelectedCheckboxes).toHaveBeenCalled();
   });
+
+  test('navigates through checkboxes with ArrowDown and ArrowUp keys', () => {
+    render(
+      <CheckboxGroup
+        title="Test Title"
+        categories={categoriesList}
+        selectedCheckboxes={selectedCheckboxes}
+        setSelectedCheckboxes={setSelectedCheckboxes}
+      />,
+    );
+
+    const firstCheckbox = screen.getByLabelText('Test Category 1');
+    const secondCheckbox = screen.getByLabelText('Test Category 2');
+
+    firstCheckbox.focus();
+
+    fireEvent.keyDown(firstCheckbox, { key: 'ArrowDown' });
+    expect(secondCheckbox).toHaveFocus();
+
+    fireEvent.keyDown(secondCheckbox, { key: 'ArrowUp' });
+    expect(firstCheckbox).toHaveFocus();
+  });
+
+  test('selects and unselects checkbox on Enter or Space key press', () => {
+    render(
+      <CheckboxGroup
+        title="Test Title"
+        categories={categoriesList}
+        selectedCheckboxes={selectedCheckboxes}
+        setSelectedCheckboxes={setSelectedCheckboxes}
+      />,
+    );
+
+    const checkbox = screen.getByLabelText(
+      'Test Category 1',
+    ) as HTMLInputElement;
+
+    expect(checkbox.checked).toBe(false);
+
+    fireEvent.keyDown(checkbox, { key: 'Enter' });
+    expect(setSelectedCheckboxes).toHaveBeenCalled();
+
+    fireEvent.keyDown(checkbox, { key: ' ' });
+    expect(setSelectedCheckboxes).toHaveBeenCalled();
+  });
 });
 
 describe('InitiativesFilter Component', () => {
