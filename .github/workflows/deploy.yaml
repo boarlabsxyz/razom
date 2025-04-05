@@ -25,8 +25,8 @@ env:
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
   NODE_ENV: ${{ inputs.deploy-env }}
   VERCEL_ENV: ${{ inputs.deploy-env }}
-  STATIC_DEPLOY_URL_PROD: mozhlyvosti.org.ua
-  STATIC_DEPLOY_URL_STAGING: staging-razom.vercel.app
+  STATIC_DEPLOY_URL_PROD: ${{ secrets.STATIC_DEPLOY_URL_PROD }}
+  STATIC_DEPLOY_URL_STAGING: ${{ secrets.STATIC_DEPLOY_URL_STAGING }}
 
 jobs:
   deployment:
