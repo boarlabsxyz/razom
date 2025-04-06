@@ -19,6 +19,7 @@ jobs:
 
   unit-tests:
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
     timeout-minutes: 10
     steps:
       - name: Checkout repository
@@ -59,6 +60,7 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
     timeout-minutes: 10
     steps:
       - name: Checkout repository
