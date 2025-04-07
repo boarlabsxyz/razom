@@ -14,6 +14,8 @@ export const handleSendEmail = async (
       body: JSON.stringify({ to: email, message }),
     });
 
+    await response.json();
+
     if (response.ok) {
       // eslint-disable-next-line no-alert
       alert('Verification email sent! Check your inbox.');
