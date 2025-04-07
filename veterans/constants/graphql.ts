@@ -79,3 +79,12 @@ export const CHECK_USER_QUERY = gql`
     }
   }
 `;
+
+export const UPDATE_USER_VERIFICATION = gql`
+  mutation UpdateUserVerification($id: ID!, $isVerified: Boolean!) {
+    updateUser(where: { id: $id }, data: { isVerified: $isVerified }) {
+      id
+      isVerified
+    }
+  }
+`;
