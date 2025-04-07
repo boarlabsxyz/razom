@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { KeystoneContext } from '@keystone-6/core/types';
+import { DEFAULT_REGION_NAME } from 'constants/ui';
 
 export async function updateInitiativesCount(
   context: KeystoneContext,
@@ -12,7 +13,7 @@ export async function updateInitiativesCount(
     }
 
     const allRegions = await context.db.Region.findMany({
-      where: { name: { equals: 'Всі області' } },
+      where: { name: { equals: DEFAULT_REGION_NAME } },
     });
     if (allRegions.length > 0) {
       const totalInitiatives = await context.db.Initiative.count({
@@ -26,7 +27,7 @@ export async function updateInitiativesCount(
         data: { numOfInitiatives: totalInitiatives },
       });
     } else {
-      console.warn("Region with name 'Всі області' not found.");
+      console.warn('Region with name DEFAULT_REGION_NAME not found.');
     }
 
     if (regionId) {
@@ -44,7 +45,7 @@ export async function updateInitiativesCount(
     }
 
     const allOtherRegions = await context.db.Region.findMany({
-      where: { name: { not: { equals: 'Всі області' } } },
+      where: { name: { not: { equals: DEFAULT_REGION_NAME } } },
     });
 
     for (const region of allOtherRegions) {

@@ -1,3 +1,5 @@
+import { DEFAULT_REGION_NAME } from 'constants/ui';
+
 const regionsArray = [
   { name: 'Вінницька', numOfInitiatives: 4 },
   { name: 'Волинська', numOfInitiatives: 24 },
@@ -24,7 +26,7 @@ const regionsArray = [
   { name: 'Чернівецька', numOfInitiatives: 23 },
   { name: 'Чернігівська', numOfInitiatives: 18 },
   { name: 'АР Крим', numOfInitiatives: 1 },
-  { name: 'Всі області', numOfInitiatives: 185 },
+  { name: DEFAULT_REGION_NAME, numOfInitiatives: 185 },
 ];
 
 export default regionsArray;

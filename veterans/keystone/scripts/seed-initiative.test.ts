@@ -78,7 +78,7 @@ describe('seed-initiative', () => {
     jest.restoreAllMocks();
   });
 
-  it('виводить повідомлення про успішне завершення', async () => {
+  it('displays success messages', async () => {
     await main();
     const calls = consoleSpy.mock.calls.flat();
     expect(calls).toContain('✅ Категорії успішно створені');
@@ -86,49 +86,49 @@ describe('seed-initiative', () => {
     expect(calls).toContain('✅ Ініціативи успішно створені');
   });
 
-  it('видаляє існуючі категорії перед створенням нових', async () => {
+  it('deletes existing categories before creating new ones', async () => {
     await main();
     expect(prisma.category.deleteMany).toHaveBeenCalled();
   });
 
-  it('видаляє існуючі джерела перед створенням нових', async () => {
+  it('deletes existing sources before creating new ones', async () => {
     await main();
     expect(prisma.source.deleteMany).toHaveBeenCalled();
   });
 
-  it('видаляє існуючі ініціативи перед створенням нових', async () => {
+  it('deletes existing initiatives before creating new ones', async () => {
     await main();
     expect(prisma.initiative.deleteMany).toHaveBeenCalled();
   });
 
-  it('створює нові категорії', async () => {
+  it('creates new categories', async () => {
     await main();
     expect(prisma.category.create).toHaveBeenCalledTimes(10);
   });
 
-  it('створює нові джерела', async () => {
+  it('creates new sources', async () => {
     await main();
     expect(prisma.source.create).toHaveBeenCalledTimes(3);
   });
 
-  it('запитує категорії, джерела та регіони перед створенням ініціатив', async () => {
+  it('queries categories, sources and regions before creating initiatives', async () => {
     await main();
     expect(prisma.category.findMany).toHaveBeenCalled();
     expect(prisma.source.findMany).toHaveBeenCalled();
     expect(prisma.region.findMany).toHaveBeenCalled();
   });
 
-  it('створює ініціативи на основі даних', async () => {
+  it('creates initiatives based on data', async () => {
     await main();
     expect(prisma.initiative.create).toHaveBeenCalledTimes(30);
   });
 
-  it("від'єднується від бази даних після завершення", async () => {
+  it('disconnects from the database after completion', async () => {
     await main();
     expect(prisma.$disconnect).toHaveBeenCalled();
   });
 
-  it('коректно обробляє помилки', async () => {
+  it('handles errors correctly', async () => {
     const mockError = new Error(
       'Не знайдено необхідні дані для ініціативи: Центр зайнятості ветеранів',
     );

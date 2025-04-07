@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { DEFAULT_REGION_NAME } from 'constants/ui';
 
 export const prisma = new PrismaClient();
 
@@ -128,7 +129,12 @@ const regions = [
     order: 23,
   },
   { name: 'АР Крим', numOfInitiatives: 0, isDefault: false, order: 24 },
-  { name: 'Всі області', numOfInitiatives: 0, isDefault: true, order: 25 },
+  {
+    name: DEFAULT_REGION_NAME,
+    numOfInitiatives: 0,
+    isDefault: true,
+    order: 25,
+  },
 ];
 
 export async function main() {
