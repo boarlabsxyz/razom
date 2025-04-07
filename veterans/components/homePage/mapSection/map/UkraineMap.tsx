@@ -23,11 +23,9 @@ export default function UkraineMap({
       viewBox="0 0 896 597"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      data-test-id="svg-map"
       aria-labelledby="map-title map-desc"
       className={st['icon-map']}
       width="100%"
-      height="auto"
     >
       <title id="map-title">Карта регіонів України</title>
       <desc id="map-desc">
