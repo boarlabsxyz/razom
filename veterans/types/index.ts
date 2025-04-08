@@ -60,3 +60,9 @@ export type CustomBaseItem = {
     toString(): string;
   };
 };
+
+export interface SeedData {
+  categories: string[];
+  sources: string[];
+  initiatives: Initiative[];
+}

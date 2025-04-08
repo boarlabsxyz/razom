@@ -2,12 +2,14 @@ import { useState, useCallback } from 'react';
 import regionsArray from 'data/RegionsArray';
 import InitiativesFilter from './initiativesFilter';
 import UkraineMap from './map';
-import st from './MapSection.module.css';
 import RegionsList from './regionsFilter';
+import { DEFAULT_REGION_NAME } from 'constants/ui';
+
+import st from './MapSection.module.css';
 
 export default function MapSection() {
   const defaultRegion = regionsArray.find(
-    (region) => region.name === 'Всі',
+    (region) => region.name === DEFAULT_REGION_NAME,
   ) || { name: '', numOfInitiatives: 0 };
 
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
