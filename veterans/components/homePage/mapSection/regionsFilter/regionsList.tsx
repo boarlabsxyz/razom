@@ -6,9 +6,10 @@ import { GET_REGIONS, type Region } from '@helpers/queries';
 import { RegionsListProps } from './types';
 import Spinner from '@comComps/spinner';
 
+import { DEFAULT_REGION_NAME } from 'constants/ui';
+
 import st from './regionsList.module.css';
 
-const DEFAULT_REGION_NAME = 'Всі';
 const SEARCH_PLACEHOLDER = 'Укажіть область...';
 const UKRAINIAN_TEXT_REGEX = /^[а-яґєіїё]+$/iu;
 
@@ -31,7 +32,7 @@ function RegionsList({
     [],
   );
 
-  const regions = data?.regions || [];
+  const regions = data?.regions ?? [];
   const filteredRegions = regions.filter((region: Region) =>
     isUkrainianText(inputValue)
       ? region.name.toLowerCase().includes(inputValue.toLowerCase())
@@ -40,10 +41,11 @@ function RegionsList({
 
   const defaultRegion = regions.find(
     (region: Region) => region.name === DEFAULT_REGION_NAME,
-  ) || {
+  ) ?? {
     name: '',
     numOfInitiatives: 0,
   };
+
   const [focusedIndex, setFocusedIndex] = useState<number | null>(
     regions.findIndex((region: Region) => region.name === defaultRegion.name),
   );
@@ -56,7 +58,7 @@ function RegionsList({
         );
 
         let focusIndex = 0;
-        if (selectedRegion !== 'Всі' && selectedIndex !== -1) {
+        if (selectedRegion !== DEFAULT_REGION_NAME && selectedIndex !== -1) {
           focusIndex = selectedIndex;
         }
 
@@ -187,12 +189,66 @@ function RegionsList({
     };
   }, [isOpen, handleClickOutside]);
 
-  if (loading) {
-    return <Spinner />;
-  }
-  if (error) {
-    return <div>Помилка завантаження регіонів</div>;
-  }
+  const renderRegionList = () => {
+    if (error) {
+      return <div>Помилка завантаження регіонів</div>;
+    }
+
+    if (loading) {
+      return <Spinner data-testid="loader" />;
+    }
+
+    return (
+      <div>
+        <input
+          ref={inputRef}
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          placeholder={SEARCH_PLACEHOLDER}
+          className={st['region-search-input']}
+          data-testid="region-search-input"
+          aria-label="Пошук регіону"
+          aria-controls="region-list"
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
+          aria-autocomplete="list"
+          role="combobox"
+          aria-owns="region-list"
+          aria-activedescendant={
+            focusedIndex !== null ? `region-${focusedIndex}` : undefined
+          }
+        />
+        {filteredRegions.map((region: Region, index: number) => (
+          <div
+            key={region.id}
+            id={`region-${index}`}
+            role="menuitemradio"
+            ref={(el) => {
+              itemsRef.current[index] = el;
+            }}
+            onClick={() => handleRegionSelect(region)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleRegionSelect(region);
+              }
+            }}
+            tabIndex={focusedIndex === index ? 0 : -1}
+            className={`${st['region-selector-item']} ${
+              focusedIndex === index ? st.focused : ''
+            } ${selectedRegion === region.name ? st.selected : ''}`}
+            aria-checked={selectedRegion === region.name}
+            aria-label={`Select ${region.name}`}
+          >
+            <span className={st['region-name']}>{region.name}</span>
+            <span className={st['num-of-initiatives']}>
+              ({region.numOfInitiatives})
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className={st['regions-wrapper']}>
@@ -224,52 +280,7 @@ function RegionsList({
             }
             onKeyDown={handleKeyDown}
           >
-            <input
-              ref={inputRef}
-              type="text"
-              value={inputValue}
-              onChange={handleInputChange}
-              placeholder={SEARCH_PLACEHOLDER}
-              className={st['region-search-input']}
-              data-testid="region-search-input"
-              aria-label="Пошук регіону"
-              aria-controls="region-list"
-              aria-expanded={isOpen}
-              aria-haspopup="listbox"
-              aria-autocomplete="list"
-              role="combobox"
-              aria-owns="region-list"
-              aria-activedescendant={
-                focusedIndex !== null ? `region-${focusedIndex}` : undefined
-              }
-            />
-            {filteredRegions.map((region: Region, index: number) => (
-              <div
-                key={region.id}
-                id={`region-${index}`}
-                role="menuitemradio"
-                ref={(el) => {
-                  itemsRef.current[index] = el;
-                }}
-                onClick={() => handleRegionSelect(region)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    handleRegionSelect(region);
-                  }
-                }}
-                tabIndex={focusedIndex === index ? 0 : -1}
-                className={`${st['region-selector-item']} ${
-                  focusedIndex === index ? st.focused : ''
-                } ${selectedRegion === region.name ? st.selected : ''}`}
-                aria-checked={selectedRegion === region.name}
-                aria-label={`Select ${region.name}`}
-              >
-                <span className={st['region-name']}>{region.name}</span>
-                <span className={st['num-of-initiatives']}>
-                  ({region.numOfInitiatives})
-                </span>
-              </div>
-            ))}
+            {renderRegionList()}
           </div>
         )}
       </div>

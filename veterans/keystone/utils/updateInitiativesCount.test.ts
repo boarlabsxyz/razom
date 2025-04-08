@@ -1,5 +1,6 @@
 import { KeystoneContext } from '@keystone-6/core/types';
 import { updateInitiativesCount } from './updateInitiativesCount';
+import { DEFAULT_REGION_NAME } from 'constants/ui';
 
 describe('updateInitiativesCount', () => {
   let mockContext: Partial<KeystoneContext>;
@@ -43,8 +44,8 @@ describe('updateInitiativesCount', () => {
     consoleWarnSpy.mockRestore();
   });
 
-  it('should update count for "Всі" region', async () => {
-    const mockAllRegion = { id: '1', name: 'Всі' };
+  it('should update count for "Всі області"(DEFAULT_REGION_NAME) region', async () => {
+    const mockAllRegion = { id: '1', name: DEFAULT_REGION_NAME };
     (mockContext.db!.Region.findMany as jest.Mock).mockResolvedValue([
       mockAllRegion,
     ]);
@@ -60,7 +61,7 @@ describe('updateInitiativesCount', () => {
 
   it('should update count for specific region', async () => {
     const regionId = '2';
-    const mockAllRegion = { id: '1', name: 'Всі' };
+    const mockAllRegion = { id: '1', name: DEFAULT_REGION_NAME };
     (mockContext.db!.Region.findMany as jest.Mock).mockResolvedValue([
       mockAllRegion,
     ]);
@@ -83,7 +84,7 @@ describe('updateInitiativesCount', () => {
 
   it('should update count for all other regions', async () => {
     const mockRegions = [
-      { id: '1', name: 'Всі' },
+      { id: '1', name: DEFAULT_REGION_NAME },
       { id: '2', name: 'Київська' },
       { id: '3', name: 'Львівська' },
     ];
@@ -112,13 +113,15 @@ describe('updateInitiativesCount', () => {
     });
   });
 
-  it('should handle missing "Всі" region gracefully', async () => {
+  it('should handle missing "Всі області"(DEFAULT_REGION_NAME) region gracefully', async () => {
     (mockContext.db!.Region.findMany as jest.Mock).mockResolvedValue([]);
 
     await updateInitiativesCount(mockContext as KeystoneContext, null);
 
     expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining("Region with name 'Всі' not found."),
+      expect.stringContaining(
+        'Region with name DEFAULT_REGION_NAME not found.',
+      ),
     );
   });
 

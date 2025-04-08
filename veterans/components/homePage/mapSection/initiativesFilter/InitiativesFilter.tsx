@@ -49,6 +49,38 @@ const CheckboxGroup: React.FC<
     }));
   };
 
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number,
+    categoryId: string,
+  ) => {
+    const totalCheckboxes = categories.length;
+    let nextIndex: number;
+    let prevIndex: number;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        nextIndex = (index + 1) % totalCheckboxes;
+        document
+          .getElementById(`checkbox-${categories[nextIndex].id}`)
+          ?.focus();
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        prevIndex = (index - 1 + totalCheckboxes) % totalCheckboxes;
+        document
+          .getElementById(`checkbox-${categories[prevIndex].id}`)
+          ?.focus();
+        break;
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        handleCheckboxChange(categoryId);
+        break;
+    }
+  };
+
   return (
     <div className={st.wrapper}>
       <button
@@ -80,7 +112,9 @@ const CheckboxGroup: React.FC<
                 value={category.name}
                 checked={!!selectedCheckboxes[category.id]}
                 onChange={() => handleCheckboxChange(category.id)}
+                onKeyDown={(e) => handleKeyDown(e, index, category.id)}
                 className={st['custom-checkbox']}
+                tabIndex={0}
               />
               <span id={`label-${category.id}`}>{category.name}</span>
             </div>
