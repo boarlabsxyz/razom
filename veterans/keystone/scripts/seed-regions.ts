@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { DEFAULT_REGION_NAME } from 'constants/ui';
+import { DEFAULT_REGION_NAME } from './../../constants/ui';
 
 export const prisma = new PrismaClient();
 
