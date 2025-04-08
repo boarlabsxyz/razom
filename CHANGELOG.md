@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.7.0] - Unreleased
 
+### Added
+
+- isVerified field to the User model in the back end ([155](https://github.com/boarlabsxyz/razom/pull/155))
+
 ### Changed
 
 - seperate github/wokflow/deploy.yaml to code_quality.yaml and deploy.yaml ([146](https://github.com/boarlabsxyz/razom/pull/146))
