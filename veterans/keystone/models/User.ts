@@ -189,13 +189,7 @@ export const User: ListConfig<Lists.User.TypeInfo<Session>> = list({
       defaultValue: false,
       access: {
         read: allowAll,
-        update: ({
-          session,
-          item,
-        }: {
-          session?: Session;
-          item: CustomBaseItem;
-        }) => isSameUser({ session, item }),
+        update: allowAll,
       },
       ui: {
         createView: { fieldMode: 'hidden' },

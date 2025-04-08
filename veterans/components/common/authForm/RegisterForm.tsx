@@ -37,6 +37,7 @@ export default function RegisterForm() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const stepRef = useRef<'register' | 'verify'>('register');
   const verificationCodeRef = useRef<string>('');
+  const emailRef = useRef<string>('');
 
   const {
     control,
@@ -75,6 +76,7 @@ export default function RegisterForm() {
       const { data: responseData } = await register({ variables: { ...data } });
 
       if (responseData?.createUser) {
+        emailRef.current = data.email;
         const { success, code } = await handleSendEmail(data.email);
         if (success && code) {
           verificationCodeRef.current = code;
@@ -200,7 +202,10 @@ export default function RegisterForm() {
           </div>
         </form>
       ) : (
-        <EmailVerification verificationCode={verificationCodeRef.current} />
+        <EmailVerification
+          verificationCode={verificationCodeRef.current}
+          email={emailRef.current}
+        />
       )}
     </div>
   );
