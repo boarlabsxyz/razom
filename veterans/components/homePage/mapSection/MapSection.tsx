@@ -4,6 +4,7 @@ import InitiativesFilter from './initiativesFilter';
 import UkraineMap from './map';
 import st from './MapSection.module.css';
 import RegionsList from './regionsFilter';
+import InitiativesList from './initiativeList';
 
 export default function MapSection() {
   const defaultRegion = regionsArray.find(
@@ -52,6 +53,7 @@ export default function MapSection() {
         selectedRegion={selectedRegion}
         setSelectedRegion={setSelectedRegion}
       />
+      <InitiativesList />
     </section>
   );
 }
