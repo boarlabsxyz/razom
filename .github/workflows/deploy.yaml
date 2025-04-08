@@ -38,7 +38,7 @@ jobs:
 
     steps:
       - name: Check if user confirmed the deployment
-        if: ${{ inputs.confirm != 'true' }}
+        if: ${{ !inputs.confirm }}
         run: |
           echo "❌ Deployment was not confirmed. Exiting..."
           exit 1

@@ -189,7 +189,7 @@ jobs:
             -d "{
               \"ref\": \"${{ github.head_ref || github.ref_name }}\",
               \"inputs\": {
-                \"confirm\": \"true\",
+                \"confirm\": true,
                 \"deploy-env\": \"preview\"
               }
             }"
