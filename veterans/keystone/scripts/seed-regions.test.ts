@@ -27,17 +27,24 @@ const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {
   return undefined as never;
 });
 
+let consoleErrorSpy: jest.SpyInstance;
+let consoleSpy: jest.SpyInstance;
+
+beforeEach(() => {
+  consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+  consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+  jest.clearAllMocks();
+});
+
+afterEach(() => {
+  consoleSpy.mockRestore();
+  consoleErrorSpy.mockRestore();
+  jest.clearAllMocks();
+});
+
 import { main } from './seed-regions';
 
 describe('seed-regions', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('should create regions when none exist', async () => {
     await main();
     expect(mockCreate).toHaveBeenCalled();
@@ -49,5 +56,9 @@ describe('seed-regions', () => {
     await main();
     expect(mockDisconnect).toHaveBeenCalled();
     expect(mockExit).toHaveBeenCalledWith(1);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      '❌ Помилка при створенні регіонів:',
+      expect.any(Error),
+    );
   });
 });

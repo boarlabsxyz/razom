@@ -2,6 +2,21 @@ import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import MapSection from './MapSection';
 import regionsArray from 'data/RegionsArray';
+import { MockedProvider } from '@apollo/client/testing';
+import { GET_INITIATIVES } from 'constants/graphql';
+
+const mocks = [
+  {
+    request: {
+      query: GET_INITIATIVES,
+    },
+    result: {
+      data: {
+        initiatives: [],
+      },
+    },
+  },
+];
 
 jest.mock('./initiativesFilter', () => ({
   __esModule: true,
@@ -43,29 +58,36 @@ jest.mock('./regionsFilter', () => ({
 }));
 
 describe('MapSection Component', () => {
+  const renderWithApollo = () =>
+    render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <MapSection />
+      </MockedProvider>,
+    );
+
   it('renders correctly', () => {
-    render(<MapSection />);
+    renderWithApollo();
     expect(screen.getByTestId('regions-list')).toBeInTheDocument();
     expect(screen.getByTestId('initiatives-filter')).toBeInTheDocument();
     expect(screen.getByTestId('ukraine-map')).toBeInTheDocument();
   });
 
   it('updates the selected region when a region is clicked', () => {
-    render(<MapSection />);
+    renderWithApollo();
     const selectRegionButton = screen.getByText('Select Kyiv');
     fireEvent.click(selectRegionButton);
     expect(screen.getByTestId('ukraine-map')).toHaveTextContent('Київ');
   });
 
   it('shows reset button when filters are applied', () => {
-    render(<MapSection />);
+    renderWithApollo();
     const selectFilterButton = screen.getByText('Select Filter');
     fireEvent.click(selectFilterButton);
     expect(screen.getByText('Очистити фільтри')).toBeInTheDocument();
   });
 
   it('resets filters when reset button is clicked', () => {
-    render(<MapSection />);
+    renderWithApollo();
     const selectRegionButton = screen.getByText('Select Kyiv');
     fireEvent.click(selectRegionButton);
     const selectFilterButton = screen.getByText('Select Filter');
