@@ -15,6 +15,10 @@ const checkEnvVariables = () => {
 
 checkEnvVariables();
 
+// Debug: show the environment
+// eslint-disable-next-line no-console
+console.log('🛠️ NODE_ENV:', process.env.NODE_ENV);
+
 const databaseUrl = process.env.DATABASE_URL!;
 const allowedOrigins = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(',')
@@ -58,6 +62,7 @@ export default withAuth(
       provider: 'postgresql',
       url: databaseUrl,
       onConnect: async () => {
+        // eslint-disable-next-line no-console
         console.log('✅ Successfully connected to the database.');
       },
     },
