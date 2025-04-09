@@ -44,36 +44,29 @@ jest.mock('./regionsFilter', () => ({
 }));
 
 describe('MapSection Component', () => {
-  const renderWithApollo = () =>
-    render(
-      <MockedProvider mocks={mocks} addTypename={false}>
-        <MapSection />
-      </MockedProvider>,
-    );
-
   it('renders correctly', () => {
-    renderWithApollo();
+    render(<MapSection />);
     expect(screen.getByTestId('regions-list')).toBeInTheDocument();
     expect(screen.getByTestId('initiatives-filter')).toBeInTheDocument();
     expect(screen.getByTestId('ukraine-map')).toBeInTheDocument();
   });
 
   it('updates the selected region when a region is clicked', () => {
-    renderWithApollo();
+    render(<MapSection />);
     const selectRegionButton = screen.getByText('Select Kyiv');
     fireEvent.click(selectRegionButton);
     expect(screen.getByTestId('ukraine-map')).toHaveTextContent('Київ');
   });
 
   it('shows reset button when filters are applied', () => {
-    renderWithApollo();
+    render(<MapSection />);
     const selectFilterButton = screen.getByText('Select Filter');
     fireEvent.click(selectFilterButton);
     expect(screen.getByText('Очистити фільтри')).toBeInTheDocument();
   });
 
   it('resets filters when reset button is clicked', () => {
-    renderWithApollo();
+    render(<MapSection />);
     const selectRegionButton = screen.getByText('Select Kyiv');
     fireEvent.click(selectRegionButton);
     const selectFilterButton = screen.getByText('Select Filter');
