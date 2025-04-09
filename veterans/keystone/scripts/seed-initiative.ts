@@ -2,6 +2,10 @@ import { PrismaClient } from '@prisma/client';
 
 export const prisma = new PrismaClient();
 
+type Category = { id: string; title: string };
+type Source = { id: string; title: string };
+type Region = { id: string; name: string };
+
 const categories = [
   'Управління, відділи з ветеранської політики',
   'Фахівець з супроводу',
@@ -582,13 +586,13 @@ export async function main() {
 
     for (const initiative of initiatives) {
       const categoryId = allCategories.find(
-        (cat) => cat.title === initiative.category,
+        (cat: Category) => cat.title === initiative.category,
       )?.id;
       const sourceId = allSources.find(
-        (src) => src.title === initiative.source,
+        (src: Source) => src.title === initiative.source,
       )?.id;
       const regionId = allRegions.find(
-        (reg) => reg.name === initiative.region,
+        (reg: Region) => reg.name === initiative.region,
       )?.id;
 
       validateInitiativeData(initiative, categoryId, sourceId, regionId);
