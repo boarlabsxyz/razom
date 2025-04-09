@@ -27,9 +27,7 @@ const allowedOrigins = process.env.CORS_ORIGINS
 const vercelPattern = /^https:\/\/razom-.*-kavoon\.vercel\.app$/;
 const isVercelDeployment = (origin: string) => vercelPattern.test(origin);
 
-const isTestEnv = process.env.NODE_ENV === 'test' || process.env.CI === 'true';
-
-const corsConfig = isTestEnv
+const corsConfig = !process.env.NODE_ENV
   ? {
       origin: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
