@@ -19,6 +19,7 @@ jobs:
 
   unit-tests:
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
     timeout-minutes: 10
     steps:
       - name: Checkout repository
@@ -59,6 +60,7 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
     timeout-minutes: 10
     steps:
       - name: Checkout repository
@@ -181,8 +183,13 @@ jobs:
           echo "Triggering deploy workflow..."
           curl -X POST \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
             -H "Content-Type: application/json" \
             "https://api.github.com/repos/${{ github.repository }}/actions/workflows/deploy.yaml/dispatches" \
-            -d "{\"ref\":\"${{ github.head_ref }}\"}"
-          echo "Deploy workflow triggered successfully"
+            -d "{
+              \"ref\": \"${{ github.head_ref || github.ref_name }}\",
+              \"inputs\": {
+                \"confirm\": true,
+                \"deploy-env\": \"preview\"
+              }
+            }"

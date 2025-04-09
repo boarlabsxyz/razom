@@ -2,21 +2,7 @@ import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import MapSection from './MapSection';
 import regionsArray from 'data/RegionsArray';
-import { MockedProvider } from '@apollo/client/testing';
-import { GET_INITIATIVES } from 'constants/graphql';
-
-const mocks = [
-  {
-    request: {
-      query: GET_INITIATIVES,
-    },
-    result: {
-      data: {
-        initiatives: [],
-      },
-    },
-  },
-];
+import { DEFAULT_REGION_NAME } from 'constants/ui';
 
 jest.mock('./initiativesFilter', () => ({
   __esModule: true,
@@ -95,7 +81,7 @@ describe('MapSection Component', () => {
     const resetButton = screen.getByText('Очистити фільтри');
     fireEvent.click(resetButton);
     expect(screen.getByTestId('ukraine-map')).toHaveTextContent(
-      regionsArray.find((r) => r.name === 'Всі')?.name ?? '',
+      regionsArray.find((r) => r.name === DEFAULT_REGION_NAME)?.name ?? '',
     );
   });
 });
