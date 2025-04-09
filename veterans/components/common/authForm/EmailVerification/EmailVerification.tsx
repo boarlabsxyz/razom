@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { useMutation, useQuery } from '@apollo/client';
 import { useRouter } from 'next/navigation';
 import st from '@comComps/authForm/AuthForm.module.css';
@@ -22,8 +23,7 @@ export default function EmailVerification({
 
   const handleVerifyCode = async () => {
     if (confirmedCode !== verificationCode) {
-      // eslint-disable-next-line no-alert
-      alert('Invalid verification code');
+      toast.error('Invalid verification code');
       return;
     }
 
@@ -40,8 +40,7 @@ export default function EmailVerification({
       if (data?.updateUser?.isVerified) {
         router.push('/');
       } else {
-        // eslint-disable-next-line no-alert
-        alert('Verification failed');
+        toast.error('Verification failed');
       }
     } catch (error: unknown) {
       let message = 'Something went wrong during verification';
@@ -49,6 +48,7 @@ export default function EmailVerification({
       if (error instanceof Error) {
         message = error.message;
       }
+      toast.error(message);
     }
   };
 

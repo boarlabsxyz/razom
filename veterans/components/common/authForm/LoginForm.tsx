@@ -17,6 +17,8 @@ import { useApolloClient, useMutation } from '@apollo/client';
 import { useRouter } from 'next/navigation';
 import LoginAuthButton from './LoginAuthButton';
 import { useSession } from 'next-auth/react';
+import { handleSendEmail } from '@helpers/handleSendEmail';
+import EmailVerification from './EmailVerification/EmailVerification';
 
 const loginSchema = yup.object().shape({
   email: yup
@@ -30,6 +32,7 @@ export default function LoginForm() {
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(loginSchema),
@@ -38,6 +41,9 @@ export default function LoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [verificationCode, setVerificationCode] = useState('');
+  const stepRef = useRef<'login' | 'verify'>('login');
+  const emailRef = useRef<string>('');
   const client = useApolloClient();
   const router = useRouter();
   const { data: session } = useSession();
@@ -51,7 +57,6 @@ export default function LoginForm() {
           query: CURRENT_USER_QUERY,
           data: { authenticatedItem: authResult.item },
         });
-        router.push('/');
       } else {
         setError(authResult?.message || 'Невідома помилка входу');
       }
@@ -121,8 +126,31 @@ export default function LoginForm() {
     setError(null);
     setSubmitError(null);
     setIsSubmitting(true);
+
     try {
-      await login({ variables: formData });
+      const { data } = await login({ variables: formData });
+      const authResult = data?.authenticateUserWithPassword;
+
+      if (authResult && 'item' in authResult) {
+        const isVerified = authResult.item?.isVerified;
+        const userEmail = getValues('email');
+        emailRef.current = userEmail;
+
+        if (!isVerified) {
+          stepRef.current = 'verify';
+
+          const { success, code } = await handleSendEmail(userEmail);
+          if (success && code) {
+            setVerificationCode(code);
+          } else {
+            setError('Failed to send verification email');
+          }
+        } else {
+          router.push('/');
+        }
+      } else {
+        setError(authResult?.message || 'Unknown login error');
+      }
     } catch (error) {
       setSubmitError(
         error instanceof Error ? error.message : 'An error occurred',
@@ -134,86 +162,93 @@ export default function LoginForm() {
 
   return (
     <div className={st.container}>
-      <form className={st.form} onSubmit={handleSubmit(onSubmit)}>
-        {submitError && (
-          <p className={st.error} role="alert">
-            {submitError}
-          </p>
-        )}
-        <div className={st.header}>
-          {isSubmitting ? <h1>Signing in...</h1> : <h1>Sign in</h1>}
-        </div>
-
-        <div className={st['input-group']}>
-          <label htmlFor="email" className={st.label}>
-            Email
-          </label>
-          <Controller
-            control={control}
-            name="email"
-            render={({ field }) => (
-              <input
-                type="email"
-                id="email"
-                placeholder="Email"
-                className={`${st.input} ${errors.email ? st['input-error'] : ''}`}
-                value={field.value || ''}
-                onChange={(e) => field.onChange(e.target.value)}
-              />
-            )}
-          />
-          {errors.email && (
-            <p className={st.error} data-testid="email-error">
-              {errors.email.message}
+      {stepRef.current === 'login' ? (
+        <form className={st.form} onSubmit={handleSubmit(onSubmit)}>
+          {submitError && (
+            <p className={st.error} role="alert">
+              {submitError}
             </p>
           )}
-        </div>
+          <div className={st.header}>
+            {isSubmitting ? <h1>Signing in...</h1> : <h1>Sign in</h1>}
+          </div>
 
-        <div className={st['input-group']}>
-          <label htmlFor="password" className={st.label}>
-            Password
-          </label>
-          <Controller
-            control={control}
-            name="password"
-            render={({ field }) => (
-              <input
-                type="password"
-                id="password"
-                placeholder="Password"
-                className={`${st.input} ${errors.password ? st['input-error'] : ''}`}
-                value={field.value || ''}
-                onChange={(e) => field.onChange(e.target.value)}
-              />
+          <div className={st['input-group']}>
+            <label htmlFor="email" className={st.label}>
+              Email
+            </label>
+            <Controller
+              control={control}
+              name="email"
+              render={({ field }) => (
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="Email"
+                  className={`${st.input} ${errors.email ? st['input-error'] : ''}`}
+                  value={field.value || ''}
+                  onChange={(e) => field.onChange(e.target.value)}
+                />
+              )}
+            />
+            {errors.email && (
+              <p className={st.error} data-testid="email-error">
+                {errors.email.message}
+              </p>
             )}
-          />
-          {errors.password && (
-            <p className={st['input-error']}>{errors.password.message}</p>
-          )}
-        </div>
+          </div>
 
-        {error && <p className={st['input-error']}>{error}</p>}
+          <div className={st['input-group']}>
+            <label htmlFor="password" className={st.label}>
+              Password
+            </label>
+            <Controller
+              control={control}
+              name="password"
+              render={({ field }) => (
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="Password"
+                  className={`${st.input} ${errors.password ? st['input-error'] : ''}`}
+                  value={field.value || ''}
+                  onChange={(e) => field.onChange(e.target.value)}
+                />
+              )}
+            />
+            {errors.password && (
+              <p className={st['input-error']}>{errors.password.message}</p>
+            )}
+          </div>
 
-        <div className={st['button-container']}>
-          <button
-            type="submit"
-            className={st['button']}
-            aria-live={isSubmitting ? 'assertive' : 'polite'}
-          >
-            {isSubmitting ? 'Signing in...' : 'Sign in'}
-          </button>
-        </div>
-        <div className={st['button-container']}>
-          <LoginAuthButton />
-        </div>
+          {error && <p className={st['input-error']}>{error}</p>}
 
-        <div className={st['text-container']}>
-          <p>
-            If you don't have an account, please{' '}
-            <Link href="/register">register here</Link>.
-          </p>
-        </div>
-      </form>
+          <div className={st['button-container']}>
+            <button
+              type="submit"
+              className={st['button']}
+              aria-live={isSubmitting ? 'assertive' : 'polite'}
+            >
+              {isSubmitting ? 'Signing in...' : 'Sign in'}
+            </button>
+          </div>
+          <div className={st['button-container']}>
+            <LoginAuthButton />
+          </div>
+
+          <div className={st['text-container']}>
+            <p>
+              If you don't have an account, please{' '}
+              <Link href="/register">register here</Link>.
+            </p>
+          </div>
+        </form>
+      ) : (
+        <EmailVerification
+          verificationCode={verificationCode}
+          email={emailRef.current}
+        />
+      )}
     </div>
   );
 }

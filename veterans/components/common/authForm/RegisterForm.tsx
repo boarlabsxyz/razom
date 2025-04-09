@@ -6,10 +6,14 @@ import Link from 'next/link';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useMutation } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client';
 
 import { RegisterFormData } from 'types';
-import { REGISTER_MUTATION } from 'constants/graphql';
+import {
+  CURRENT_USER_QUERY,
+  LOGIN_MUTATION,
+  REGISTER_MUTATION,
+} from 'constants/graphql';
 import st from '@comComps/authForm/AuthForm.module.css';
 import { handleSendEmail } from '@helpers/handleSendEmail';
 import EmailVerification from './EmailVerification/EmailVerification';
@@ -38,6 +42,7 @@ export default function RegisterForm() {
   const stepRef = useRef<'register' | 'verify'>('register');
   const verificationCodeRef = useRef<string>('');
   const emailRef = useRef<string>('');
+  const client = useApolloClient();
 
   const {
     control,
@@ -56,6 +61,25 @@ export default function RegisterForm() {
   const togglePasswordVisibility = () => {
     setPasswordVisible((prev) => !prev);
   };
+
+  const [login] = useMutation(LOGIN_MUTATION, {
+    onCompleted(data) {
+      const authResult = data?.authenticateUserWithPassword;
+      if (authResult && 'item' in authResult) {
+        client.writeQuery({
+          query: CURRENT_USER_QUERY,
+          data: { authenticatedItem: authResult.item },
+        });
+      } else {
+        setSubmitError(
+          authResult?.message || 'Login failed after registration',
+        );
+      }
+    },
+    onError(err) {
+      setSubmitError(err.message);
+    },
+  });
 
   const [register] = useMutation(REGISTER_MUTATION, {
     onCompleted(data) {
@@ -80,6 +104,12 @@ export default function RegisterForm() {
         const { success, code } = await handleSendEmail(data.email);
         if (success && code) {
           verificationCodeRef.current = code;
+          await login({
+            variables: {
+              email: data.email,
+              password: data.password,
+            },
+          });
         } else {
           setSubmitError('Failed to send verification email.');
         }

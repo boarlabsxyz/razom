@@ -32,6 +32,7 @@ export const LOGIN_MUTATION = gql`
           email
           role
           name
+          isVerified
         }
       }
       ... on UserAuthenticationWithPasswordFailure {
