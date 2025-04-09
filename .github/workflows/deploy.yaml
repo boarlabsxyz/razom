@@ -27,6 +27,7 @@ env:
   VERCEL_ENV: ${{ inputs.deploy-env }}
   STATIC_DEPLOY_URL_PROD: ${{ secrets.STATIC_DEPLOY_URL_PROD }}
   STATIC_DEPLOY_URL_STAGING: ${{ secrets.STATIC_DEPLOY_URL_STAGING }}
+  RESEND_API_KEY: ${{ secrets.RESEND_API_KEY}}
 
 jobs:
   deployment:
