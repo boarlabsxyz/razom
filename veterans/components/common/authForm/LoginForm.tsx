@@ -148,8 +148,6 @@ export default function LoginForm() {
         } else {
           router.push('/');
         }
-      } else {
-        setError(authResult?.message || 'Unknown login error');
       }
     } catch (error) {
       setSubmitError(

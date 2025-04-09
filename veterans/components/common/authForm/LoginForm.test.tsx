@@ -35,6 +35,7 @@ const loginMock: MockedResponse[] = [
             email: 'test@example.com',
             role: 'USER',
             name: 'Test User',
+            isVerified: true,
           },
         },
       },
