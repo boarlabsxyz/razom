@@ -14,6 +14,7 @@ on:
         type: choice
         options:
           - preview
+          - staging
           - production
         default: preview
 
@@ -23,6 +24,9 @@ env:
   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
   NODE_ENV: ${{ inputs.deploy-env }}
+  VERCEL_ENV: ${{ inputs.deploy-env }}
+  STATIC_DEPLOY_URL_PROD: ${{ secrets.STATIC_DEPLOY_URL_PROD }}
+  STATIC_DEPLOY_URL_STAGING: ${{ secrets.STATIC_DEPLOY_URL_STAGING }}
 
 jobs:
   deployment:
@@ -30,9 +34,14 @@ jobs:
     timeout-minutes: 10
     environment:
       name: ${{ inputs.deploy-env }}
-      url: ${{ inputs.deploy-env == 'preview' && steps.deploy.outputs.url || 'https://razom.vercel.app/' }}
+      url: ${{ inputs.deploy-env == 'preview' && steps.deploy.outputs.url || (inputs.deploy-env == 'staging' && env.STATIC_DEPLOY_URL_STAGING || env.STATIC_DEPLOY_URL_PROD) }}
 
     steps:
+      - name: Check if user confirmed the deployment
+        if: ${{ !inputs.confirm }}
+        run: |
+          echo "❌ Deployment was not confirmed. Exiting..."
+          exit 1
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -56,24 +65,30 @@ jobs:
 
       - name: Build project
         run: |
-          if [[ "${{ inputs.deploy-env  }}" == "production" ]]; then
-            npx vercel build --yes --prod --token="$VERCEL_CLI_TOKEN"
-          else
+          if [[ "${{ inputs.deploy-env }}" == "preview" ]]; then
             npx vercel build --yes --token="$VERCEL_CLI_TOKEN"
+          else
+            npx vercel build --yes --prod --token="$VERCEL_CLI_TOKEN"
           fi
         working-directory: ./veterans
 
       - name: Deploy to Vercel
         id: deploy
         run: |
-          if [[ "${{ inputs.deploy-env  }}" == "production" ]]; then
+          if [[ "${{ inputs.deploy-env }}" == "production" ]]; then
             DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
+            echo "DEPLOY_URL=$STATIC_DEPLOY_URL_PROD" >> "$GITHUB_ENV"
+          elif [[ "${{ inputs.deploy-env }}" == "staging" ]]; then
+            DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
+            echo "DEPLOY_URL=$STATIC_DEPLOY_URL_STAGING" >> "$GITHUB_ENV"
           else
             DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
+            echo "DEPLOY_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
           fi
-            echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
-            echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}" >> "$GITHUB_ENV"
-            echo "Preview URL: $DEPLOYMENT_URL"
+
+          echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
+          echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
+          echo "Preview URL: $DEPLOYMENT_URL"
         working-directory: ./veterans
 
       - name: Check if DEPLOYMENT_URL is set
