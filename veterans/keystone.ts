@@ -23,7 +23,9 @@ const allowedOrigins = process.env.CORS_ORIGINS
 const vercelPattern = /^https:\/\/razom-.*-kavoon\.vercel\.app$/;
 const isVercelDeployment = (origin: string) => vercelPattern.test(origin);
 
-const corsConfig = !process.env.NODE_ENV
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+const corsConfig = !isDevelopment
   ? {
       origin: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -50,8 +52,6 @@ const corsConfig = !process.env.NODE_ENV
       credentials: true,
     };
 
-const isDevelopment = process.env.NODE_ENV === 'development';
-
 export default withAuth(
   config({
     db: {
@@ -72,8 +72,8 @@ export default withAuth(
       path: '/api/graphql',
       cors: corsConfig,
     },
-    ui: !isDevelopment
-      ? { isDisabled: true }
-      : { isAccessAllowed: (context) => !!context.session?.data },
+    ui: isDevelopment
+      ? { isAccessAllowed: (context) => !!context.session?.data }
+      : { isDisabled: true },
   }),
 );
