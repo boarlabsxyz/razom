@@ -11,8 +11,9 @@ import RegisterForm from './RegisterForm';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { useRouter } from 'next/navigation';
 import { SessionProvider } from 'next-auth/react';
-import { REGISTER_MUTATION } from 'constants/graphql';
+import { LOGIN_MUTATION, REGISTER_MUTATION } from 'constants/graphql';
 import { generateSecureCode } from '@helpers/generateSecureCode';
+import LoginForm from './LoginForm';
 
 const mocks: MockedResponse[] = [
   {
@@ -221,5 +222,33 @@ describe('Auth Forms', () => {
 
     fireEvent.change(verificationInput, { target: { value: '1234' } });
     expect(verificationInput).toHaveValue('1234');
+  });
+
+  it('should show error if network is down during login', async () => {
+    const networkErrorMock = [
+      {
+        request: {
+          query: LOGIN_MUTATION,
+          variables: {
+            email: 'test@example.com',
+            password: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD,
+          },
+        },
+        error: new Error('Network error'),
+      },
+    ];
+
+    customRender(<LoginForm />, networkErrorMock);
+    fireEvent.change(screen.getByPlaceholderText('Email'), {
+      target: { value: 'test@example.com' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('Password'), {
+      target: { value: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
+    await waitFor(() =>
+      expect(screen.getByText('Network error')).toBeInTheDocument(),
+    );
   });
 });

@@ -23,7 +23,10 @@ const mocks = {
     {
       request: {
         query: LOGIN_MUTATION,
-        variables: { email: 'test@example.com', password: 'Password123' },
+        variables: {
+          email: 'test@example.com',
+          password: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD,
+        },
       },
       result: {
         data: {
@@ -50,7 +53,10 @@ const mocks = {
     {
       request: {
         query: LOGIN_MUTATION,
-        variables: { email: 'wrong@example.com', password: 'Password123' },
+        variables: {
+          email: 'wrong@example.com',
+          password: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD,
+        },
       },
       error: new Error('Invalid credentials'),
     },
@@ -69,7 +75,7 @@ const mocks = {
         variables: {
           name: 'OAuth User',
           email: 'oauth@example.com',
-          password: 'withoutpassword',
+          password: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD,
         },
       },
       result: {
@@ -148,7 +154,7 @@ describe('Auth Forms', () => {
       target: { value: 'test@example.com' },
     });
     fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: 'Password123' },
+      target: { value: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD },
     });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
     await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/'));
@@ -160,7 +166,7 @@ describe('Auth Forms', () => {
       target: { value: 'wrong@example.com' },
     });
     fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: 'Password123' },
+      target: { value: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD },
     });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
     await waitFor(() =>
@@ -178,7 +184,10 @@ describe('Auth Forms', () => {
       {
         request: {
           query: LOGIN_MUTATION,
-          variables: { email: 'test@example.com', password: 'Password123' },
+          variables: {
+            email: 'test@example.com',
+            password: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD,
+          },
         },
         error: new Error('Network error'),
       },
@@ -189,7 +198,7 @@ describe('Auth Forms', () => {
       target: { value: 'test@example.com' },
     });
     fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: 'Password123' },
+      target: { value: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD },
     });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
@@ -205,7 +214,10 @@ describe('Auth Forms', () => {
       {
         request: {
           query: LOGIN_MUTATION,
-          variables: { email: 'test@example.com', password: 'Password123' },
+          variables: {
+            email: 'test@example.com',
+            password: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD,
+          },
         },
         result: {
           data: {
@@ -223,13 +235,64 @@ describe('Auth Forms', () => {
       target: { value: 'test@example.com' },
     });
     fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: 'Password123' },
+      target: { value: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD },
     });
 
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() =>
       expect(screen.getByText(submitErrorMock)).toBeInTheDocument(),
+    );
+  });
+
+  it('should render EmailVerification component when user is not verified', async () => {
+    const testEmail = 'unverified@example.com';
+
+    const mocksWithUnverifiedUser = [
+      {
+        request: {
+          query: LOGIN_MUTATION,
+          variables: {
+            email: testEmail,
+            password: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD,
+          },
+        },
+        result: {
+          data: {
+            authenticateUserWithPassword: {
+              item: {
+                id: '1',
+                email: testEmail,
+                name: 'Unverified User',
+                role: 'USER',
+                isVerified: false,
+              },
+            },
+          },
+        },
+      },
+    ];
+
+    jest.mock('@helpers/handleSendEmail', () => ({
+      handleSendEmail: jest.fn(() =>
+        Promise.resolve({ success: true, code: '123456' }),
+      ),
+    }));
+
+    customRender(<LoginForm />, mocksWithUnverifiedUser);
+
+    fireEvent.change(screen.getByPlaceholderText('Email'), {
+      target: { value: testEmail },
+    });
+    fireEvent.change(screen.getByPlaceholderText('Password'), {
+      target: { value: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(/verify your email address/i),
+      ).toBeInTheDocument(),
     );
   });
 });
