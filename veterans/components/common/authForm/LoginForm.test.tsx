@@ -13,7 +13,6 @@ import { useRouter } from 'next/navigation';
 import { SessionProvider } from 'next-auth/react';
 import {
   CHECK_USER_QUERY,
-  CURRENT_USER_QUERY,
   LOGIN_MUTATION,
   LOGOUT_MUTATION,
   REGISTER_MUTATION,
