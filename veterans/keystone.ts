@@ -50,6 +50,8 @@ const corsConfig = !process.env.NODE_ENV
       credentials: true,
     };
 
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 export default withAuth(
   config({
     db: {
@@ -70,5 +72,8 @@ export default withAuth(
       path: '/api/graphql',
       cors: corsConfig,
     },
+    ui: !isDevelopment
+      ? { isDisabled: true }
+      : { isAccessAllowed: (context) => !!context.session?.data },
   }),
 );
