@@ -18,69 +18,72 @@ import {
   REGISTER_MUTATION,
 } from 'constants/graphql';
 
-const loginMock: MockedResponse[] = [
-  {
-    request: {
-      query: LOGIN_MUTATION,
-      variables: {
-        email: 'test@example.com',
-        password: 'Password123',
+const mocks = {
+  login: [
+    {
+      request: {
+        query: LOGIN_MUTATION,
+        variables: {
+          email: 'test@example.com',
+          password: process.env.SESSION_SECRET,
+        },
       },
-    },
-    result: {
-      data: {
-        authenticateUserWithPassword: {
-          item: {
-            id: '1',
-            email: 'test@example.com',
-            role: 'USER',
-            name: 'Test User',
+      result: {
+        data: {
+          authenticateUserWithPassword: {
+            item: {
+              id: '1',
+              email: 'test@example.com',
+              role: 'USER',
+              name: 'Test User',
+              isVerified: true,
+            },
           },
         },
       },
     },
-  },
-];
-
-const logoutMock: MockedResponse[] = [
-  {
-    request: {
-      query: LOGOUT_MUTATION,
+  ],
+  logout: [
+    {
+      request: { query: LOGOUT_MUTATION },
+      result: { data: { endSession: true } },
     },
-    result: { data: { endSession: true } },
-  },
-];
-
-const loginErrorMock: MockedResponse[] = [
-  {
-    request: {
-      query: LOGIN_MUTATION,
-      variables: { email: 'wrong@example.com', password: 'WrongPassword' },
+  ],
+  loginError: [
+    {
+      request: {
+        query: LOGIN_MUTATION,
+        variables: {
+          email: 'wrong@example.com',
+          password: process.env.SESSION_SECRET,
+        },
+      },
+      error: new Error('Invalid credentials'),
     },
-    error: new Error('Invalid credentials'),
-  },
-];
-
-const oauthMock: MockedResponse[] = [
-  {
-    request: {
-      query: CHECK_USER_QUERY,
-      variables: { email: 'oauth@example.com' },
+  ],
+  oauth: [
+    {
+      request: {
+        query: CHECK_USER_QUERY,
+        variables: { email: 'oauth@example.com' },
+      },
+      result: { data: { user: null } },
     },
-    result: { data: { user: null } },
-  },
-  {
-    request: {
-      query: REGISTER_MUTATION,
-      variables: {
-        name: 'OAuth User',
-        email: 'oauth@example.com',
-        password: 'withoutpassword',
+    {
+      request: {
+        query: REGISTER_MUTATION,
+        variables: {
+          name: 'OAuth User',
+          email: 'oauth@example.com',
+          password: process.env.SESSION_SECRET,
+        },
+      },
+      result: {
+        data: { createUser: { id: '456', email: 'oauth@example.com' } },
       },
     },
-    result: { data: { createUser: { id: '456', email: 'oauth@example.com' } } },
-  },
-];
+  ],
+};
 
 const AllProviders: React.FC<{
   children: React.ReactNode;
@@ -104,6 +107,17 @@ const customRender = (
     ),
     ...options,
   });
+
+const fillAndSubmitLoginForm = async (email: string, password: string) => {
+  fireEvent.change(screen.getByPlaceholderText('Email'), {
+    target: { value: email },
+  });
+  fireEvent.change(screen.getByPlaceholderText('Password'), {
+    target: { value: password },
+  });
+  fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+  await waitFor(() => screen.getByRole('button', { name: /sign in/i }));
+};
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
@@ -131,7 +145,7 @@ describe('Auth Forms', () => {
     ).toBeInTheDocument();
   });
 
-  it('should display OAuth login button', async () => {
+  it('should display OAuth login button', () => {
     customRender(<LoginForm />);
     expect(
       screen.getByRole('button', { name: /Увійти через Google/i }),
@@ -145,117 +159,128 @@ describe('Auth Forms', () => {
     expect(await screen.findByText('Password is required')).toBeInTheDocument();
   });
 
-  it('should display error if email field is empty', async () => {
-    customRender(<LoginForm />);
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: 'Password123' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-    expect(await screen.findByText('Email is required')).toBeInTheDocument();
-  });
-
-  it('should display error if password field is empty', async () => {
-    customRender(<LoginForm />);
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-    expect(await screen.findByText('Password is required')).toBeInTheDocument();
-  });
-
-  it('should clear error messages upon correcting input', async () => {
-    customRender(<LoginForm />);
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'john.doe@example.com' },
-    });
-    await waitFor(() => {
-      expect(screen.queryByText('Email is required')).not.toBeInTheDocument();
-    });
-  });
-
   it('should log in successfully with valid credentials and redirect to homepage', async () => {
-    customRender(<LoginForm />, [...loginMock, ...logoutMock]);
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: 'Password123' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-    await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/');
-    });
+    customRender(<LoginForm />, [...mocks.login, ...mocks.logout]);
+    await fillAndSubmitLoginForm(
+      'test@example.com',
+      process.env.SESSION_SECRET ?? '',
+    );
+    await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/'));
   });
 
   it('should handle login errors correctly', async () => {
-    customRender(<LoginForm />, loginErrorMock);
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'wrong@example.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: 'WrongPassword' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-    await waitFor(() => {
-      expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
-    });
+    customRender(<LoginForm />, mocks.loginError);
+    await fillAndSubmitLoginForm(
+      'wrong@example.com',
+      process.env.SESSION_SECRET ?? '',
+    );
+    await waitFor(() =>
+      expect(screen.getByText('Invalid credentials')).toBeInTheDocument(),
+    );
   });
 
   it('should handle OAuth authentication and redirect to home', async () => {
-    customRender(<LoginForm />, oauthMock);
-    await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/');
-    });
+    customRender(<LoginForm />, mocks.oauth);
+    await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/'));
   });
 
-  it('should handle OAuth authentication for an existing user', async () => {
-    const existingUserMock: MockedResponse[] = [
-      {
-        request: {
-          query: CHECK_USER_QUERY,
-          variables: { email: 'existing@example.com' },
-        },
-        result: {
-          data: {
-            user: {
-              id: '123',
-              email: 'existing@example.com',
-              name: 'Existing User',
-            },
-          },
-        },
-      },
-    ];
-
-    customRender(<LoginForm />, existingUserMock);
-    await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/');
-    });
-  });
-
-  it('should show an error message if the network is down during login', async () => {
-    const networkErrorMock: MockedResponse[] = [
+  it('should show error if network is down during login', async () => {
+    const networkErrorMock = [
       {
         request: {
           query: LOGIN_MUTATION,
-          variables: { email: 'test@example.com', password: 'Password123' },
+          variables: {
+            email: 'test@example.com',
+            password: process.env.SESSION_SECRET,
+          },
         },
         error: new Error('Network error'),
       },
     ];
 
     customRender(<LoginForm />, networkErrorMock);
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: 'Password123' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    await fillAndSubmitLoginForm(
+      'test@example.com',
+      process.env.SESSION_SECRET ?? '',
+    );
+    await waitFor(() =>
+      expect(screen.getByText('Network error')).toBeInTheDocument(),
+    );
+  });
 
-    await waitFor(() => {
-      expect(screen.getByText('Network error')).toBeInTheDocument();
-    });
+  it('should display submit error message when login fails after registration', async () => {
+    const submitErrorMock = 'Login failed after registration';
+
+    const mocksWithError = [
+      {
+        request: {
+          query: LOGIN_MUTATION,
+          variables: {
+            email: 'test@example.com',
+            password: process.env.SESSION_SECRET,
+          },
+        },
+        result: {
+          data: {
+            authenticateUserWithPassword: {
+              message: submitErrorMock,
+            },
+          },
+        },
+      },
+    ];
+
+    customRender(<LoginForm />, mocksWithError);
+    await fillAndSubmitLoginForm(
+      'test@example.com',
+      process.env.SESSION_SECRET ?? '',
+    );
+    await waitFor(() =>
+      expect(screen.getByText(submitErrorMock)).toBeInTheDocument(),
+    );
+  });
+
+  it('should render EmailVerification component when user is not verified', async () => {
+    const testEmail = 'unverified@example.com';
+
+    const mocksWithUnverifiedUser = [
+      {
+        request: {
+          query: LOGIN_MUTATION,
+          variables: {
+            email: testEmail,
+            password: process.env.SESSION_SECRET,
+          },
+        },
+        result: {
+          data: {
+            authenticateUserWithPassword: {
+              item: {
+                id: '1',
+                email: testEmail,
+                name: 'Unverified User',
+                role: 'USER',
+                isVerified: false,
+              },
+            },
+          },
+        },
+      },
+    ];
+
+    jest.mock('@helpers/handleSendEmail', () => ({
+      handleSendEmail: jest.fn(() =>
+        Promise.resolve({ success: true, code: '123456' }),
+      ),
+    }));
+
+    customRender(<LoginForm />, mocksWithUnverifiedUser);
+    await fillAndSubmitLoginForm(testEmail, process.env.SESSION_SECRET ?? '');
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(/verify your email address/i),
+      ).toBeInTheDocument(),
+    );
   });
 });

@@ -195,7 +195,7 @@ export const User: ListConfig<Lists.User.TypeInfo<Session>> = list({
         }: {
           session?: Session;
           item: CustomBaseItem;
-        }) => isSameUser({ session, item }),
+        }) => isAdminOrSameUser({ session, item }),
       },
       ui: {
         createView: { fieldMode: 'hidden' },

@@ -6,10 +6,14 @@ import Link from 'next/link';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useMutation } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client';
 
 import { RegisterFormData } from 'types';
-import { REGISTER_MUTATION } from 'constants/graphql';
+import {
+  CURRENT_USER_QUERY,
+  LOGIN_MUTATION,
+  REGISTER_MUTATION,
+} from 'constants/graphql';
 import st from '@comComps/authForm/AuthForm.module.css';
 import { handleSendEmail } from '@helpers/handleSendEmail';
 import EmailVerification from './EmailVerification/EmailVerification';
@@ -37,6 +41,8 @@ export default function RegisterForm() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const stepRef = useRef<'register' | 'verify'>('register');
   const verificationCodeRef = useRef<string>('');
+  const emailRef = useRef<string>('');
+  const client = useApolloClient();
 
   const {
     control,
@@ -55,6 +61,25 @@ export default function RegisterForm() {
   const togglePasswordVisibility = () => {
     setPasswordVisible((prev) => !prev);
   };
+
+  const [login] = useMutation(LOGIN_MUTATION, {
+    onCompleted(data) {
+      const authResult = data?.authenticateUserWithPassword;
+      if (authResult && 'item' in authResult) {
+        client.writeQuery({
+          query: CURRENT_USER_QUERY,
+          data: { authenticatedItem: authResult.item },
+        });
+      } else {
+        setSubmitError(
+          authResult?.message ?? 'Login failed after registration',
+        );
+      }
+    },
+    onError(err) {
+      setSubmitError(err.message);
+    },
+  });
 
   const [register] = useMutation(REGISTER_MUTATION, {
     onCompleted(data) {
@@ -75,16 +100,23 @@ export default function RegisterForm() {
       const { data: responseData } = await register({ variables: { ...data } });
 
       if (responseData?.createUser) {
+        emailRef.current = data.email;
         const { success, code } = await handleSendEmail(data.email);
         if (success && code) {
           verificationCodeRef.current = code;
+          await login({
+            variables: {
+              email: data.email,
+              password: data.password,
+            },
+          });
         } else {
           setSubmitError('Failed to send verification email.');
         }
       }
-      // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     } catch (error) {
       setSubmitError('An error occurred during registration');
+      throw error;
     }
   };
 
@@ -200,7 +232,10 @@ export default function RegisterForm() {
           </div>
         </form>
       ) : (
-        <EmailVerification verificationCode={verificationCodeRef.current} />
+        <EmailVerification
+          verificationCode={verificationCodeRef.current}
+          email={emailRef.current}
+        />
       )}
     </div>
   );
