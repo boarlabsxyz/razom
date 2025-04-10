@@ -84,7 +84,7 @@ export default function LoginForm() {
 
   useEffect(() => {
     async function handleAuth() {
-      if (!session ?? hasAuthenticated.current) {
+      if (!session || hasAuthenticated.current) {
         return;
       }
       hasAuthenticated.current = true;

@@ -108,7 +108,6 @@ const customRender = (
     ...options,
   });
 
-// Helper function for interacting with the form
 const fillAndSubmitLoginForm = async (email: string, password: string) => {
   fireEvent.change(screen.getByPlaceholderText('Email'), {
     target: { value: email },

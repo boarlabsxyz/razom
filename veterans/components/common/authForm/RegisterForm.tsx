@@ -114,7 +114,6 @@ export default function RegisterForm() {
           setSubmitError('Failed to send verification email.');
         }
       }
-      // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     } catch (error) {
       setSubmitError('An error occurred during registration');
       throw error;
