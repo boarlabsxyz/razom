@@ -67,6 +67,11 @@ export default withAuth(
     server: {
       cors: corsConfig,
       port: Number(process.env.BACKEND_PORT) || 3000,
+      extendExpressApp: (app) => {
+        app.get('/', (req, res) => {
+          res.json({ status: 'ok' });
+        });
+      },
     },
     graphql: {
       path: '/api/graphql',
