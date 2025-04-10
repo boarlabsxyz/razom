@@ -30,5 +30,8 @@ if [ ! -d ".keystone" ]; then
     exit 1
 fi
 
+# Create a simple health check file
+echo "{\"status\":\"ok\"}" > /usr/src/app/public/health.json
+
 echo "🔧 Running Keystone in NODE_ENV=$NODE_ENV"
 node_modules/.bin/keystone start 

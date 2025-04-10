@@ -33,6 +33,7 @@ RUN npm install --save \
 COPY ./veterans .
 
 RUN mkdir -p /usr/src/app/shared
+RUN mkdir -p /usr/src/app/public
 
 COPY ./scripts/build-keystone.sh /usr/src/app/build-keystone.sh
 RUN chmod +x /usr/src/app/build-keystone.sh
