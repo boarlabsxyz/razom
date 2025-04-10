@@ -35,5 +35,5 @@ if [ ! -d ".keystone/admin" ]; then
     exit 1
 fi
 
-echo "Starting Keystone server..."
-NODE_ENV=production node_modules/.bin/keystone start 
+echo "🔧 Running Keystone in NODE_ENV=$NODE_ENV"
+node_modules/.bin/keystone start 
