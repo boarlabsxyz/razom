@@ -72,7 +72,7 @@ export default function RegisterForm() {
         });
       } else {
         setSubmitError(
-          authResult?.message || 'Login failed after registration',
+          authResult?.message ?? 'Login failed after registration',
         );
       }
     },
@@ -117,6 +117,7 @@ export default function RegisterForm() {
       // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     } catch (error) {
       setSubmitError('An error occurred during registration');
+      throw error;
     }
   };
 

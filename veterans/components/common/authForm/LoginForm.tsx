@@ -58,7 +58,7 @@ export default function LoginForm() {
           data: { authenticatedItem: authResult.item },
         });
       } else {
-        setError(authResult?.message || 'Невідома помилка входу');
+        setError(authResult?.message ?? 'Невідома помилка входу');
       }
     },
     onError(err) {
@@ -84,7 +84,7 @@ export default function LoginForm() {
 
   useEffect(() => {
     async function handleAuth() {
-      if (!session || hasAuthenticated.current) {
+      if (!session ?? hasAuthenticated.current) {
         return;
       }
       hasAuthenticated.current = true;
@@ -184,7 +184,7 @@ export default function LoginForm() {
                   id="email"
                   placeholder="Email"
                   className={`${st.input} ${errors.email ? st['input-error'] : ''}`}
-                  value={field.value || ''}
+                  value={field.value ?? ''}
                   onChange={(e) => field.onChange(e.target.value)}
                 />
               )}
@@ -209,7 +209,7 @@ export default function LoginForm() {
                   id="password"
                   placeholder="Password"
                   className={`${st.input} ${errors.password ? st['input-error'] : ''}`}
-                  value={field.value || ''}
+                  value={field.value ?? ''}
                   onChange={(e) => field.onChange(e.target.value)}
                 />
               )}
