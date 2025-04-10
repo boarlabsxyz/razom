@@ -34,10 +34,10 @@ COPY ./veterans .
 
 RUN mkdir -p /usr/src/app/shared
 
-COPY ./scripts/build-keystone.sh /usr/src/app/build-keystone.sh
-RUN chmod +x /usr/src/app/build-keystone.sh
+# COPY ./scripts/build-keystone.sh /usr/src/app/build-keystone.sh
+# RUN chmod +x /usr/src/app/build-keystone.sh
 
-RUN /usr/src/app/build-keystone.sh
+# RUN /usr/src/app/build-keystone.sh
 
 RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
 
