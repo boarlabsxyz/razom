@@ -41,7 +41,7 @@ export default function LoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [verificationCode, setVerificationCode] = useState('');
+  const verificationCode = useRef<string>('');
   const stepRef = useRef<'login' | 'verify'>('login');
   const emailRef = useRef<string>('');
   const client = useApolloClient();
@@ -141,7 +141,7 @@ export default function LoginForm() {
 
           const { success, code } = await handleSendEmail(userEmail);
           if (success && code) {
-            setVerificationCode(code);
+            verificationCode.current = code;
           } else {
             setError('Failed to send verification email');
           }
@@ -243,7 +243,7 @@ export default function LoginForm() {
         </form>
       ) : (
         <EmailVerification
-          verificationCode={verificationCode}
+          verificationCode={verificationCode.current}
           email={emailRef.current}
         />
       )}

@@ -259,4 +259,40 @@ describe('Auth Forms', () => {
       expect(screen.getByText('Network error')).toBeInTheDocument();
     });
   });
+
+  it('should display error message when authentication fails', async () => {
+    const loginErrorMock: MockedResponse[] = [
+      {
+        request: {
+          query: LOGIN_MUTATION,
+          variables: {
+            email: 'test@example.com',
+            password: 'WrongPassword',
+          },
+        },
+        result: {
+          data: {
+            authenticateUserWithPassword: {
+              message: 'Invalid email or password',
+            },
+          },
+        },
+      },
+    ];
+
+    customRender(<LoginForm />, loginErrorMock);
+
+    fireEvent.change(screen.getByPlaceholderText('Email'), {
+      target: { value: 'test@example.com' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('Password'), {
+      target: { value: 'WrongPassword' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Invalid email or password')).toBeInTheDocument();
+    });
+  });
 });
