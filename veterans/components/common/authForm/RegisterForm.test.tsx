@@ -231,7 +231,7 @@ describe('Auth Forms', () => {
           query: LOGIN_MUTATION,
           variables: {
             email: 'test@example.com',
-            password: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD,
+            password: 'Password123',
           },
         },
         error: new Error('Network error'),
@@ -243,7 +243,7 @@ describe('Auth Forms', () => {
       target: { value: 'test@example.com' },
     });
     fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD },
+      target: { value: 'Password123' },
     });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 

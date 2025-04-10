@@ -25,7 +25,7 @@ const mocks = {
         query: LOGIN_MUTATION,
         variables: {
           email: 'test@example.com',
-          password: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD,
+          password: process.env.SESSION_SECRET,
         },
       },
       result: {
@@ -55,7 +55,7 @@ const mocks = {
         query: LOGIN_MUTATION,
         variables: {
           email: 'wrong@example.com',
-          password: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD,
+          password: process.env.SESSION_SECRET,
         },
       },
       error: new Error('Invalid credentials'),
@@ -75,7 +75,7 @@ const mocks = {
         variables: {
           name: 'OAuth User',
           email: 'oauth@example.com',
-          password: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD,
+          password: process.env.SESSION_SECRET,
         },
       },
       result: {
@@ -154,7 +154,7 @@ describe('Auth Forms', () => {
       target: { value: 'test@example.com' },
     });
     fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD },
+      target: { value: process.env.SESSION_SECRET },
     });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
     await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/'));
@@ -166,7 +166,7 @@ describe('Auth Forms', () => {
       target: { value: 'wrong@example.com' },
     });
     fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD },
+      target: { value: process.env.SESSION_SECRET },
     });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
     await waitFor(() =>
@@ -186,7 +186,7 @@ describe('Auth Forms', () => {
           query: LOGIN_MUTATION,
           variables: {
             email: 'test@example.com',
-            password: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD,
+            password: process.env.SESSION_SECRET,
           },
         },
         error: new Error('Network error'),
@@ -198,7 +198,7 @@ describe('Auth Forms', () => {
       target: { value: 'test@example.com' },
     });
     fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD },
+      target: { value: process.env.SESSION_SECRET },
     });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
@@ -216,7 +216,7 @@ describe('Auth Forms', () => {
           query: LOGIN_MUTATION,
           variables: {
             email: 'test@example.com',
-            password: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD,
+            password: process.env.SESSION_SECRET,
           },
         },
         result: {
@@ -235,7 +235,7 @@ describe('Auth Forms', () => {
       target: { value: 'test@example.com' },
     });
     fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD },
+      target: { value: process.env.SESSION_SECRET },
     });
 
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
@@ -254,7 +254,7 @@ describe('Auth Forms', () => {
           query: LOGIN_MUTATION,
           variables: {
             email: testEmail,
-            password: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD,
+            password: process.env.SESSION_SECRET,
           },
         },
         result: {
@@ -285,7 +285,7 @@ describe('Auth Forms', () => {
       target: { value: testEmail },
     });
     fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: process.env.NEXT_PUBLIC_AUTH_USER_PASSWORD },
+      target: { value: process.env.SESSION_SECRET },
     });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
