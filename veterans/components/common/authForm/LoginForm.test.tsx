@@ -108,6 +108,18 @@ const customRender = (
     ...options,
   });
 
+// Helper function for interacting with the form
+const fillAndSubmitLoginForm = async (email: string, password: string) => {
+  fireEvent.change(screen.getByPlaceholderText('Email'), {
+    target: { value: email },
+  });
+  fireEvent.change(screen.getByPlaceholderText('Password'), {
+    target: { value: password },
+  });
+  fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+  await waitFor(() => screen.getByRole('button', { name: /sign in/i }));
+};
+
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
@@ -150,25 +162,19 @@ describe('Auth Forms', () => {
 
   it('should log in successfully with valid credentials and redirect to homepage', async () => {
     customRender(<LoginForm />, [...mocks.login, ...mocks.logout]);
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: process.env.SESSION_SECRET },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    await fillAndSubmitLoginForm(
+      'test@example.com',
+      process.env.SESSION_SECRET ?? '',
+    );
     await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/'));
   });
 
   it('should handle login errors correctly', async () => {
     customRender(<LoginForm />, mocks.loginError);
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'wrong@example.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: process.env.SESSION_SECRET },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    await fillAndSubmitLoginForm(
+      'wrong@example.com',
+      process.env.SESSION_SECRET ?? '',
+    );
     await waitFor(() =>
       expect(screen.getByText('Invalid credentials')).toBeInTheDocument(),
     );
@@ -194,14 +200,10 @@ describe('Auth Forms', () => {
     ];
 
     customRender(<LoginForm />, networkErrorMock);
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: process.env.SESSION_SECRET },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-
+    await fillAndSubmitLoginForm(
+      'test@example.com',
+      process.env.SESSION_SECRET ?? '',
+    );
     await waitFor(() =>
       expect(screen.getByText('Network error')).toBeInTheDocument(),
     );
@@ -230,16 +232,10 @@ describe('Auth Forms', () => {
     ];
 
     customRender(<LoginForm />, mocksWithError);
-
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: process.env.SESSION_SECRET },
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-
+    await fillAndSubmitLoginForm(
+      'test@example.com',
+      process.env.SESSION_SECRET ?? '',
+    );
     await waitFor(() =>
       expect(screen.getByText(submitErrorMock)).toBeInTheDocument(),
     );
@@ -280,14 +276,7 @@ describe('Auth Forms', () => {
     }));
 
     customRender(<LoginForm />, mocksWithUnverifiedUser);
-
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: testEmail },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: process.env.SESSION_SECRET },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    await fillAndSubmitLoginForm(testEmail, process.env.SESSION_SECRET ?? '');
 
     await waitFor(() =>
       expect(

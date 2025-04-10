@@ -95,6 +95,19 @@ const fillRegisterForm = () => {
   });
 };
 
+const fillLoginForm = (email: string, password: string) => {
+  fireEvent.change(screen.getByPlaceholderText('Email'), {
+    target: { value: email },
+  });
+  fireEvent.change(screen.getByPlaceholderText('Password'), {
+    target: { value: password },
+  });
+};
+
+const submitForm = () => {
+  fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+};
+
 describe('Auth Forms', () => {
   beforeEach(() => {
     (useRouter as jest.Mock).mockReturnValue({
@@ -224,14 +237,14 @@ describe('Auth Forms', () => {
     expect(verificationInput).toHaveValue('1234');
   });
 
-  it('should show error if network is down during login', async () => {
+  it('should show an error if network is down during login', async () => {
     const networkErrorMock = [
       {
         request: {
           query: LOGIN_MUTATION,
           variables: {
             email: 'test@example.com',
-            password: process.env.SESSION_SECRET,
+            password: process.env.SESSION_SECRET ?? '',
           },
         },
         error: new Error('Network error'),
@@ -239,13 +252,8 @@ describe('Auth Forms', () => {
     ];
 
     customRender(<LoginForm />, networkErrorMock);
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: process.env.SESSION_SECRET },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    fillLoginForm('test@example.com', process.env.SESSION_SECRET ?? '');
+    submitForm();
 
     await waitFor(() =>
       expect(screen.getByText('Network error')).toBeInTheDocument(),
