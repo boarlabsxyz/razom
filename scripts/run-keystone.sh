@@ -30,10 +30,5 @@ if [ ! -d ".keystone" ]; then
     exit 1
 fi
 
-if [ ! -d ".keystone/admin" ]; then
-    echo "Error: Admin UI build not found. Please run build-keystone.sh first."
-    exit 1
-fi
-
 echo "🔧 Running Keystone in NODE_ENV=$NODE_ENV"
 node_modules/.bin/keystone start 
