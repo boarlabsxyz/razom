@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
+import { MockedProvider } from '@apollo/client/testing';
 import HomePage from './page';
 
 jest.mock('@comComps/container', () =>
@@ -14,7 +15,11 @@ jest.mock('@comps/homePage/mapSection', () =>
 
 describe('HomePage', () => {
   it('renders Container, Hero, and InitiativesSection components', () => {
-    render(<HomePage />);
+    render(
+      <MockedProvider mocks={[]} addTypename={false}>
+        <HomePage />
+      </MockedProvider>,
+    );
 
     expect(screen.getByTestId('container')).toBeInTheDocument();
     expect(screen.getByTestId('hero-section')).toBeInTheDocument();

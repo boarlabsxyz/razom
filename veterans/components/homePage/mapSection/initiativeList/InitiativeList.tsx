@@ -1,6 +1,6 @@
 'use client';
 
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 
 import Spinner from '@comComps/spinner';
@@ -9,18 +9,7 @@ import { Initiative } from 'types';
 
 import st from './InitiativeList.module.css';
 import { processInitiatives } from 'utils/initiativeUtils';
-
-const GET_INITIATIVES = gql`
-  query GetInitiatives {
-    initiatives {
-      id
-      title
-      description {
-        document
-      }
-    }
-  }
-`;
+import { GET_INITIATIVES } from 'constants/graphql';
 
 export default function InitiativesList() {
   const { loading, error, data } = useQuery<{ initiatives: Initiative[] }>(
