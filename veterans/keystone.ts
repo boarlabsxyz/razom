@@ -23,7 +23,7 @@ const allowedOrigins = process.env.CORS_ORIGINS
 const vercelPattern = /^https:\/\/razom-.*-kavoon\.vercel\.app$/;
 const isVercelDeployment = (origin: string) => vercelPattern.test(origin);
 
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isProduction = process.env.NODE_ENV === 'production';
 
 // const corsConfig = !isDevelopment
 //   ? {
@@ -87,8 +87,7 @@ export default withAuth(
       cors: corsConfig,
       port: Number(process.env.BACKEND_PORT) || 3000,
       extendExpressApp: (app) => {
-        // Only add health check in production
-        if (!isDevelopment) {
+        if (isProduction) {
           app.get('/', (req, res) => {
             res.json({ status: 'ok' });
           });
@@ -99,8 +98,8 @@ export default withAuth(
       path: '/api/graphql',
       cors: corsConfig,
     },
-    ui: isDevelopment
-      ? { isAccessAllowed: (context) => !!context.session?.data }
-      : { isDisabled: true },
+    ui: isProduction
+      ? { isDisabled: true }
+      : { isAccessAllowed: (context) => !!context.session?.data },
   }),
 );
