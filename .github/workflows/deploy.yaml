@@ -23,7 +23,7 @@ env:
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-  NODE_ENV: ${{ secrets.NODE_ENV }}
+  # NODE_ENV: ${{ secrets.NODE_ENV }}
   # NODE_ENV: ${{ inputs.deploy-env }}
   # VERCEL_ENV: ${{ inputs.deploy-env }}
   STATIC_DEPLOY_URL_PROD: ${{ secrets.STATIC_DEPLOY_URL_PROD }}
@@ -82,10 +82,7 @@ jobs:
             echo "DEPLOY_URL=$STATIC_DEPLOY_URL_PROD" >> "$GITHUB_ENV"
           elif [[ "${{ inputs.deploy-env }}" == "staging" ]]; then
             DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
-            echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
-            npx vercel alias "$DEPLOYMENT_URL" "$STATIC_DEPLOY_URL_STAGING" --token="$VERCEL_CLI_TOKEN"
             echo "DEPLOY_URL=$STATIC_DEPLOY_URL_STAGING" >> "$GITHUB_ENV"
-
           else
             DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
             echo "DEPLOY_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
@@ -94,6 +91,11 @@ jobs:
           echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
           echo "Preview URL: $DEPLOYMENT_URL"
+        working-directory: ./veterans
+
+      - name: Assign alias to deployment
+        run: |
+          vercel alias set "$DEPLOYMENT_URL" staging-razom.vercel.app --token="$VERCEL_CLI_TOKEN"
         working-directory: ./veterans
 
       - name: Check if DEPLOYMENT_URL is set
