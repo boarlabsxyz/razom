@@ -82,7 +82,10 @@ jobs:
             echo "DEPLOY_URL=$STATIC_DEPLOY_URL_PROD" >> "$GITHUB_ENV"
           elif [[ "${{ inputs.deploy-env }}" == "staging" ]]; then
             DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
+            echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
+            npx vercel alias "$DEPLOYMENT_URL" "$STATIC_DEPLOY_URL_STAGING" --token="$VERCEL_CLI_TOKEN"
             echo "DEPLOY_URL=$STATIC_DEPLOY_URL_STAGING" >> "$GITHUB_ENV"
+
           else
             DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
             echo "DEPLOY_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
