@@ -23,10 +23,10 @@ const allowedOrigins = process.env.CORS_ORIGINS
 const vercelPattern = /^https:\/\/razom-.*-kavoon\.vercel\.app$/;
 const isVercelDeployment = (origin: string) => vercelPattern.test(origin);
 
-const isTest = process.env.NODE_ENV === 'test';
+const isGitHubAction = process.env.IS_GITHUB_ACTION === 'true';
 const isProduction = process.env.NODE_ENV === 'production';
 
-const corsConfig = isTest
+const corsConfig = isGitHubAction
   ? {
       origin: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
