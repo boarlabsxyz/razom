@@ -28,7 +28,8 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const corsConfig = isGitHubAction
   ? {
-      origin: true,
+      // origin: true,
+      origin: [...allowedOrigins, 'https://github.com'],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
       credentials: true,
