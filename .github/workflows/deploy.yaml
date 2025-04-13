@@ -93,6 +93,9 @@ jobs:
           echo "Preview URL: $DEPLOYMENT_URL"
         working-directory: ./veterans
 
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
       - name: Assign alias to deployment
         run: |
           vercel alias set "$DEPLOYMENT_URL" staging-razom.vercel.app --token="$VERCEL_CLI_TOKEN"
