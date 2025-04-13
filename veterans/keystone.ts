@@ -98,6 +98,6 @@ export default withAuth(
       path: '/api/graphql',
       cors: corsConfig,
     },
-    ui: isProduction ? { isDisabled: true } : {},
+    // ui: isProduction ? { isDisabled: true } : {},
   }),
 );
