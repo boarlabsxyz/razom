@@ -39,7 +39,7 @@ const corsConfig = isGitHubAction
         callback: (err: Error | null, allow?: boolean) => void,
       ) => {
         if (!origin) {
-          return callback(null, true);
+          return callback(null, false);
         }
 
         if (allowedOrigins.includes(origin) || isVercelDeployment(origin)) {
