@@ -25,32 +25,51 @@ const isVercelDeployment = (origin: string) => vercelPattern.test(origin);
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-const corsConfig = !isDevelopment
-  ? {
-      origin: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-      credentials: true,
-    }
-  : {
-      origin: (
-        origin: string | undefined,
-        callback: (err: Error | null, allow?: boolean) => void,
-      ) => {
-        if (!origin) {
-          return callback(null, true);
-        }
+// const corsConfig = !isDevelopment
+//   ? {
+//       origin: true,
+//       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//       allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+//       credentials: true,
+//     }
+//   : {
+//       origin: (
+//         origin: string | undefined,
+//         callback: (err: Error | null, allow?: boolean) => void,
+//       ) => {
+//         if (!origin) {
+//           return callback(null, true);
+//         }
 
-        if (allowedOrigins.includes(origin) || isVercelDeployment(origin)) {
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
-      },
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-      credentials: true,
-    };
+//         if (allowedOrigins.includes(origin) || isVercelDeployment(origin)) {
+//           callback(null, true);
+//         } else {
+//           callback(new Error('Not allowed by CORS'));
+//         }
+//       },
+//       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//       allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+//       credentials: true,
+//     };
+const corsConfig = {
+  origin: (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void,
+  ) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin) || isVercelDeployment(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true,
+};
 
 export default withAuth(
   config({
@@ -68,6 +87,7 @@ export default withAuth(
       cors: corsConfig,
       port: Number(process.env.BACKEND_PORT) || 3000,
       extendExpressApp: (app) => {
+        // Only add health check in production
         if (!isDevelopment) {
           app.get('/', (req, res) => {
             res.json({ status: 'ok' });
