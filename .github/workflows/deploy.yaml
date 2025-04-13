@@ -23,8 +23,9 @@ env:
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-  NODE_ENV: ${{ inputs.deploy-env }}
-  VERCEL_ENV: ${{ inputs.deploy-env }}
+  NODE_ENV: ${{ secrets.NODE_ENV }}
+  # NODE_ENV: ${{ inputs.deploy-env }}
+  # VERCEL_ENV: ${{ inputs.deploy-env }}
   STATIC_DEPLOY_URL_PROD: ${{ secrets.STATIC_DEPLOY_URL_PROD }}
   STATIC_DEPLOY_URL_STAGING: ${{ secrets.STATIC_DEPLOY_URL_STAGING }}
   RESEND_API_KEY: ${{ secrets.RESEND_API_KEY}}

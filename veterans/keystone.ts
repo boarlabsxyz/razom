@@ -23,34 +23,35 @@ const allowedOrigins = process.env.CORS_ORIGINS
 const vercelPattern = /^https:\/\/razom-.*-kavoon\.vercel\.app$/;
 const isVercelDeployment = (origin: string) => vercelPattern.test(origin);
 
+const isTest = process.env.NODE_ENV === 'test';
 const isProduction = process.env.NODE_ENV === 'production';
 
-// const corsConfig = !isDevelopment
-//   ? {
-//       origin: true,
-//       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//       allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-//       credentials: true,
-//     }
-//   : {
-//       origin: (
-//         origin: string | undefined,
-//         callback: (err: Error | null, allow?: boolean) => void,
-//       ) => {
-//         if (!origin) {
-//           return callback(null, true);
-//         }
+const corsConfig = isTest
+  ? {
+      origin: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+      credentials: true,
+    }
+  : {
+      origin: (
+        origin: string | undefined,
+        callback: (err: Error | null, allow?: boolean) => void,
+      ) => {
+        if (!origin) {
+          return callback(null, true);
+        }
 
-//         if (allowedOrigins.includes(origin) || isVercelDeployment(origin)) {
-//           callback(null, true);
-//         } else {
-//           callback(new Error('Not allowed by CORS'));
-//         }
-//       },
-//       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//       allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-//       credentials: true,
-//     };
+        if (allowedOrigins.includes(origin) || isVercelDeployment(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+      credentials: true,
+    };
 // const corsConfig = {
 //   origin: (
 //     origin: string | undefined,
@@ -71,12 +72,12 @@ const isProduction = process.env.NODE_ENV === 'production';
 //   credentials: true,
 // };
 
-const corsConfig = {
-  origin: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  credentials: true,
-};
+// const corsConfig = {
+//   origin: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+//   credentials: true,
+// };
 
 export default withAuth(
   config({
