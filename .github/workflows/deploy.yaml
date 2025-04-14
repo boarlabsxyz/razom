@@ -104,8 +104,11 @@ jobs:
         id: extract-id
         run: |
           echo "Fetching deployment ID from $DEPLOYMENT_URL"
-          DEPLOYMENT_ID=$(vercel inspect "$DEPLOYMENT_URL" --token="$VERCEL_CLI_TOKEN" --output json | jq -r '.deploymentId')
+          vercel inspect "$DEPLOYMENT_URL" --token="$VERCEL_CLI_TOKEN" --output json > inspect.json
+          cat inspect.json
+          DEPLOYMENT_ID=$(jq -r '.id' inspect.json)
           echo "DEPLOYMENT_ID=$DEPLOYMENT_ID" >> "$GITHUB_ENV"
+
         working-directory: ./veterans
 
       - name: Assign alias to deployment
