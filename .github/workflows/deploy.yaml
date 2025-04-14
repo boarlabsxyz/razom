@@ -103,12 +103,16 @@ jobs:
       - name: Extract deployment ID
         id: extract-id
         run: |
-          echo "Fetching deployment ID from $DEPLOYMENT_URL"
-          vercel inspect "$DEPLOYMENT_URL" --token="$VERCEL_CLI_TOKEN" --output json > inspect.json
-          cat inspect.json
-          DEPLOYMENT_ID=$(jq -r '.id' inspect.json)
+          echo "Fetching deployment metadata from Vercel API"
+          DEPLOYMENT_URL_CLEAN="${DEPLOYMENT_URL##https://}"
+          API_RESPONSE=$(curl -s -H "Authorization: Bearer $VERCEL_CLI_TOKEN" "https://api.vercel.com/v13/deployments/get?url=$DEPLOYMENT_URL_CLEAN")
+          echo "$API_RESPONSE" | jq .
+          DEPLOYMENT_ID=$(echo "$API_RESPONSE" | jq -r '.id')
+          if [ -z "$DEPLOYMENT_ID" ] || [ "$DEPLOYMENT_ID" == "null" ]; then
+            echo "::error::Failed to extract deployment ID"
+            exit 1
+          fi
           echo "DEPLOYMENT_ID=$DEPLOYMENT_ID" >> "$GITHUB_ENV"
-
         working-directory: ./veterans
 
       - name: Assign alias to deployment
