@@ -97,8 +97,8 @@ jobs:
         run: npm install -g vercel
 
       - name: Debug deployment URL
-        run: echo "Deployment URL: $DEPLOYMENT_URL"
-
+        run: |
+          echo "Deployment URL: $DEPLOYMENT_URL"
 
       - name: Assign alias to deployment
         run: |
