@@ -6,15 +6,12 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
-# ARG NODE_ENV
 ARG SESSION_SECRET
 ARG DATABASE_URL
 
-# ENV NODE_ENV=${NODE_ENV}
 ENV SESSION_SECRET=${SESSION_SECRET}
 ENV DATABASE_URL=${DATABASE_URL}
 
-# Copy package files and npm config
 COPY ./veterans/package.json ./veterans/package-lock.json ./
 COPY ./veterans/.npmrc ./
 
