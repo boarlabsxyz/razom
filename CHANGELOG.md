@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - seperate github/wokflow/deploy.yaml to code_quality.yaml and deploy.yaml ([146](https://github.com/boarlabsxyz/razom/pull/146))
 
+### Fixed
+
+- CORS rules and deploy.yaml for correct deploy on preview, staging and production environments([159](https://github.com/boarlabsxyz/razom/pull/159), [163](https://github.com/boarlabsxyz/razom/pull/163))
+- bag with diplay map in Safari ([152](https://github.com/boarlabsxyz/razom/pull/152))
+
 ## [1.6.0] - Unreleased
 
 ### Added
