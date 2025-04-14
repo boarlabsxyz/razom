@@ -65,6 +65,10 @@ jobs:
         run: npm ci
         working-directory: ./veterans
 
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+        working-directory: ./veterans
+
       - name: Build project
         run: |
           if [[ "${{ inputs.deploy-env }}" == "preview" ]]; then
@@ -78,13 +82,13 @@ jobs:
         id: deploy
         run: |
           if [[ "${{ inputs.deploy-env }}" == "production" ]]; then
-            DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
             echo "DEPLOY_URL=$STATIC_DEPLOY_URL_PROD" >> "$GITHUB_ENV"
           elif [[ "${{ inputs.deploy-env }}" == "staging" ]]; then
-            DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
             echo "DEPLOY_URL=$STATIC_DEPLOY_URL_STAGING" >> "$GITHUB_ENV"
           else
-            DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
             echo "DEPLOY_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
           fi
 
@@ -93,16 +97,21 @@ jobs:
           echo "Preview URL: $DEPLOYMENT_URL"
         working-directory: ./veterans
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel
+      - name: Install jq
+        run: sudo apt-get install jq
 
-      - name: Debug deployment URL
+      - name: Extract deployment ID
+        id: extract-id
         run: |
-          echo "Deployment URL: $DEPLOYMENT_URL"
+          echo "Fetching deployment ID from $DEPLOYMENT_URL"
+          DEPLOYMENT_ID=$(vercel inspect "$DEPLOYMENT_URL" --token="$VERCEL_CLI_TOKEN" --output json | jq -r '.deploymentId')
+          echo "DEPLOYMENT_ID=$DEPLOYMENT_ID" >> "$GITHUB_ENV"
+        working-directory: ./veterans
 
       - name: Assign alias to deployment
+        if: ${{ inputs.deploy-env == 'staging' }}
         run: |
-          vercel alias set "$DEPLOYMENT_URL" staging-razom.vercel.app --token="$VERCEL_CLI_TOKEN"
+          vercel alias set "$DEPLOYMENT_ID" staging-razom.vercel.app --token="$VERCEL_CLI_TOKEN"
         working-directory: ./veterans
 
       - name: Check if DEPLOYMENT_URL is set
