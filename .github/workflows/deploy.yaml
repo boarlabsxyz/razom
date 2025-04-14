@@ -118,7 +118,10 @@ jobs:
       - name: Assign alias to deployment
         if: ${{ inputs.deploy-env == 'staging' }}
         run: |
-          vercel alias set "$DEPLOYMENT_ID" staging-razom.vercel.app --token="$VERCEL_CLI_TOKEN"
+          # First, remove any existing alias
+          vercel alias rm staging-razom.vercel.app --token="$VERCEL_CLI_TOKEN" || true
+          # Then assign the new alias
+          vercel alias set "$DEPLOYMENT_URL" staging-razom.vercel.app --token="$VERCEL_CLI_TOKEN"
         working-directory: ./veterans
 
       - name: Check if DEPLOYMENT_URL is set
