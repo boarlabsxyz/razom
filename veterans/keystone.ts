@@ -15,22 +15,43 @@ const checkEnvVariables = () => {
 
 checkEnvVariables();
 
-const databaseUrl = process.env.DATABASE_URL;
-
-if (!databaseUrl) {
-  throw new Error('DATABASE_URL environment variable is required');
-}
-
+const databaseUrl = process.env.DATABASE_URL!;
 const allowedOrigins = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(',')
   : ['http://localhost:8000'];
 
-const corsConfig = {
-  origin: allowedOrigins,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  credentials: true,
-};
+const vercelPattern = /^https:\/\/razom-.*-kavoon\.vercel\.app$/;
+const isVercelDeployment = (origin: string) => vercelPattern.test(origin);
+
+const isGitHubAction = process.env.IS_GITHUB_ACTION === 'true';
+const isProduction = process.env.NODE_ENV === 'production';
+
+const corsConfig = isGitHubAction
+  ? {
+      origin: [...allowedOrigins, 'https://github.com'],
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+      credentials: true,
+    }
+  : {
+      origin: (
+        origin: string | undefined,
+        callback: (err: Error | null, allow?: boolean) => void,
+      ) => {
+        if (!origin) {
+          return callback(null, false);
+        }
+
+        if (allowedOrigins.includes(origin) || isVercelDeployment(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+      credentials: true,
+    };
 
 export default withAuth(
   config({
@@ -47,10 +68,18 @@ export default withAuth(
     server: {
       cors: corsConfig,
       port: Number(process.env.BACKEND_PORT) || 3000,
+      extendExpressApp: (app) => {
+        if (isProduction) {
+          app.get('/', (req, res) => {
+            res.json({ status: 'ok' });
+          });
+        }
+      },
     },
     graphql: {
       path: '/api/graphql',
       cors: corsConfig,
     },
+    ui: isProduction ? { isDisabled: true } : {},
   }),
 );

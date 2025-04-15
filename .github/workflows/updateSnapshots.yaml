@@ -42,4 +42,4 @@ jobs:
           name: playwright-snapshots
           path: e2e/nextjs-test/screenshot-test.spec.ts-snapshots
           overwrite: true
-          retention-days: 45
+          retention-days: 20

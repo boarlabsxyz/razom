@@ -71,6 +71,7 @@ jobs:
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > veterans/.env
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> veterans/.env
           echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> veterans/.env
+          echo "IS_GITHUB_ACTION=${{ secrets.IS_GITHUB_ACTION }}" >> veterans/.env
 
       - name: Get latest run ID for playwright-snapshots
         id: get-latest-run
@@ -141,7 +142,7 @@ jobs:
         with:
           name: playwright-report
           path: veterans/playwright-report/
-          retention-days: 30
+          retention-days: 20
 
       - name: Fail workflow if tests failed
         if: ${{ env.TESTS_FAILED == 'true' }}

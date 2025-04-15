@@ -12,7 +12,6 @@ ARG DATABASE_URL
 ENV SESSION_SECRET=${SESSION_SECRET}
 ENV DATABASE_URL=${DATABASE_URL}
 
-# Copy package files and npm config
 COPY ./veterans/package.json ./veterans/package-lock.json ./
 COPY ./veterans/.npmrc ./
 
@@ -32,6 +31,7 @@ RUN npm install --save \
 COPY ./veterans .
 
 RUN mkdir -p /usr/src/app/shared
+RUN mkdir -p /usr/src/app/public
 
 COPY ./scripts/build-keystone.sh /usr/src/app/build-keystone.sh
 RUN chmod +x /usr/src/app/build-keystone.sh
