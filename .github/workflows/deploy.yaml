@@ -23,10 +23,9 @@ env:
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   VERCEL_CLI_TOKEN: ${{ secrets.VERCEL_CLI_TOKEN }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-  NODE_ENV: ${{ inputs.deploy-env }}
-  VERCEL_ENV: ${{ inputs.deploy-env }}
   STATIC_DEPLOY_URL_PROD: ${{ secrets.STATIC_DEPLOY_URL_PROD }}
   STATIC_DEPLOY_URL_STAGING: ${{ secrets.STATIC_DEPLOY_URL_STAGING }}
+  RESEND_API_KEY: ${{ secrets.RESEND_API_KEY}}
 
 jobs:
   deployment:
@@ -63,6 +62,10 @@ jobs:
         run: npm ci
         working-directory: ./veterans
 
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+        working-directory: ./veterans
+
       - name: Build project
         run: |
           if [[ "${{ inputs.deploy-env }}" == "preview" ]]; then
@@ -76,19 +79,46 @@ jobs:
         id: deploy
         run: |
           if [[ "${{ inputs.deploy-env }}" == "production" ]]; then
-            DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
             echo "DEPLOY_URL=$STATIC_DEPLOY_URL_PROD" >> "$GITHUB_ENV"
           elif [[ "${{ inputs.deploy-env }}" == "staging" ]]; then
-            DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
             echo "DEPLOY_URL=$STATIC_DEPLOY_URL_STAGING" >> "$GITHUB_ENV"
           else
-            DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
             echo "DEPLOY_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
           fi
 
           echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
           echo "Preview URL: $DEPLOYMENT_URL"
+        working-directory: ./veterans
+
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      - name: Extract deployment ID
+        id: extract-id
+        run: |
+          echo "Fetching deployment metadata from Vercel API"
+          DEPLOYMENT_URL_CLEAN="${DEPLOYMENT_URL##https://}"
+          API_RESPONSE=$(curl -s -H "Authorization: Bearer $VERCEL_CLI_TOKEN" "https://api.vercel.com/v13/deployments/get?url=$DEPLOYMENT_URL_CLEAN")
+          echo "$API_RESPONSE" | jq .
+          DEPLOYMENT_ID=$(echo "$API_RESPONSE" | jq -r '.id')
+          if [ -z "$DEPLOYMENT_ID" ] || [ "$DEPLOYMENT_ID" == "null" ]; then
+            echo "::error::Failed to extract deployment ID"
+            exit 1
+          fi
+          echo "DEPLOYMENT_ID=$DEPLOYMENT_ID" >> "$GITHUB_ENV"
+        working-directory: ./veterans
+
+      - name: Assign alias to deployment
+        if: ${{ inputs.deploy-env == 'staging' }}
+        run: |
+          # First, remove any existing alias
+          vercel alias rm staging-razom.vercel.app --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID" || true
+          # Then assign the new alias
+          vercel alias set "$DEPLOYMENT_URL" staging-razom.vercel.app --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID"
         working-directory: ./veterans
 
       - name: Check if DEPLOYMENT_URL is set
