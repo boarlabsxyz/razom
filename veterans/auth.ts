@@ -16,13 +16,10 @@ const { withAuth } = createAuth({
 });
 
 const sessionMaxAge = 60 * 60 * 24 * 30;
-const isProd = process.env.NODE_ENV === 'production';
 
 const session = statelessSessions({
   maxAge: sessionMaxAge,
   secret: process.env.SESSION_SECRET,
-  sameSite: isProd ? 'none' : 'lax',
-  secure: isProd,
 });
 
 export { withAuth, session };
