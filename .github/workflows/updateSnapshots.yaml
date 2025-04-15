@@ -16,9 +16,9 @@ jobs:
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > veterans/.env
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> veterans/.env
           echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> veterans/.env
-          echo "NEXT_PUBLIC_GRAPHQL_API=http://app-keystone:3000/api/graphql" >> veterans/.env
-          echo "NEXTAUTH_URL=http://localhost:8000" >> veterans/.env
-          echo "CORS_ORIGINS=http://localhost:3000,http://localhost:8000" >> veterans/.env
+          echo "NEXT_PUBLIC_GRAPHQL_API=${{ secrets.NEXT_PUBLIC_GRAPHQL_API }}" >> veterans/.env
+          echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> veterans/.env
+          echo "CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}" >> veterans/.env
 
       - name: Docker starts services
         run: docker compose up -d --build
