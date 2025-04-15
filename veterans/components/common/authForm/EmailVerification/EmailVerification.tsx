@@ -59,7 +59,7 @@ export default function EmailVerification({
       <input
         type="text"
         id="confirmEmail"
-        placeholder="Email verification"
+        placeholder="Verification code"
         className={st.input}
         style={{ textAlign: 'center' }}
         value={confirmedCode}

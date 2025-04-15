@@ -201,7 +201,7 @@ describe('Auth Forms', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByPlaceholderText('Email verification'),
+        screen.getByPlaceholderText('Verification code'),
       ).toBeInTheDocument();
     });
 
@@ -227,11 +227,11 @@ describe('Auth Forms', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByPlaceholderText('Email verification'),
+        screen.getByPlaceholderText('Verification code'),
       ).toBeInTheDocument();
     });
 
-    const verificationInput = screen.getByPlaceholderText('Email verification');
+    const verificationInput = screen.getByPlaceholderText('Verification code');
 
     fireEvent.change(verificationInput, { target: { value: '1234' } });
     expect(verificationInput).toHaveValue('1234');

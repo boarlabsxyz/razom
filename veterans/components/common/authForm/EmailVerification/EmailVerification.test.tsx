@@ -38,7 +38,7 @@ describe('EmailVerification', () => {
     );
 
     expect(
-      screen.getByPlaceholderText('Email verification'),
+      screen.getByPlaceholderText('Verification code'),
     ).toBeInTheDocument();
     expect(screen.getByText('Verify your email address')).toBeInTheDocument();
   });
@@ -48,7 +48,7 @@ describe('EmailVerification', () => {
       <EmailVerification verificationCode="1234" email="test@example.com" />,
     );
 
-    fireEvent.change(screen.getByPlaceholderText('Email verification'), {
+    fireEvent.change(screen.getByPlaceholderText('Verification code'), {
       target: { value: 'wrong-code' },
     });
 
@@ -71,7 +71,7 @@ describe('EmailVerification', () => {
       <EmailVerification verificationCode="1234" email="test@example.com" />,
     );
 
-    fireEvent.change(screen.getByPlaceholderText('Email verification'), {
+    fireEvent.change(screen.getByPlaceholderText('Verification code'), {
       target: { value: '1234' },
     });
 
@@ -98,7 +98,7 @@ describe('EmailVerification', () => {
       <EmailVerification verificationCode="1234" email="test@example.com" />,
     );
 
-    fireEvent.change(screen.getByPlaceholderText('Email verification'), {
+    fireEvent.change(screen.getByPlaceholderText('Verification code'), {
       target: { value: '1234' },
     });
 
@@ -119,7 +119,7 @@ describe('EmailVerification', () => {
       <EmailVerification verificationCode="1234" email="test@example.com" />,
     );
 
-    fireEvent.change(screen.getByPlaceholderText('Email verification'), {
+    fireEvent.change(screen.getByPlaceholderText('Verification code'), {
       target: { value: '1234' },
     });
 
