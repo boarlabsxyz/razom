@@ -20,8 +20,23 @@ jobs:
       - name: Docker starts services
         run: docker compose up -d --build
 
-      - name: Wait for services to start
-        run: sleep 10
+      - name: Wait until app-nextjs is healthy
+        run: |
+          for i in {1..30}; do
+            STATUS=$(docker inspect --format='{{json .State.Health.Status}}' $(docker ps -qf "name=app-nextjs"))
+            if [ "$STATUS" = "\"healthy\"" ]; then
+              echo "✅ app-nextjs is healthy"
+              break
+            fi
+            echo "⏳ Waiting for app-nextjs to become healthy... ($i)"
+            sleep 2
+          done
+
+          if [ "$STATUS" != "\"healthy\"" ]; then
+            echo "❌ app-nextjs did not become healthy in time"
+            docker compose logs app-nextjs
+            exit 1
+          fi
 
       - name: Install Playwright Browsers (app-nextjs)
         run: docker compose exec app-nextjs npx playwright install --with-deps
