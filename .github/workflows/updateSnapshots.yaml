@@ -21,7 +21,29 @@ jobs:
         run: docker compose up -d --build
 
       - name: Wait for services to start
-        run: sleep 10
+        run: sleep 30
+
+      - name: Check Next.js server health
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:8000 | grep -q "DOCTYPE html"; then
+              echo "Next.js server is ready"
+              break
+            fi
+            echo "Waiting for Next.js server... Attempt $i"
+            sleep 5
+          done
+
+      - name: Check Keystone server health
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:3000 | grep -q "status"; then
+              echo "Keystone server is ready"
+              break
+            fi
+            echo "Waiting for Keystone server... Attempt $i"
+            sleep 5
+          done
 
       - name: Seed regions
         run: docker compose exec app-nextjs npm run seed-regions

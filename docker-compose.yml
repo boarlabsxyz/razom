@@ -22,7 +22,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.keystone
-
     ports:
       - '3000:3000'
     depends_on:
@@ -33,6 +32,11 @@ services:
       - ./veterans/playwright-report:/usr/src/app/playwright-report
     env_file:
       - ./veterans/.env
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000']
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - mynetwork
 
@@ -42,6 +46,9 @@ services:
       dockerfile: Dockerfile.nextjs
     ports:
       - '8000:8000'
+    depends_on:
+      app-keystone:
+        condition: service_healthy
     volumes:
       - shared-volume:/usr/src/app/shared
       - ./veterans/coverage:/usr/src/app/coverage
@@ -49,6 +56,11 @@ services:
       - ./veterans/e2e/nextjs-test:/usr/src/app/e2e/nextjs-test
     env_file:
       - ./veterans/.env
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8000']
+      interval: 10s
+      timeout: 5s
+      retries: 5
     develop:
       watch:
         - action: sync
