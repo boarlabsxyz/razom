@@ -88,10 +88,21 @@ jobs:
             # Deploy to staging
             DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID")
             echo "DEPLOY_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
-            # Remove existing alias if it exists
-            vercel alias rm "$STATIC_DEPLOY_URL_STAGING" --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID" || true
-            # Assign staging domain
-            vercel alias set "$DEPLOYMENT_URL" "$STATIC_DEPLOY_URL_STAGING" --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID"
+            
+            # Get deployment ID from URL
+            DEPLOYMENT_ID=$(echo "$DEPLOYMENT_URL" | sed 's|https://razom-||' | sed 's|-kavoon.vercel.app||')
+            
+            # Remove existing alias using Vercel API
+            curl -X DELETE \
+              -H "Authorization: Bearer $VERCEL_CLI_TOKEN" \
+              "https://api.vercel.com/v2/aliases/staging-razom.vercel.app" || true
+            
+            # Add new alias using Vercel API
+            curl -X POST \
+              -H "Authorization: Bearer $VERCEL_CLI_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "{\"deploymentId\": \"$DEPLOYMENT_ID\", \"alias\": \"staging-razom.vercel.app\"}" \
+              "https://api.vercel.com/v2/aliases"
           else
             # Deploy preview
             DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID")
