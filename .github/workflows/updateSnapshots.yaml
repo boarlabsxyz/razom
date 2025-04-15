@@ -23,9 +23,9 @@ jobs:
       - name: Wait until app-keystone GraphQL API responds
         run: |
           for i in {1..30}; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/graphql)
+            STATUS=$(docker compose exec app-nextjs curl -s -o /dev/null -w "%{http_code}" http://app-keystone:3000/api/graphql)
             if [ "$STATUS" -eq 400 ] || [ "$STATUS" -eq 200 ]; then
-              echo "✅ app-keystone GraphQL API is ready"
+              echo "✅ app-keystone GraphQL API is ready (STATUS $STATUS)"
               break
             fi
             echo "⏳ Waiting for app-keystone to respond on /api/graphql... ($i)"
