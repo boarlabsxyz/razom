@@ -50,6 +50,11 @@ services:
       - ./veterans/coverage:/usr/src/app/coverage
       - ./veterans/playwright-report:/usr/src/app/playwright-report
       - ./veterans/e2e/nextjs-test:/usr/src/app/e2e/nextjs-test
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8000/api/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
     env_file:
       - ./veterans/.env
     develop:
