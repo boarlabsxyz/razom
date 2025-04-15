@@ -80,13 +80,13 @@ jobs:
         run: |
           if [[ "${{ inputs.deploy-env }}" == "production" ]]; then
             # Deploy to production
-            DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID" --prod)
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID")
             echo "DEPLOY_URL=$STATIC_DEPLOY_URL_PROD" >> "$GITHUB_ENV"
             # Assign production domain
             vercel alias set "$DEPLOYMENT_URL" mozhlyvosti.org.ua --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID"
           elif [[ "${{ inputs.deploy-env }}" == "staging" ]]; then
             # Deploy to staging
-            DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID" --prod)
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID")
             echo "DEPLOY_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
             # Remove existing alias if it exists
             vercel alias rm "$STATIC_DEPLOY_URL_STAGING" --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID" || true
