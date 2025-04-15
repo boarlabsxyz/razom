@@ -54,7 +54,12 @@ jobs:
       - name: Check GraphQL server health
         run: |
           for i in {1..30}; do
-            if curl -s http://localhost:8000/api/graphql -X POST -H "Content-Type: application/json" -d '{"query": "{ __schema { types { name } } }"}' | grep -q "types"; then
+            if curl -s http://localhost:8000/api/graphql \
+              -X POST \
+              -H "Content-Type: application/json" \
+              -H "Accept: application/json" \
+              -d '{"query": "query { __schema { types { name } } }"}' \
+              | grep -q "types"; then
               echo "GraphQL server is ready"
               exit 0
             fi

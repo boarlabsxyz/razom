@@ -57,6 +57,10 @@ const nextConfig = {
         source: '/api/auth/callback/google',
         destination: '/api/auth/callback/google',
       },
+      {
+        source: '/api/graphql',
+        destination: 'http://app-keystone:3000/api/graphql',
+      },
     ];
   },
 
