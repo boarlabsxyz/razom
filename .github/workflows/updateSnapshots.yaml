@@ -24,7 +24,7 @@ jobs:
         run: sleep 10
 
       - name: Run database migrations
-        run: docker compose exec app-nextjs npx prisma migrate deploy
+        run: docker compose exec app-nextjs npx prisma migrate deploy --schema=/usr/src/app/shared/schema.prisma
 
       - name: Seed regions
         run: docker compose exec app-nextjs npm run seed-regions
