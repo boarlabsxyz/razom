@@ -16,12 +16,61 @@ jobs:
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > veterans/.env
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> veterans/.env
           echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> veterans/.env
+          echo "NEXT_PUBLIC_GRAPHQL_API=${{ secrets.NEXT_PUBLIC_GRAPHQL_API }}" >> veterans/.env
+          echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> veterans/.env
+          echo "CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}" >> veterans/.env
 
       - name: Docker starts services
         run: docker compose up -d --build
 
       - name: Wait for services to start
-        run: sleep 10
+        run: sleep 30
+
+      - name: Check Next.js server health
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:8000 | grep -q "DOCTYPE html"; then
+              echo "Next.js server is ready"
+              break
+            fi
+            echo "Waiting for Next.js server... Attempt $i"
+            sleep 5
+          done
+
+      - name: Check Keystone server health
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:3000 | grep -q "status"; then
+              echo "Keystone server is ready"
+              break
+            fi
+            echo "Waiting for Keystone server... Attempt $i"
+            sleep 5
+          done
+
+      - name: Seed regions
+        run: docker compose exec app-nextjs npm run seed-regions
+
+      - name: Seed initiatives
+        run: docker compose exec app-nextjs npm run seed-initiative
+
+      - name: Check GraphQL server health
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:8000/api/graphql \
+              -X POST \
+              -H "Content-Type: application/json" \
+              -H "Accept: application/json" \
+              -d '{"query": "query { __schema { types { name } } }"}' \
+              | grep -q "types"; then
+              echo "GraphQL server is ready"
+              exit 0
+            fi
+            echo "Waiting for GraphQL server... Attempt $i"
+            sleep 5
+          done
+          echo "GraphQL server failed to start"
+          exit 1
 
       - name: Install Playwright Browsers (app-nextjs)
         run: docker compose exec app-nextjs npx playwright install --with-deps

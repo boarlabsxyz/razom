@@ -30,7 +30,7 @@ export default function InitiativesList() {
   return (
     <div className={st.wrapper} aria-label="Blog initiatives">
       <ul>
-        {processedInitiatives.map(({ id, title, description }) => (
+        {processedInitiatives.slice(0, 5).map(({ id, title, description }) => (
           <li key={id}>
             <article>
               <h3>{title}</h3>

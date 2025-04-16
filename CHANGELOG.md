@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- e2e-tests for correct doing snapshots after fetching data ([174](https://github.com/boarlabsxyz/razom/pull/174))
 - CORS rules and deploy.yaml for correct deploy on preview, staging and production environments([159](https://github.com/boarlabsxyz/razom/pull/159), [163](https://github.com/boarlabsxyz/razom/pull/163))
 - bag with diplay map in Safari ([152](https://github.com/boarlabsxyz/razom/pull/152))
 

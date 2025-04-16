@@ -6,15 +6,16 @@ test('Snapshot for Home Page without Hero Section', async ({
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
 
+  await page.route('**/api/graphql', async (route) => {
+    await route.continue();
+  });
+
   await page.goto(process.env.BASE_URL ?? 'http://localhost:8000/', {
     timeout: 60000,
     waitUntil: 'networkidle',
   });
 
-  await Promise.all([
-    page.waitForLoadState('domcontentloaded'),
-    page.waitForLoadState('networkidle'),
-  ]);
+  await page.waitForLoadState('domcontentloaded');
   await page.evaluate(() => {
     return document.fonts.ready;
   });
@@ -24,8 +25,9 @@ test('Snapshot for Home Page without Hero Section', async ({
     timeout: 10000,
   });
 
+  await page.waitForTimeout(1000);
+
   if (browserName === 'webkit') {
-    await page.waitForLoadState('networkidle');
     await page.evaluate(() => {
       const style = document.createElement('style');
       style.textContent = `
@@ -37,6 +39,7 @@ test('Snapshot for Home Page without Hero Section', async ({
       `;
       document.head.appendChild(style);
     });
+
     await page
       .waitForSelector('[role="alert"]', {
         state: 'hidden',
@@ -46,6 +49,8 @@ test('Snapshot for Home Page without Hero Section', async ({
 
     await page.waitForTimeout(2000);
   }
+
+  await page.waitForTimeout(1000);
 
   const snapshot = await page.screenshot({
     fullPage: true,
