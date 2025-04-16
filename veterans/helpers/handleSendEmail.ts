@@ -1,4 +1,5 @@
 import { generateSecureCode } from '@helpers/generateSecureCode';
+import { toast } from 'react-hot-toast';
 
 export const handleSendEmail = async (
   email: string,
@@ -15,8 +16,7 @@ export const handleSendEmail = async (
     });
 
     if (response.ok) {
-      // eslint-disable-next-line no-alert
-      alert('Verification email sent! Check your inbox.');
+      toast.success('Verification email sent! Check your inbox.');
       return { success: true, code: newCode };
     } else {
       throw new Error('Failed to send verification email');

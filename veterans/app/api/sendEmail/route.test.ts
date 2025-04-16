@@ -1,9 +1,17 @@
+jest.mock('nodemailer', () => ({
+  createTransport: jest.fn().mockReturnValue({
+    sendMail: jest.fn().mockResolvedValue({ messageId: 'test-id' }),
+  }),
+}));
+
 jest.mock('next/server', () => ({
   NextResponse: {
-    json: jest.fn().mockImplementation((body, { status }) => ({
-      status,
-      json: async () => body,
-    })),
+    json: jest.fn().mockImplementation((body, { status }) => {
+      return new Response(JSON.stringify(body), {
+        status,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }),
   },
 }));
 
@@ -14,12 +22,6 @@ describe('POST /api/sendEmail', () => {
   });
 
   it('should return error if "to" is missing', async () => {
-    jest.doMock('resend', () => ({
-      Resend: jest.fn(() => ({
-        emails: { send: jest.fn() },
-      })),
-    }));
-
     const { POST } = await import('./route');
     const req = {
       json: jest.fn().mockResolvedValue({ to: '', message: 'Hello' }),
@@ -33,12 +35,6 @@ describe('POST /api/sendEmail', () => {
   });
 
   it('should send an email successfully and return a success response', async () => {
-    jest.doMock('resend', () => ({
-      Resend: jest.fn(() => ({
-        emails: { send: jest.fn().mockResolvedValue({ status: 'success' }) },
-      })),
-    }));
-
     const { POST } = await import('./route');
     const req = {
       json: jest
@@ -51,35 +47,26 @@ describe('POST /api/sendEmail', () => {
 
     expect(response.status).toBe(200);
     expect(jsonResponse.message).toBe('Email sent successfully!');
+    expect(jsonResponse.response).toHaveProperty('messageId', 'test-id');
   });
 
-  describe('Error Handling', () => {
-    beforeEach(() => {
-      jest.resetModules();
-      jest.clearAllMocks();
+  it('should return a 500 error if sending email fails', async () => {
+    const nodemailer = await import('nodemailer');
+    (nodemailer.createTransport as jest.Mock).mockReturnValueOnce({
+      sendMail: jest.fn().mockRejectedValue(new Error('Test error message')),
     });
 
-    it('should return a 500 error if sending email fails', async () => {
-      jest.doMock('resend', () => ({
-        Resend: jest.fn(() => ({
-          emails: {
-            send: jest.fn().mockRejectedValue(new Error('Test error message')),
-          },
-        })),
-      }));
+    const { POST } = await import('./route');
+    const req = {
+      json: jest
+        .fn()
+        .mockResolvedValue({ to: 'test@example.com', message: 'Hello' }),
+    } as unknown as Request;
 
-      const { POST } = await import('./route');
-      const req = {
-        json: jest
-          .fn()
-          .mockResolvedValue({ to: 'test@example.com', message: 'Hello' }),
-      } as unknown as Request;
+    const response = await POST(req);
+    const jsonResponse = await response.json();
 
-      const response = await POST(req);
-      const jsonResponse = await response.json();
-
-      expect(response.status).toBe(500);
-      expect(jsonResponse.error).toBe('Test error message');
-    });
+    expect(response.status).toBe(500);
+    expect(jsonResponse.error).toBe('Test error message');
   });
 });

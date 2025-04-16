@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import nodemailer from 'nodemailer';
 
 export async function POST(req: Request) {
   const { to, message } = await req.json();
@@ -14,12 +12,24 @@ export async function POST(req: Request) {
   }
 
   try {
-    const response = await resend.emails.send({
-      from: 'RAZOM <onboarding@resend.dev>',
-      to: [to],
-      subject: 'Your Verification Code',
-      text: message,
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASSWORD,
+      },
     });
+
+    const mailOptions = {
+      from: process.env.GMAIL_USER,
+      to,
+      subject: 'Verify Your Email Address',
+      text: message,
+    };
+
+    const response = await transporter.sendMail(mailOptions);
 
     return NextResponse.json(
       { message: 'Email sent successfully!', response },

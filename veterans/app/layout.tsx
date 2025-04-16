@@ -1,4 +1,5 @@
 import React from 'react';
+import { Toaster } from 'react-hot-toast';
 import { Lato, Golos_Text } from 'next/font/google';
 
 import 'styles/global.css';
@@ -51,6 +52,7 @@ export default function RootLayout({
                 <Banner name="logotype" height={34} />
               </HeaderContent>
             </Header>
+            <Toaster position="top-center" />
             <main>{children}</main>
             <Footer>
               <FooterContent>
