@@ -15,11 +15,7 @@ test('Snapshot for Home Page without Hero Section', async ({
     waitUntil: 'networkidle',
   });
 
-  await Promise.all([
-    page.waitForLoadState('domcontentloaded'),
-    page.waitForLoadState('networkidle'),
-  ]);
-
+  await page.waitForLoadState('domcontentloaded');
   await page.evaluate(() => {
     return document.fonts.ready;
   });
@@ -29,11 +25,9 @@ test('Snapshot for Home Page without Hero Section', async ({
     timeout: 10000,
   });
 
-  await page.waitForLoadState('networkidle');
   await page.waitForTimeout(1000);
 
   if (browserName === 'webkit') {
-    await page.waitForLoadState('networkidle');
     await page.evaluate(() => {
       const style = document.createElement('style');
       style.textContent = `
@@ -56,7 +50,6 @@ test('Snapshot for Home Page without Hero Section', async ({
     await page.waitForTimeout(2000);
   }
 
-  await page.waitForLoadState('networkidle');
   await page.waitForTimeout(1000);
 
   const snapshot = await page.screenshot({
