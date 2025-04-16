@@ -53,6 +53,7 @@ export default function MapSection() {
       <UkraineMap
         selectedRegion={selectedRegion}
         setSelectedRegion={setSelectedRegion}
+        defaultRegionName={defaultRegion.name}
       />
     </section>
   );
