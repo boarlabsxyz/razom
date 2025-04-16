@@ -79,39 +79,15 @@ jobs:
         id: deploy
         run: |
           if [[ "${{ inputs.deploy-env }}" == "production" ]]; then
-            # Deploy to production
-            DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID")
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
             echo "DEPLOY_URL=$STATIC_DEPLOY_URL_PROD" >> "$GITHUB_ENV"
-            # Assign production domain
-            vercel alias set "$DEPLOYMENT_URL" mozhlyvosti.org.ua --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID"
           elif [[ "${{ inputs.deploy-env }}" == "staging" ]]; then
-            # Deploy to staging
-            DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID")
-            echo "DEPLOY_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
-            
-            # Get the full deployment ID from the inspect URL
-            INSPECT_URL=$(echo "$DEPLOYMENT_URL" | grep -o 'Inspect: https://vercel.com/[^ ]*' | cut -d' ' -f2)
-            DEPLOYMENT_ID=$(echo "$INSPECT_URL" | sed 's|https://vercel.com/kavoon/razom/||')
-            
-            echo "Deployment ID: $DEPLOYMENT_ID"
-            
-            # First, try to remove any existing alias
-            curl -X DELETE \
-              -H "Authorization: Bearer $VERCEL_CLI_TOKEN" \
-              "https://api.vercel.com/v2/domains/staging-razom.vercel.app/records" || true
-            
-            # Then, create the new alias using the full deployment ID
-            curl -X POST \
-              -H "Authorization: Bearer $VERCEL_CLI_TOKEN" \
-              -H "Content-Type: application/json" \
-              -d "{\"deploymentId\": \"$DEPLOYMENT_ID\", \"alias\": \"staging-razom.vercel.app\"}" \
-              "https://api.vercel.com/v13/deployments/$DEPLOYMENT_ID/aliases"
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN")
+            echo "DEPLOY_URL=$STATIC_DEPLOY_URL_STAGING" >> "$GITHUB_ENV"
           else
-            # Deploy preview
-            DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID")
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --token="$VERCEL_CLI_TOKEN")
             echo "DEPLOY_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
           fi
-
           echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
           echo "Preview URL: $DEPLOYMENT_URL"
@@ -133,6 +109,20 @@ jobs:
             exit 1
           fi
           echo "DEPLOYMENT_ID=$DEPLOYMENT_ID" >> "$GITHUB_ENV"
+        working-directory: ./veterans
+
+      - name: Assign alias to deployment
+        if: ${{ inputs.deploy-env == 'staging' || inputs.deploy-env == 'production' }}
+        run: |
+          if [[ "${{ inputs.deploy-env }}" == "staging" ]]; then
+            # First, remove any existing alias
+            vercel alias rm staging-razom.vercel.app --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID" || true
+            # Then assign the new alias
+            vercel alias set "$DEPLOYMENT_URL" staging-razom.vercel.app --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID"
+          else
+            # For production, assign the production domain
+            vercel alias set "$DEPLOYMENT_URL" mozhlyvosti.org.ua --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID"
+          fi
         working-directory: ./veterans
 
       - name: Check if DEPLOYMENT_URL is set
