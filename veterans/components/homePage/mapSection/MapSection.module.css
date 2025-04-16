@@ -21,7 +21,7 @@
 }
 
 .map-button-reset {
-  position: static;
+  position: absolute;
   font-weight: 400;
   font-size: 0.875rem;
   line-height: 1.625rem;
@@ -29,10 +29,10 @@
   background-color: var(--white);
   width: 142px;
   height: 34px;
-  margin-top: 10px;
-  border-radius: 2px;
-  border: 1px solid var(--haiti);
   cursor: pointer;
+  top: 16px;
+  right: 8px;
+  border: none;
 }
 
 @media (max-width: 480px) {
@@ -40,19 +40,19 @@
     max-width: 100%;
     padding: 15px;
   }
+
   .map-button-reset {
-    position: absolute;
+    top: 10px;
     right: 5px;
-    top: 0;
-    border: none;
   }
-  .map-button-reset::after {
-    content: '';
-    position: absolute;
-    left: 12px;
-    bottom: 8px;
-    width: calc(100% - 24px);
-    height: 1px;
-    background-color: var(--haiti);
-  }
+}
+
+.map-button-reset::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  bottom: 8px;
+  width: calc(100% - 24px);
+  height: 1px;
+  background-color: var(--haiti);
 }
