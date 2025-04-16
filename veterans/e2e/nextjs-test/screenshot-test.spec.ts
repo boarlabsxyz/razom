@@ -6,6 +6,10 @@ test('Snapshot for Home Page without Hero Section', async ({
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
 
+  await page.route('**/api/graphql', async (route) => {
+    await route.continue();
+  });
+
   await page.goto(process.env.BASE_URL ?? 'http://localhost:8000/', {
     timeout: 60000,
     waitUntil: 'networkidle',
@@ -15,6 +19,7 @@ test('Snapshot for Home Page without Hero Section', async ({
     page.waitForLoadState('domcontentloaded'),
     page.waitForLoadState('networkidle'),
   ]);
+
   await page.evaluate(() => {
     return document.fonts.ready;
   });
@@ -23,6 +28,25 @@ test('Snapshot for Home Page without Hero Section', async ({
     state: 'visible',
     timeout: 10000,
   });
+
+  await page.waitForFunction(
+    () => {
+      return (
+        window.__NEXT_DATA__?.props?.pageProps?.initialApolloState !== undefined
+      );
+    },
+    { timeout: 30000 },
+  );
+
+  await page
+    .waitForSelector('[data-loading="true"]', {
+      state: 'hidden',
+      timeout: 10000,
+    })
+    .catch(() => {});
+  await page
+    .waitForSelector('.loading-spinner', { state: 'hidden', timeout: 10000 })
+    .catch(() => {});
 
   if (browserName === 'webkit') {
     await page.waitForLoadState('networkidle');
@@ -46,6 +70,8 @@ test('Snapshot for Home Page without Hero Section', async ({
 
     await page.waitForTimeout(2000);
   }
+
+  await page.waitForLoadState('networkidle');
 
   const snapshot = await page.screenshot({
     fullPage: true,
