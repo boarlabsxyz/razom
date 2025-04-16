@@ -120,7 +120,9 @@ jobs:
             # Then assign the new alias
             vercel alias set "$DEPLOYMENT_URL" staging-razom.vercel.app --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID"
           else
-            # For production, assign the production domain
+            # First, remove any existing alias
+            vercel alias rm mozhlyvosti.org.ua --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID" || true
+            # Then assign the new alias
             vercel alias set "$DEPLOYMENT_URL" mozhlyvosti.org.ua --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID"
           fi
         working-directory: ./veterans
