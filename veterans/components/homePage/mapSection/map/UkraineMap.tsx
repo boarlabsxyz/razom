@@ -6,16 +6,24 @@ import st from './UkraineMap.module.css';
 
 interface UkraineMapProps {
   readonly selectedRegion?: string;
-  readonly setSelectedRegion: (region: string) => void;
+  readonly defaultRegionName: string;
+  readonly setSelectedRegion: React.Dispatch<
+    React.SetStateAction<string | undefined>
+  >;
 }
 
 export default function UkraineMap({
   selectedRegion,
+  defaultRegionName,
   setSelectedRegion,
 }: UkraineMapProps) {
   const handleRegionClick = useCallback(
-    (regionName: string) => () => setSelectedRegion(regionName),
-    [setSelectedRegion],
+    (regionName: string) => () => {
+      setSelectedRegion((prevSelectedRegion) =>
+        prevSelectedRegion === regionName ? defaultRegionName : regionName,
+      );
+    },
+    [setSelectedRegion, defaultRegionName],
   );
 
   return (
