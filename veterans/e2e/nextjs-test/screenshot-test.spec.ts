@@ -29,14 +29,7 @@ test('Snapshot for Home Page without Hero Section', async ({
     timeout: 10000,
   });
 
-  await page.waitForFunction(
-    () => {
-      return (
-        window.__NEXT_DATA__?.props?.pageProps?.initialApolloState !== undefined
-      );
-    },
-    { timeout: 30000 },
-  );
+  await page.waitForLoadState('networkidle');
 
   await page
     .waitForSelector('[data-loading="true"]', {
