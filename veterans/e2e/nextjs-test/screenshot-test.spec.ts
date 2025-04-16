@@ -29,24 +29,6 @@ test('Snapshot for Home Page without Hero Section', async ({
     timeout: 10000,
   });
 
-  // await Promise.all([
-  //   page
-  //     .waitForSelector('[data-loading="true"]', {
-  //       state: 'hidden',
-  //       timeout: 10000,
-  //     })
-  //     .catch(() => {}),
-  //   page
-  //     .waitForSelector('.loading-spinner', { state: 'hidden', timeout: 10000 })
-  //     .catch(() => {}),
-  //   page
-  //     .waitForSelector('[role="progressbar"]', {
-  //       state: 'hidden',
-  //       timeout: 10000,
-  //     })
-  //     .catch(() => {}),
-  // ]);
-
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(1000);
 
