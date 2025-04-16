@@ -89,15 +89,18 @@ jobs:
             DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_CLI_TOKEN" --scope="$VERCEL_ORG_ID")
             echo "DEPLOY_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
             
-            # Get deployment ID from URL
-            DEPLOYMENT_ID=$(echo "$DEPLOYMENT_URL" | sed 's|https://razom-||' | sed 's|-kavoon.vercel.app||')
+            # Get the full deployment ID from the inspect URL
+            INSPECT_URL=$(echo "$DEPLOYMENT_URL" | grep -o 'Inspect: https://vercel.com/[^ ]*' | cut -d' ' -f2)
+            DEPLOYMENT_ID=$(echo "$INSPECT_URL" | sed 's|https://vercel.com/kavoon/razom/||')
+            
+            echo "Deployment ID: $DEPLOYMENT_ID"
             
             # First, try to remove any existing alias
             curl -X DELETE \
               -H "Authorization: Bearer $VERCEL_CLI_TOKEN" \
               "https://api.vercel.com/v2/domains/staging-razom.vercel.app/records" || true
             
-            # Then, create the new alias
+            # Then, create the new alias using the full deployment ID
             curl -X POST \
               -H "Authorization: Bearer $VERCEL_CLI_TOKEN" \
               -H "Content-Type: application/json" \
