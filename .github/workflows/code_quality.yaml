@@ -56,7 +56,7 @@ jobs:
         run: docker compose build app-nextjs
 
       - name: Run linters
-        run: docker compose run --rm app-nextjs npm run lint
+        run: docker compose run --no-deps --rm app-nextjs npm run lint
 
   e2e-tests:
     runs-on: ubuntu-latest
